@@ -27,6 +27,7 @@ export class BinanceAPIClient {
   private apiSecret: string;
   private baseUrl = 'https://api.binance.com/api';
   private isDemoMode: boolean = process.env.TRADING_MODE === 'DEMO' || !process.env.BINANCE_API_KEY;
+  private lastApiError: string | null = null;
 
   constructor() {
     this.apiKey = process.env.BINANCE_API_KEY || '';
@@ -43,6 +44,10 @@ export class BinanceAPIClient {
 
   getMode(): string {
     return this.isDemoMode ? 'DEMO' : 'LIVE';
+  }
+
+  getLastApiError(): string | null {
+    return this.lastApiError;
   }
 
   setDemoMode(demo: boolean) {
@@ -218,9 +223,13 @@ export class BinanceAPIClient {
         headers: { 'X-MBX-APIKEY': this.apiKey },
       });
 
+      this.lastApiError = null;
+
       return response.data;
     } catch (error: any) {
-      console.error(`[Binance] Error fetching account balance:`, error.response?.data || error.message);
+      const details = error.response?.data || error.message;
+      this.lastApiError = typeof details === 'string' ? details : JSON.stringify(details);
+      console.error(`[Binance] Error fetching account balance:`, details);
       return null;
     }
   }

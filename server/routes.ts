@@ -84,7 +84,11 @@ export async function registerRoutes(
     try {
       const balance = await binanceClient.getAccountBalance();
       if (!balance) {
-        return res.status(500).json({ message: "Failed to fetch account balance" });
+        return res.status(500).json({
+          message: "Failed to fetch account balance",
+          mode: binanceClient.getMode(),
+          details: binanceClient.getLastApiError(),
+        });
       }
       
       // Filter and format balances
