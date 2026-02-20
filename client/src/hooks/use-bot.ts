@@ -268,3 +268,111 @@ export function useUpdateAtrConfig() {
     }
   });
 }
+
+// ===== MULTI-STRATEGY HOOKS =====
+
+export function useMultiStrategyMarkets() {
+  return useQuery({
+    queryKey: ['/api/multi-strategy/markets'],
+    queryFn: async () => {
+      const res = await fetch('/api/multi-strategy/markets');
+      if (!res.ok) throw new Error('Failed to fetch markets');
+      return await res.json();
+    },
+    refetchInterval: 30000, // Update every 30s
+  });
+}
+
+export function useEnsembleWeights() {
+  return useQuery({
+    queryKey: ['/api/multi-strategy/ensemble-weights'],
+    queryFn: async () => {
+      const res = await fetch('/api/multi-strategy/ensemble-weights');
+      if (!res.ok) throw new Error('Failed to fetch ensemble weights');
+      return await res.json();
+    },
+    refetchInterval: 10000,
+  });
+}
+
+export function useMotifPatterns() {
+  return useQuery({
+    queryKey: ['/api/multi-strategy/motif-patterns'],
+    queryFn: async () => {
+      const res = await fetch('/api/multi-strategy/motif-patterns');
+      if (!res.ok) throw new Error('Failed to fetch motif patterns');
+      return await res.json();
+    },
+    refetchInterval: 15000,
+  });
+}
+
+export function useMultiStrategyBotControl() {
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+
+  const startMultiBot = useMutation({
+    mutationFn: async () => {
+      const res = await fetch('/api/multi-strategy/start-bot', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: '{}',
+      });
+      if (!res.ok) throw new Error('Failed to start multi-strategy bot');
+      return await res.json();
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['/api/multi-strategy/bot-status'] });
+      toast({ title: 'Multi-Strategy Bot Started', description: `Markets: ${data.status.activeMarkets.join(', ')}`, className: 'border-green-500/50' });
+    },
+    onError: (error) => {
+      toast({ title: 'Error', description: error.message, variant: 'destructive' });
+    }
+  });
+
+  const stopMultiBot = useMutation({
+    mutationFn: async () => {
+      const res = await fetch('/api/multi-strategy/stop-bot', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: '{}',
+      });
+      if (!res.ok) throw new Error('Failed to stop multi-strategy bot');
+      return await res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/multi-strategy/bot-status'] });
+      toast({ title: 'Multi-Strategy Bot Stopped', className: 'border-yellow-500/50' });
+    },
+    onError: (error) => {
+      toast({ title: 'Error', description: error.message, variant: 'destructive' });
+    }
+  });
+
+  return { startMultiBot, stopMultiBot };
+}
+
+export function useMultiStrategyBotStatus() {
+  return useQuery({
+    queryKey: ['/api/multi-strategy/bot-status'],
+    queryFn: async () => {
+      const res = await fetch('/api/multi-strategy/bot-status');
+      if (!res.ok) throw new Error('Failed to fetch bot status');
+      return await res.json();
+    },
+    refetchInterval: 3000,
+  });
+}
+
+export function useMultiStrategyPositions() {
+  return useQuery({
+    queryKey: ['/api/multi-strategy/positions'],
+    queryFn: async () => {
+      const res = await fetch('/api/multi-strategy/positions');
+      if (!res.ok) throw new Error('Failed to fetch positions');
+      return await res.json();
+    },
+    refetchInterval: 5000,
+  });
+}
+

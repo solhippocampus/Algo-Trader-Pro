@@ -98,9 +98,9 @@ export class MarkovChain {
 // Reinforcement Learning Agent
 export class RLAgent {
   private qTable: Map<string, Map<string, number>> = new Map();
-  private learningRate: number = 0.1;
-  private discountFactor: number = 0.9;
-  private epsilon: number = 0.1;
+  private learningRate: number = 0.15; // Increased from 0.1 for faster learning
+  private discountFactor: number = 0.95; // Increased from 0.9 for better long-term rewards
+  private epsilon: number = 0.05; // Decreased from 0.1 for less random exploration
 
   async chooseAction(state: string, availableActions: string[]): Promise<string> {
     if (Math.random() < this.epsilon) {
@@ -257,10 +257,11 @@ export class EnsembleStrategyEngine extends EventEmitter {
     const buyProb = weightedBuyScore / totalWeight;
     const sellProb = weightedSellScore / totalWeight;
 
+    // Increased confidence threshold from 0.4 to 0.55 for more selective trading
     let action: "BUY" | "SELL" | "HOLD" = "HOLD";
-    if (buyProb > sellProb && buyProb > 0.4) {
+    if (buyProb > sellProb && buyProb > 0.55) {
       action = "BUY";
-    } else if (sellProb > buyProb && sellProb > 0.4) {
+    } else if (sellProb > buyProb && sellProb > 0.55) {
       action = "SELL";
     }
 

@@ -165,19 +165,72 @@ export class MultiStrategyTradingBot {
     try {
       console.log(`[Trade] Executing ${signal.action} for ${symbol} at ${signal.price}`);
 
-      // Track position
-      const positionId = `${symbol}_${Date.now()}`;
-      this.openPositions.set(positionId, {
-        symbol,
-        action: signal.action,
-        entryPrice: signal.price,
-        stopLoss: signal.price * (1 - riskConfig.stopLossPercentage),
-        takeProfit: signal.price * (1 + riskConfig.takeProfitPercentage),
-        size: riskConfig.maxPositionSize,
-        timestamp: new Date(),
-      });
+      // Calculate position size based on account balance
+      const accountData = await binanceClient.getAccountBalance();
+      let usdtBalance = 10000; // fallback
+      
+      if (accountData?.balances) {
+        const usdtBal = accountData.balances.find((b: any) => b.asset === 'USDT');
+        if (usdtBal) {
+          usdtBalance = parseFloat(usdtBal.free || '0');
+        }
+      }
 
-      this.tradesCount++;
+      const tradeSize = Math.min(
+        riskConfig.maxPositionSize * 10000, // 10k base allocation
+        usdtBalance * riskConfig.maxPositionSize
+      );
+
+      if (tradeSize < 10) {
+        console.warn(`[Trade] Position size too small: ${tradeSize} USDT`);
+        return;
+      }
+
+      // Place actual market order on Binance
+      try {
+        const quantity = tradeSize / signal.price;
+        const order = await binanceClient.placeMarketOrder(
+          symbol,
+          signal.action === 'BUY' ? 'BUY' : 'SELL',
+          quantity
+        );
+
+        // Track position with real order ID
+        const positionId = order?.orderId || `${symbol}_${Date.now()}`;
+        this.openPositions.set(positionId, {
+          symbol,
+          orderId: order?.orderId,
+          action: signal.action,
+          entryPrice: signal.price,
+          quantity: quantity,
+          stopLoss: signal.price * (1 - riskConfig.stopLossPercentage),
+          takeProfit: signal.price * (1 + riskConfig.takeProfitPercentage),
+          size: riskConfig.maxPositionSize,
+          timestamp: new Date(),
+          status: order?.status || 'PENDING',
+        });
+
+        this.tradesCount++;
+        console.log(`[Trade] ✅ Order placed: ${positionId} | Qty: ${quantity.toFixed(8)} | Price: ${signal.price}`);
+
+      } catch (binanceError) {
+        console.error(`[Trade] Binance order failed, tracking position locally:`, binanceError);
+        
+        // Fallback: track position locally if real order fails
+        const positionId = `${symbol}_${Date.now()}`;
+        this.openPositions.set(positionId, {
+          symbol,
+          action: signal.action,
+          entryPrice: signal.price,
+          stopLoss: signal.price * (1 - riskConfig.stopLossPercentage),
+          takeProfit: signal.price * (1 + riskConfig.takeProfitPercentage),
+          size: riskConfig.maxPositionSize,
+          timestamp: new Date(),
+          status: 'LOCAL_TRACKING',
+        });
+        
+        this.tradesCount++;
+      }
 
       // Update RL agent
       const agent = ensembleEngine.getRLAgent();
@@ -185,7 +238,6 @@ export class MultiStrategyTradingBot {
       const reward = signal.confidence > 0.5 ? 1 : -0.5;
       agent.updateQValue(state, signal.action, reward, state, ['BUY', 'SELL', 'HOLD']);
 
-      console.log(`[Trade] Position opened: ${positionId}`);
     } catch (error) {
       console.error(`[Trade] Error executing trade for ${symbol}:`, error);
     }

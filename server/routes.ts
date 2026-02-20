@@ -367,9 +367,15 @@ export async function registerRoutes(
   setTimeout(async () => {
     try {
       if (process.env.AUTO_START_BOT === 'true' || process.env.NODE_ENV === 'production') {
+        // Start legacy bot
         await tradingBot.start();
         await storage.updateConfig({ isRunning: true });
-        console.log(`[Bot] Auto-started in ${process.env.NODE_ENV || 'development'} mode`);
+        console.log(`[Bot] Legacy bot auto-started in ${process.env.NODE_ENV || 'development'} mode`);
+
+        // Start multi-strategy bot (new system)
+        const { multiStrategyBot } = await import('./trading/multi-strategy-trader');
+        await multiStrategyBot.start();
+        console.log(`[Bot] Multi-strategy bot auto-started with 9 markets`);
       }
     } catch (e) {
       console.error("[Bot] Failed to auto-start:", e);

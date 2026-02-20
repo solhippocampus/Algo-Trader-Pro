@@ -1,4 +1,4 @@
-import { useBotControl, useBotStatus, useStats, useTrades, useAccountBalance, useDecisions, useMotifWeights, useOnChain, useMultiExchange, useCorrelation, usePositions, useAtrConfig, useUpdateAtrConfig, useTradesClosed, usePnlSummary } from "@/hooks/use-bot";
+import { useBotControl, useBotStatus, useStats, useTrades, useAccountBalance, useDecisions, useMotifWeights, useOnChain, useMultiExchange, useCorrelation, usePositions, useAtrConfig, useUpdateAtrConfig, useTradesClosed, usePnlSummary, useMultiStrategyMarkets, useEnsembleWeights, useMotifPatterns, useMultiStrategyBotControl, useMultiStrategyBotStatus, useMultiStrategyPositions } from "@/hooks/use-bot";
 import { StrategyCard } from "@/components/StrategyCard";
 import { StatCard } from "@/components/StatCard";
 import { TradeHistory } from "@/components/TradeHistory";
@@ -27,7 +27,16 @@ export default function Dashboard() {
   const updateAtr = useUpdateAtrConfig();
   const { startBot, stopBot } = useBotControl();
 
+  // Multi-strategy hooks
+  const { data: multiStrategyMarkets } = useMultiStrategyMarkets();
+  const { data: ensembleWeights } = useEnsembleWeights();
+  const { data: motifPatterns } = useMotifPatterns();
+  const { startMultiBot, stopMultiBot } = useMultiStrategyBotControl();
+  const { data: multiStrategyStatus } = useMultiStrategyBotStatus();
+  const { data: multiStrategyPositions } = useMultiStrategyPositions();
+
   const isRunning = status?.isRunning || false;
+  const isMultiStrategyRunning = multiStrategyStatus?.isRunning || false;
   
   // Build chart data from closed trades with cumulative PnL
   const chartData = closedTrades && closedTrades.length > 0
@@ -188,6 +197,147 @@ export default function Dashboard() {
           ) : (
             <div className="text-center py-8">
               <p className="text-muted-foreground">Loading account balances...</p>
+            </div>
+          )}
+        </div>
+
+        {/* Multi-Strategy Markets Overview */}
+        <div className="glass-card p-6 rounded-2xl border border-white/10">
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h2 className="text-2xl font-bold font-display flex items-center gap-2">
+                <Zap className="w-6 h-6 text-blue-500" />
+                Multi-Strategy Markets
+              </h2>
+              <p className="text-sm text-muted-foreground mt-1">
+                {isMultiStrategyRunning ? (
+                  <span className="text-green-500 font-semibold">🟢 Multi-Strategy Bot Active</span>
+                ) : (
+                  <span className="text-gray-500 font-semibold">⚪ Multi-Strategy Bot Inactive</span>
+                )}
+              </p>
+            </div>
+            <Button 
+              onClick={() => isMultiStrategyRunning ? stopMultiBot.mutate() : startMultiBot.mutate()}
+              disabled={startMultiBot.isPending || stopMultiBot.isPending}
+              className={cn(
+                "h-10 px-4 text-sm font-semibold transition-all",
+                isMultiStrategyRunning 
+                  ? "bg-red-500/10 hover:bg-red-500/20 text-red-500 border border-red-500/50" 
+                  : "bg-blue-500/10 hover:bg-blue-500/20 text-blue-500 border border-blue-500/50"
+              )}
+            >
+              {startMultiBot.isPending || stopMultiBot.isPending ? "..." : (isMultiStrategyRunning ? "Stop" : "Start")}
+            </Button>
+          </div>
+
+          {multiStrategyMarkets && multiStrategyMarkets.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              {multiStrategyMarkets.map((market: any) => (
+                <div 
+                  key={market.symbol}
+                  className="bg-white/5 border border-white/10 rounded-lg p-4 hover:bg-white/10 transition-colors"
+                >
+                  <p className="text-sm font-semibold text-white mb-2">{market.symbol}</p>
+                  <div className="space-y-1">
+                    <p className="text-xs text-muted-foreground">Price: <span className="text-green-400">${market.price?.toFixed(2)}</span></p>
+                    <p className="text-xs text-muted-foreground">Volatility: <span className="text-yellow-400">{(market.volatility * 100)?.toFixed(2)}%</span></p>
+                    <p className="text-xs text-muted-foreground">Allocation: <span className="text-blue-400">{(market.allocation * 100)?.toFixed(1)}%</span></p>
+                    <p className="text-xs text-muted-foreground">Volume 24h: <span className="text-white">${(market.volume / 1e6)?.toFixed(2)}M</span></p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-8">
+              <p className="text-muted-foreground">Loading multi-strategy markets...</p>
+            </div>
+          )}
+        </div>
+
+        {/* Ensemble Weights & Motif Patterns */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="glass-card p-6 rounded-2xl border border-white/10">
+            <h3 className="text-xl font-bold font-display mb-4">Ensemble Strategy Weights</h3>
+            {ensembleWeights && Object.entries(ensembleWeights).map(([strategy, weight]: [string, any]) => (
+              <div key={strategy} className="mb-4">
+                <div className="flex justify-between mb-2">
+                  <p className="text-sm text-muted-foreground capitalize">{strategy}</p>
+                  <p className="text-sm font-semibold text-primary">{((weight as number) * 100).toFixed(1)}%</p>
+                </div>
+                <div className="w-full bg-white/10 rounded-full h-2 overflow-hidden">
+                  <div 
+                    className="bg-gradient-to-r from-primary to-blue-500 h-full transition-all duration-300"
+                    style={{ width: `${(weight as number) * 100}%` }}
+                  />
+                </div>
+              </div>
+            ))}
+            <p className="text-xs text-muted-foreground mt-4">
+              Strategy weights adapt based on recent performance. Higher = better recent returns.
+            </p>
+          </div>
+
+          <div className="glass-card p-6 rounded-2xl border border-white/10">
+            <h3 className="text-xl font-bold font-display mb-4">Learned Motif Patterns</h3>
+            {motifPatterns && Object.entries(motifPatterns).map(([coin, pattern]: [string, any]) => (
+              <div key={coin} className="mb-3 p-3 bg-white/5 rounded-lg border border-white/10">
+                <p className="text-sm font-semibold text-white">{coin}</p>
+                <div className="grid grid-cols-2 gap-2 mt-2 text-xs">
+                  <p className="text-muted-foreground">Probability: <span className="text-green-400">{(pattern.probability * 100)?.toFixed(1)}%</span></p>
+                  <p className="text-muted-foreground">Strength: <span className="text-blue-400">{(pattern.strength || 0)?.toFixed(2)}</span></p>
+                </div>
+              </div>
+            ))}
+            <p className="text-xs text-muted-foreground mt-4">
+              Patterns evolve through mutation based on trading outcomes.
+            </p>
+          </div>
+        </div>
+
+        {/* Multi-Strategy Open Positions */}
+        <div className="glass-card p-6 rounded-2xl border border-white/10">
+          <h3 className="text-xl font-bold font-display mb-4 flex items-center gap-2">
+            <Scale className="w-5 h-5 text-yellow-500" />
+            Multi-Strategy Open Positions
+          </h3>
+          {multiStrategyPositions && multiStrategyPositions.length > 0 ? (
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-white/10">
+                    <th className="text-left py-2 px-3 text-muted-foreground font-semibold">Symbol</th>
+                    <th className="text-left py-2 px-3 text-muted-foreground font-semibold">Action</th>
+                    <th className="text-right py-2 px-3 text-muted-foreground font-semibold">Entry Price</th>
+                    <th className="text-right py-2 px-3 text-muted-foreground font-semibold">Stop Loss</th>
+                    <th className="text-right py-2 px-3 text-muted-foreground font-semibold">Take Profit</th>
+                    <th className="text-right py-2 px-3 text-muted-foreground font-semibold">Size</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {multiStrategyPositions.map((pos: any, idx: number) => (
+                    <tr key={idx} className="border-b border-white/5 hover:bg-white/5 transition-colors">
+                      <td className="py-3 px-3 font-semibold">{pos.symbol}</td>
+                      <td className="py-3 px-3">
+                        <span className={cn(
+                          "px-2 py-1 rounded text-xs font-semibold",
+                          pos.action === 'BUY' ? "bg-green-500/20 text-green-400" : "bg-red-500/20 text-red-400"
+                        )}>
+                          {pos.action}
+                        </span>
+                      </td>
+                      <td className="py-3 px-3 text-right">${pos.entryPrice?.toFixed(2)}</td>
+                      <td className="py-3 px-3 text-right text-red-400">${pos.stopLoss?.toFixed(2)}</td>
+                      <td className="py-3 px-3 text-right text-green-400">${pos.takeProfit?.toFixed(2)}</td>
+                      <td className="py-3 px-3 text-right">{(pos.size * 100)?.toFixed(2)}%</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <div className="text-center py-8">
+              <p className="text-muted-foreground">No open positions yet</p>
             </div>
           )}
         </div>
