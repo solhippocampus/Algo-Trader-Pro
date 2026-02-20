@@ -5,6 +5,8 @@ This document covers two pieces:
 - Deploying the frontend to Netlify (static site)
 - Running the backend/bot as a continuously running service (recommended: Render, Railway, or a VPS with Docker + PM2)
 
+For VPS-first live deployment, see `deploy/vps/RUNBOOK.md`.
+
 1) Netlify (Frontend)
 
 - In Netlify, create a new site from Git and point it to this repository.
