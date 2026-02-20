@@ -116,3 +116,131 @@ export function useUpdateConfig() {
     }
   });
 }
+
+export function useAccountBalance() {
+  return useQuery({
+    queryKey: ["/api/trading/account-balance"],
+    queryFn: async () => {
+      const res = await fetch("/api/trading/account-balance");
+      if (!res.ok) throw new Error("Failed to fetch account balance");
+      const data = await res.json();
+      return {
+        mode: data.mode || "DEMO",
+        balances: data.balances || [],
+        totalAssets: data.totalAssets || 0,
+        timestamp: data.timestamp || new Date().toISOString(),
+      };
+    },
+    refetchInterval: 10000, // Update every 10s
+  });
+}
+
+export function useDecisions() {
+  return useQuery({
+    queryKey: ["/api/trading/decisions"],
+    queryFn: async () => {
+      const res = await fetch("/api/trading/decisions");
+      if (!res.ok) throw new Error("Failed to fetch decisions");
+      const data = await res.json();
+      // API returns array directly, not wrapped in { value: [] }
+      return Array.isArray(data) ? data : (data.value || []);
+    },
+    refetchInterval: 5000, // Update every 5s for live decisions
+  });
+}
+
+export function useMotifWeights() {
+  return useQuery({
+    queryKey: ["/api/trading/motif-weights"],
+    queryFn: async () => {
+      const res = await fetch("/api/trading/motif-weights");
+      if (!res.ok) throw new Error("Failed to fetch motif weights");
+      return await res.json();
+    },
+    refetchInterval: 10000, // Update every 10s
+  });
+}
+
+export function useOnChain() {
+  return useQuery({
+    queryKey: ['/api/data/onchain'],
+    queryFn: async () => {
+      const res = await fetch('/api/data/onchain');
+      if (!res.ok) throw new Error('Failed to fetch on-chain data');
+      return await res.json();
+    },
+    refetchInterval: 30000,
+  });
+}
+
+export function useMultiExchange() {
+  return useQuery({
+    queryKey: ['/api/data/multi-exchange'],
+    queryFn: async () => {
+      const res = await fetch('/api/data/multi-exchange');
+      if (!res.ok) throw new Error('Failed to fetch multi-exchange data');
+      return await res.json();
+    },
+    refetchInterval: 15000,
+  });
+}
+
+export function useCorrelation() {
+  return useQuery({
+    queryKey: ['/api/trading/correlation'],
+    queryFn: async () => {
+      const res = await fetch('/api/trading/correlation');
+      if (!res.ok) throw new Error('Failed to fetch correlation data');
+      return await res.json();
+    },
+    refetchInterval: 30000,
+  });
+}
+
+export function usePositions() {
+  return useQuery({
+    queryKey: ['/api/trading/positions'],
+    queryFn: async () => {
+      const res = await fetch('/api/trading/positions');
+      if (!res.ok) throw new Error('Failed to fetch positions');
+      return await res.json();
+    },
+    refetchInterval: 5000,
+  });
+}
+
+export function useAtrConfig() {
+  return useQuery({
+    queryKey: ['/api/trading/atr-config'],
+    queryFn: async () => {
+      const res = await fetch('/api/trading/atr-config');
+      if (!res.ok) throw new Error('Failed to fetch ATR config');
+      return await res.json();
+    },
+    refetchInterval: 15000,
+  });
+}
+
+export function useUpdateAtrConfig() {
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+
+  return useMutation({
+    mutationFn: async (payload: { atrMultiplier: number }) => {
+      const res = await fetch('/api/trading/atr-config', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) throw new Error('Failed to update ATR config');
+      return await res.json();
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['/api/trading/atr-config'] });
+      toast({ title: 'ATR updated', description: `ATR multiplier set to ${data.atrMultiplier}` });
+    },
+    onError: (err) => {
+      toast({ title: 'Update failed', description: err.message, variant: 'destructive' });
+    }
+  });
+}

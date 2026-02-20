@@ -1,0 +1,91 @@
+import { createHotContext as __vite__createHotContext } from "/@vite/client";import.meta.hot = __vite__createHotContext("/src/App.tsx");import __vite__cjsImport0_react_jsxDevRuntime from "/@fs/C:/Users/umTCnar/Desktop/Algo-Trader-Pro/node_modules/.vite/deps/react_jsx-dev-runtime.js?v=82b0aef9"; const jsxDEV = __vite__cjsImport0_react_jsxDevRuntime["jsxDEV"];
+import * as RefreshRuntime from "/@react-refresh";
+const inWebWorker = typeof WorkerGlobalScope !== "undefined" && self instanceof WorkerGlobalScope;
+let prevRefreshReg;
+let prevRefreshSig;
+if (import.meta.hot && !inWebWorker) {
+  if (!window.$RefreshReg$) {
+    throw new Error(
+      "@vitejs/plugin-react can't detect preamble. Something is wrong."
+    );
+  }
+  prevRefreshReg = window.$RefreshReg$;
+  prevRefreshSig = window.$RefreshSig$;
+  window.$RefreshReg$ = RefreshRuntime.getRefreshReg("C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/App.tsx");
+  window.$RefreshSig$ = RefreshRuntime.createSignatureFunctionForTransform;
+}
+import { Switch, Route } from "/@fs/C:/Users/umTCnar/Desktop/Algo-Trader-Pro/node_modules/.vite/deps/wouter.js?v=82b0aef9";
+import { queryClient } from "/src/lib/queryClient.ts";
+import { QueryClientProvider } from "/@fs/C:/Users/umTCnar/Desktop/Algo-Trader-Pro/node_modules/.vite/deps/@tanstack_react-query.js?v=82b0aef9";
+import { Toaster } from "/src/components/ui/toaster.tsx";
+import { TooltipProvider } from "/src/components/ui/tooltip.tsx";
+import Dashboard from "/src/pages/Dashboard.tsx";
+import Settings from "/src/pages/Settings.tsx";
+import NotFound from "/src/pages/not-found.tsx";
+function Router() {
+  return /* @__PURE__ */ jsxDEV(Switch, { children: [
+    /* @__PURE__ */ jsxDEV(Route, { path: "/", component: Dashboard }, void 0, false, {
+      fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/App.tsx",
+      lineNumber: 32,
+      columnNumber: 7
+    }, this),
+    /* @__PURE__ */ jsxDEV(Route, { path: "/settings", component: Settings }, void 0, false, {
+      fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/App.tsx",
+      lineNumber: 33,
+      columnNumber: 7
+    }, this),
+    /* @__PURE__ */ jsxDEV(Route, { component: NotFound }, void 0, false, {
+      fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/App.tsx",
+      lineNumber: 34,
+      columnNumber: 7
+    }, this)
+  ] }, void 0, true, {
+    fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/App.tsx",
+    lineNumber: 31,
+    columnNumber: 5
+  }, this);
+}
+_c = Router;
+function App() {
+  return /* @__PURE__ */ jsxDEV(QueryClientProvider, { client: queryClient, children: /* @__PURE__ */ jsxDEV(TooltipProvider, { children: [
+    /* @__PURE__ */ jsxDEV(Toaster, {}, void 0, false, {
+      fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/App.tsx",
+      lineNumber: 43,
+      columnNumber: 9
+    }, this),
+    /* @__PURE__ */ jsxDEV(Router, {}, void 0, false, {
+      fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/App.tsx",
+      lineNumber: 44,
+      columnNumber: 9
+    }, this)
+  ] }, void 0, true, {
+    fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/App.tsx",
+    lineNumber: 42,
+    columnNumber: 7
+  }, this) }, void 0, false, {
+    fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/App.tsx",
+    lineNumber: 41,
+    columnNumber: 5
+  }, this);
+}
+_c2 = App;
+export default App;
+var _c, _c2;
+$RefreshReg$(_c, "Router");
+$RefreshReg$(_c2, "App");
+if (import.meta.hot && !inWebWorker) {
+  window.$RefreshReg$ = prevRefreshReg;
+  window.$RefreshSig$ = prevRefreshSig;
+}
+if (import.meta.hot && !inWebWorker) {
+  RefreshRuntime.__hmr_import(import.meta.url).then((currentExports) => {
+    RefreshRuntime.registerExportsForReactRefresh("C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/App.tsx", currentExports);
+    import.meta.hot.accept((nextExports) => {
+      if (!nextExports) return;
+      const invalidateMessage = RefreshRuntime.validateRefreshBoundaryAndEnqueueUpdate("C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/App.tsx", currentExports, nextExports);
+      if (invalidateMessage) import.meta.hot.invalidate(invalidateMessage);
+    });
+  });
+}
+
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJtYXBwaW5ncyI6IkFBWU07Ozs7Ozs7Ozs7Ozs7Ozs7QUFaTixTQUFTQSxRQUFRQyxhQUFhO0FBQzlCLFNBQVNDLG1CQUFtQjtBQUM1QixTQUFTQywyQkFBMkI7QUFDcEMsU0FBU0MsZUFBZTtBQUN4QixTQUFTQyx1QkFBdUI7QUFDaEMsT0FBT0MsZUFBZTtBQUN0QixPQUFPQyxjQUFjO0FBQ3JCLE9BQU9DLGNBQWM7QUFFckIsU0FBU0MsU0FBUztBQUNoQixTQUNFLHVCQUFDLFVBQ0M7QUFBQSwyQkFBQyxTQUFNLE1BQUssS0FBSSxXQUFXSCxhQUEzQjtBQUFBO0FBQUE7QUFBQTtBQUFBLFdBQXFDO0FBQUEsSUFDckMsdUJBQUMsU0FBTSxNQUFLLGFBQVksV0FBV0MsWUFBbkM7QUFBQTtBQUFBO0FBQUE7QUFBQSxXQUE0QztBQUFBLElBQzVDLHVCQUFDLFNBQU0sV0FBV0MsWUFBbEI7QUFBQTtBQUFBO0FBQUE7QUFBQSxXQUEyQjtBQUFBLE9BSDdCO0FBQUE7QUFBQTtBQUFBO0FBQUEsU0FJQTtBQUVKO0FBQUNFLEtBUlFEO0FBVVQsU0FBU0UsTUFBTTtBQUNiLFNBQ0UsdUJBQUMsdUJBQW9CLFFBQVFULGFBQzNCLGlDQUFDLG1CQUNDO0FBQUEsMkJBQUMsYUFBRDtBQUFBO0FBQUE7QUFBQTtBQUFBLFdBQVE7QUFBQSxJQUNSLHVCQUFDLFlBQUQ7QUFBQTtBQUFBO0FBQUE7QUFBQSxXQUFPO0FBQUEsT0FGVDtBQUFBO0FBQUE7QUFBQTtBQUFBLFNBR0EsS0FKRjtBQUFBO0FBQUE7QUFBQTtBQUFBLFNBS0E7QUFFSjtBQUFDVSxNQVRRRDtBQVdULGVBQWVBO0FBQUksSUFBQUQsSUFBQUU7QUFBQUMsYUFBQUgsSUFBQTtBQUFBRyxhQUFBRCxLQUFBIiwibmFtZXMiOlsiU3dpdGNoIiwiUm91dGUiLCJxdWVyeUNsaWVudCIsIlF1ZXJ5Q2xpZW50UHJvdmlkZXIiLCJUb2FzdGVyIiwiVG9vbHRpcFByb3ZpZGVyIiwiRGFzaGJvYXJkIiwiU2V0dGluZ3MiLCJOb3RGb3VuZCIsIlJvdXRlciIsIl9jIiwiQXBwIiwiX2MyIiwiJFJlZnJlc2hSZWckIl0sImlnbm9yZUxpc3QiOltdLCJzb3VyY2VzIjpbIkFwcC50c3giXSwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IHsgU3dpdGNoLCBSb3V0ZSB9IGZyb20gXCJ3b3V0ZXJcIjtcbmltcG9ydCB7IHF1ZXJ5Q2xpZW50IH0gZnJvbSBcIi4vbGliL3F1ZXJ5Q2xpZW50XCI7XG5pbXBvcnQgeyBRdWVyeUNsaWVudFByb3ZpZGVyIH0gZnJvbSBcIkB0YW5zdGFjay9yZWFjdC1xdWVyeVwiO1xuaW1wb3J0IHsgVG9hc3RlciB9IGZyb20gXCJAL2NvbXBvbmVudHMvdWkvdG9hc3RlclwiO1xuaW1wb3J0IHsgVG9vbHRpcFByb3ZpZGVyIH0gZnJvbSBcIkAvY29tcG9uZW50cy91aS90b29sdGlwXCI7XG5pbXBvcnQgRGFzaGJvYXJkIGZyb20gXCJAL3BhZ2VzL0Rhc2hib2FyZFwiO1xuaW1wb3J0IFNldHRpbmdzIGZyb20gXCJAL3BhZ2VzL1NldHRpbmdzXCI7XG5pbXBvcnQgTm90Rm91bmQgZnJvbSBcIkAvcGFnZXMvbm90LWZvdW5kXCI7XG5cbmZ1bmN0aW9uIFJvdXRlcigpIHtcbiAgcmV0dXJuIChcbiAgICA8U3dpdGNoPlxuICAgICAgPFJvdXRlIHBhdGg9XCIvXCIgY29tcG9uZW50PXtEYXNoYm9hcmR9IC8+XG4gICAgICA8Um91dGUgcGF0aD1cIi9zZXR0aW5nc1wiIGNvbXBvbmVudD17U2V0dGluZ3N9IC8+XG4gICAgICA8Um91dGUgY29tcG9uZW50PXtOb3RGb3VuZH0gLz5cbiAgICA8L1N3aXRjaD5cbiAgKTtcbn1cblxuZnVuY3Rpb24gQXBwKCkge1xuICByZXR1cm4gKFxuICAgIDxRdWVyeUNsaWVudFByb3ZpZGVyIGNsaWVudD17cXVlcnlDbGllbnR9PlxuICAgICAgPFRvb2x0aXBQcm92aWRlcj5cbiAgICAgICAgPFRvYXN0ZXIgLz5cbiAgICAgICAgPFJvdXRlciAvPlxuICAgICAgPC9Ub29sdGlwUHJvdmlkZXI+XG4gICAgPC9RdWVyeUNsaWVudFByb3ZpZGVyPlxuICApO1xufVxuXG5leHBvcnQgZGVmYXVsdCBBcHA7XG4iXSwiZmlsZSI6IkM6L1VzZXJzL3VtVENuYXIvRGVza3RvcC9BbGdvLVRyYWRlci1Qcm8vY2xpZW50L3NyYy9BcHAudHN4In0=

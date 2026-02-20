@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 import type { Trade } from "@shared/schema";
 import { ArrowUpRight, ArrowDownLeft } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface TradeHistoryProps {
   trades: Trade[];
@@ -46,35 +47,35 @@ export function TradeHistory({ trades, isLoading }: TradeHistoryProps) {
         </TableHeader>
         <TableBody>
           {trades.map((trade) => (
-            <TableRow key={trade.id} className="border-white/5 hover:bg-white/5 transition-colors">
+            <TableRow key={trade.positionId || trade.id} className="border-white/5 hover:bg-white/5 transition-colors">
               <TableCell className="font-mono text-xs text-muted-foreground">
-                {trade.createdAt ? format(new Date(trade.createdAt), "HH:mm:ss") : "-"}
+                {trade.executedAt ? format(new Date(trade.executedAt), "HH:mm:ss") : (trade.createdAt ? format(new Date(trade.createdAt), "HH:mm:ss") : "-")}
               </TableCell>
               <TableCell className="font-bold">{trade.symbol}</TableCell>
               <TableCell>
                 <Badge 
                   variant="outline" 
-                  className={trade.side === "BUY" 
+                  className={(trade.side === "LONG" || trade.side === "BUY")
                     ? "bg-green-500/10 text-green-500 border-green-500/20" 
                     : "bg-red-500/10 text-red-500 border-red-500/20"
                   }
                 >
-                  {trade.side === "BUY" ? <ArrowUpRight className="w-3 h-3 mr-1" /> : <ArrowDownLeft className="w-3 h-3 mr-1" />}
+                  {(trade.side === "LONG" || trade.side === "BUY") ? <ArrowUpRight className="w-3 h-3 mr-1" /> : <ArrowDownLeft className="w-3 h-3 mr-1" />}
                   {trade.side}
                 </Badge>
               </TableCell>
-              <TableCell className="text-right font-mono">${trade.price}</TableCell>
-              <TableCell className="text-right font-mono">{trade.amount}</TableCell>
+              <TableCell className="text-right font-mono">${(trade.entryPrice || trade.price)?.toFixed(2)}</TableCell>
+              <TableCell className="text-right font-mono">{(trade.quantity || trade.amount)?.toFixed(4)}</TableCell>
               <TableCell>
                 <span className="px-2 py-0.5 rounded text-[10px] font-medium bg-blue-500/10 text-blue-400 border border-blue-500/20 uppercase">
-                  {trade.strategyUsed}
+                  {trade.strategyUsed || "Motif"}
                 </span>
               </TableCell>
               <TableCell className={cn(
                 "text-right font-mono font-bold",
                 Number(trade.pnl) > 0 ? "text-green-500" : Number(trade.pnl) < 0 ? "text-red-500" : "text-muted-foreground"
               )}>
-                {Number(trade.pnl) > 0 ? "+" : ""}{trade.pnl}
+                {trade.pnl ? `${Number(trade.pnl) > 0 ? "+" : ""}${trade.pnl}` : "OPEN"}
               </TableCell>
             </TableRow>
           ))}

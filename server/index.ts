@@ -3,6 +3,17 @@ import { registerRoutes } from "./routes";
 import { serveStatic } from "./static";
 import { createServer } from "http";
 
+// Global process-level handlers to keep the server alive and log unexpected
+// errors during development. These make crashes less likely to silently kill
+// the dev server so the UI doesn't disappear when a non-fatal error occurs.
+process.on('uncaughtException', (err) => {
+  console.error('[process] Uncaught exception:', err && (err as any).stack ? err.stack : err);
+});
+
+process.on('unhandledRejection', (reason) => {
+  console.error('[process] Unhandled rejection:', reason);
+});
+
 const app = express();
 const httpServer = createServer(app);
 
@@ -90,14 +101,55 @@ app.use((req, res, next) => {
   // this serves both the API and the client.
   // It is the only port that is not firewalled.
   const port = parseInt(process.env.PORT || "5000", 10);
-  httpServer.listen(
-    {
-      port,
-      host: "0.0.0.0",
-      reusePort: true,
-    },
-    () => {
-      log(`serving on port ${port}`);
-    },
-  );
+  
+  const listenOptions: any = {
+    port,
+    host: "127.0.0.1",
+  };
+  
+  // reusePort is not supported on Windows, so only add it on non-Windows systems
+  if (process.platform !== "win32") {
+    listenOptions.reusePort = true;
+  }
+  
+  // Attach an error handler so listen errors (eg. EADDRINUSE) don't emit an
+  // uncaught 'error' event that crashes the process. We log and exit
+  // gracefully when the port is already in use.
+  httpServer.on('error', (err: any) => {
+    console.error('[httpServer] Server error:', err && err.stack ? err.stack : err);
+    if (err && err.code === 'EADDRINUSE') {
+      log(`Port ${port} already in use. Another instance may be running.`, 'express');
+      // Exit with non-zero so supervising tools can restart if configured.
+      process.exit(1);
+    }
+  });
+
+  httpServer.listen(listenOptions, () => {
+    log(`serving on http://127.0.0.1:${port}`);
+  });
+
+  // In development, also listen on the common Vite port (5173) and redirect
+  // to the actual server port. This avoids confusion when users open :5173
+  // while the integrated dev server runs on a single port (default 5000).
+  if (process.env.NODE_ENV !== "production") {
+    try {
+      const redirectPort = 5173;
+      const redirectServer = createServer((req, res) => {
+        const host = `http://127.0.0.1:${port}`;
+        const target = host + (req.url || "");
+        res.writeHead(307, { Location: target });
+        res.end();
+      });
+
+      redirectServer.on("error", (err: any) => {
+        log(`redirect server on :5173 failed: ${String(err)}`, "redirect");
+      });
+
+      redirectServer.listen(5173, "127.0.0.1", () => {
+        log(`dev-redirect listening on http://127.0.0.1:5173 -> http://127.0.0.1:${port}` , "redirect");
+      });
+    } catch (e) {
+      log(`unable to start :5173 redirect - ${String(e)}`, "redirect");
+    }
+  }
 })();

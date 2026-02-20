@@ -1,0 +1,1592 @@
+import { createHotContext as __vite__createHotContext } from "/@vite/client";import.meta.hot = __vite__createHotContext("/src/pages/Dashboard.tsx");import __vite__cjsImport0_react_jsxDevRuntime from "/@fs/C:/Users/umTCnar/Desktop/Algo-Trader-Pro/node_modules/.vite/deps/react_jsx-dev-runtime.js?v=82b0aef9"; const Fragment = __vite__cjsImport0_react_jsxDevRuntime["Fragment"]; const jsxDEV = __vite__cjsImport0_react_jsxDevRuntime["jsxDEV"];
+import * as RefreshRuntime from "/@react-refresh";
+const inWebWorker = typeof WorkerGlobalScope !== "undefined" && self instanceof WorkerGlobalScope;
+let prevRefreshReg;
+let prevRefreshSig;
+if (import.meta.hot && !inWebWorker) {
+  if (!window.$RefreshReg$) {
+    throw new Error(
+      "@vitejs/plugin-react can't detect preamble. Something is wrong."
+    );
+  }
+  prevRefreshReg = window.$RefreshReg$;
+  prevRefreshSig = window.$RefreshSig$;
+  window.$RefreshReg$ = RefreshRuntime.getRefreshReg("C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx");
+  window.$RefreshSig$ = RefreshRuntime.createSignatureFunctionForTransform;
+}
+var _s = $RefreshSig$();
+import { useBotControl, useBotStatus, useStats, useTrades, useAccountBalance, useDecisions, useMotifWeights } from "/src/hooks/use-bot.ts";
+import { StrategyCard } from "/src/components/StrategyCard.tsx";
+import { StatCard } from "/src/components/StatCard.tsx";
+import { TradeHistory } from "/src/components/TradeHistory.tsx";
+import { StatusBadge } from "/src/components/StatusBadge.tsx";
+import { Button } from "/src/components/ui/button.tsx";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "/src/components/ui/tabs.tsx";
+import { AreaChart, Area, XAxis, YAxis, Tooltip as ChartTooltip, ResponsiveContainer } from "/@fs/C:/Users/umTCnar/Desktop/Algo-Trader-Pro/node_modules/.vite/deps/recharts.js?v=82b0aef9";
+import { Activity, Zap, Scale, TrendingUp, BrainCircuit, LineChart, Play, Square, Settings as SettingsIcon } from "/@fs/C:/Users/umTCnar/Desktop/Algo-Trader-Pro/node_modules/.vite/deps/lucide-react.js?v=82b0aef9";
+import { Link } from "/@fs/C:/Users/umTCnar/Desktop/Algo-Trader-Pro/node_modules/.vite/deps/wouter.js?v=82b0aef9";
+import { cn } from "/src/lib/utils.ts";
+export default function Dashboard() {
+  _s();
+  const { data: status } = useBotStatus();
+  const { data: stats } = useStats();
+  const { data: trades } = useTrades();
+  const { data: decisions } = useDecisions();
+  const { data: motifWeights } = useMotifWeights();
+  const { data: accountData } = useAccountBalance();
+  const { data: onchain } = useOnChain();
+  const { data: multiExchange } = useMultiExchange();
+  const { data: correlation } = useCorrelation();
+  const { data: positions } = usePositions();
+  const { data: atrConfig } = useAtrConfig();
+  const updateAtr = useUpdateAtrConfig();
+  const { startBot, stopBot } = useBotControl();
+  const isRunning = status?.isRunning || false;
+  const chartData = trades && trades.length > 5 ? trades.map((t) => ({ pnl: Number(t.pnl), time: t.createdAt })) : Array.from({ length: 10 }).map((_, i) => ({ pnl: Math.random() * 20 - 5, time: i }));
+  return /* @__PURE__ */ jsxDEV("div", { className: "min-h-screen bg-background text-foreground pb-20 grid-bg", children: [
+    /* @__PURE__ */ jsxDEV("header", { className: "sticky top-0 z-50 border-b border-white/5 bg-background/80 backdrop-blur-xl", children: /* @__PURE__ */ jsxDEV("div", { className: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between", children: [
+      /* @__PURE__ */ jsxDEV("div", { className: "flex items-center gap-3", children: [
+        /* @__PURE__ */ jsxDEV("div", { className: "w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-blue-600 flex items-center justify-center shadow-lg shadow-primary/20", children: /* @__PURE__ */ jsxDEV(Activity, { className: "w-5 h-5 text-white" }, void 0, false, {
+          fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+          lineNumber: 61,
+          columnNumber: 15
+        }, this) }, void 0, false, {
+          fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+          lineNumber: 60,
+          columnNumber: 13
+        }, this),
+        /* @__PURE__ */ jsxDEV("div", { children: [
+          /* @__PURE__ */ jsxDEV("h1", { className: "text-lg font-bold font-display tracking-tight leading-none", children: "Binance Quant" }, void 0, false, {
+            fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+            lineNumber: 64,
+            columnNumber: 15
+          }, this),
+          /* @__PURE__ */ jsxDEV("p", { className: "text-[10px] text-muted-foreground uppercase tracking-widest", children: "Autonomous Trading System" }, void 0, false, {
+            fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+            lineNumber: 65,
+            columnNumber: 15
+          }, this)
+        ] }, void 0, true, {
+          fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+          lineNumber: 63,
+          columnNumber: 13
+        }, this)
+      ] }, void 0, true, {
+        fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+        lineNumber: 59,
+        columnNumber: 11
+      }, this),
+      /* @__PURE__ */ jsxDEV("div", { className: "flex items-center gap-4", children: [
+        /* @__PURE__ */ jsxDEV(StatusBadge, { isRunning }, void 0, false, {
+          fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+          lineNumber: 70,
+          columnNumber: 13
+        }, this),
+        /* @__PURE__ */ jsxDEV(Link, { href: "/settings", children: /* @__PURE__ */ jsxDEV(Button, { variant: "outline", size: "icon", className: "h-9 w-9 border-white/10 hover:bg-white/5", children: /* @__PURE__ */ jsxDEV(SettingsIcon, { className: "w-4 h-4 text-muted-foreground" }, void 0, false, {
+          fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+          lineNumber: 73,
+          columnNumber: 17
+        }, this) }, void 0, false, {
+          fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+          lineNumber: 72,
+          columnNumber: 15
+        }, this) }, void 0, false, {
+          fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+          lineNumber: 71,
+          columnNumber: 13
+        }, this)
+      ] }, void 0, true, {
+        fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+        lineNumber: 69,
+        columnNumber: 11
+      }, this)
+    ] }, void 0, true, {
+      fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+      lineNumber: 58,
+      columnNumber: 9
+    }, this) }, void 0, false, {
+      fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+      lineNumber: 57,
+      columnNumber: 7
+    }, this),
+    /* @__PURE__ */ jsxDEV("main", { className: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8", children: [
+      /* @__PURE__ */ jsxDEV("div", { className: "grid grid-cols-1 lg:grid-cols-4 gap-6", children: [
+        /* @__PURE__ */ jsxDEV("div", { className: "lg:col-span-1 space-y-6", children: /* @__PURE__ */ jsxDEV("div", { className: "glass-card p-6 rounded-2xl border-l-4 border-l-primary flex flex-col justify-between h-full min-h-[200px]", children: [
+          /* @__PURE__ */ jsxDEV("div", { children: [
+            /* @__PURE__ */ jsxDEV("h2", { className: "text-xl font-bold font-display mb-2", children: "Bot Control" }, void 0, false, {
+              fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+              lineNumber: 87,
+              columnNumber: 17
+            }, this),
+            /* @__PURE__ */ jsxDEV("p", { className: "text-sm text-muted-foreground mb-6", children: isRunning ? "System is actively monitoring market data and executing trades based on selected strategies." : "System is offline. Strategies will not execute until the bot is started." }, void 0, false, {
+              fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+              lineNumber: 88,
+              columnNumber: 17
+            }, this)
+          ] }, void 0, true, {
+            fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+            lineNumber: 86,
+            columnNumber: 15
+          }, this),
+          /* @__PURE__ */ jsxDEV(
+            Button,
+            {
+              onClick: () => isRunning ? stopBot.mutate() : startBot.mutate(),
+              disabled: startBot.isPending || stopBot.isPending,
+              className: cn(
+                "w-full h-12 text-base font-semibold shadow-xl transition-all hover:scale-[1.02] active:scale-[0.98]",
+                isRunning ? "bg-red-500/10 hover:bg-red-500/20 text-red-500 border border-red-500/50" : "bg-primary hover:bg-primary/90 text-white shadow-primary/25"
+              ),
+              children: startBot.isPending || stopBot.isPending ? "Processing..." : isRunning ? /* @__PURE__ */ jsxDEV(Fragment, { children: [
+                /* @__PURE__ */ jsxDEV(Square, { className: "w-4 h-4 mr-2 fill-current" }, void 0, false, {
+                  fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                  lineNumber: 108,
+                  columnNumber: 19
+                }, this),
+                " STOP BOT"
+              ] }, void 0, true, {
+                fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                lineNumber: 108,
+                columnNumber: 17
+              }, this) : /* @__PURE__ */ jsxDEV(Fragment, { children: [
+                /* @__PURE__ */ jsxDEV(Play, { className: "w-4 h-4 mr-2 fill-current" }, void 0, false, {
+                  fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                  lineNumber: 110,
+                  columnNumber: 19
+                }, this),
+                " START BOT"
+              ] }, void 0, true, {
+                fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                lineNumber: 110,
+                columnNumber: 17
+              }, this)
+            },
+            void 0,
+            false,
+            {
+              fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+              lineNumber: 95,
+              columnNumber: 15
+            },
+            this
+          )
+        ] }, void 0, true, {
+          fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+          lineNumber: 85,
+          columnNumber: 13
+        }, this) }, void 0, false, {
+          fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+          lineNumber: 84,
+          columnNumber: 11
+        }, this),
+        /* @__PURE__ */ jsxDEV("div", { className: "lg:col-span-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4", children: [
+          /* @__PURE__ */ jsxDEV(
+            StatCard,
+            {
+              label: "Total PnL",
+              value: `$${stats?.totalPnl.toFixed(2) || "0.00"}`,
+              subValue: "+12.5% vs last week",
+              trend: "up",
+              icon: /* @__PURE__ */ jsxDEV(LineChart, { className: "w-5 h-5" }, void 0, false, {
+                fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                lineNumber: 122,
+                columnNumber: 21
+              }, this)
+            },
+            void 0,
+            false,
+            {
+              fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+              lineNumber: 117,
+              columnNumber: 13
+            },
+            this
+          ),
+          /* @__PURE__ */ jsxDEV(
+            StatCard,
+            {
+              label: "Win Rate",
+              value: `${stats?.winRate.toFixed(1) || "0.0"}%`,
+              subValue: `Based on ${stats?.totalTrades || 0} trades`,
+              trend: "neutral",
+              icon: /* @__PURE__ */ jsxDEV(Activity, { className: "w-5 h-5" }, void 0, false, {
+                fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                lineNumber: 129,
+                columnNumber: 21
+              }, this)
+            },
+            void 0,
+            false,
+            {
+              fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+              lineNumber: 124,
+              columnNumber: 13
+            },
+            this
+          ),
+          /* @__PURE__ */ jsxDEV(
+            StatCard,
+            {
+              label: "Active Positions",
+              value: stats?.activePositions || 0,
+              subValue: `Total: ${stats?.totalTrades || 0} trades`,
+              icon: /* @__PURE__ */ jsxDEV(Scale, { className: "w-5 h-5" }, void 0, false, {
+                fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                lineNumber: 135,
+                columnNumber: 21
+              }, this)
+            },
+            void 0,
+            false,
+            {
+              fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+              lineNumber: 131,
+              columnNumber: 13
+            },
+            this
+          ),
+          /* @__PURE__ */ jsxDEV(
+            StatCard,
+            {
+              label: "Total Trades",
+              value: stats?.totalTrades || 0,
+              subValue: `Risk: ${(stats?.totalRisk || 0).toFixed(2)}%`,
+              icon: /* @__PURE__ */ jsxDEV(Zap, { className: "w-5 h-5" }, void 0, false, {
+                fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                lineNumber: 141,
+                columnNumber: 21
+              }, this)
+            },
+            void 0,
+            false,
+            {
+              fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+              lineNumber: 137,
+              columnNumber: 13
+            },
+            this
+          )
+        ] }, void 0, true, {
+          fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+          lineNumber: 116,
+          columnNumber: 11
+        }, this)
+      ] }, void 0, true, {
+        fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+        lineNumber: 83,
+        columnNumber: 9
+      }, this),
+      /* @__PURE__ */ jsxDEV("div", { className: "glass-card p-6 rounded-2xl border border-white/10", children: [
+        /* @__PURE__ */ jsxDEV("div", { className: "flex items-center justify-between mb-6", children: [
+          /* @__PURE__ */ jsxDEV("div", { children: [
+            /* @__PURE__ */ jsxDEV("h2", { className: "text-2xl font-bold font-display flex items-center gap-2", children: [
+              /* @__PURE__ */ jsxDEV(Activity, { className: "w-6 h-6 text-green-500" }, void 0, false, {
+                fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                lineNumber: 151,
+                columnNumber: 17
+              }, this),
+              "Binance Account Balance"
+            ] }, void 0, true, {
+              fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+              lineNumber: 150,
+              columnNumber: 15
+            }, this),
+            /* @__PURE__ */ jsxDEV("p", { className: "text-sm text-muted-foreground mt-1", children: accountData?.mode === "LIVE" ? /* @__PURE__ */ jsxDEV("span", { className: "text-green-500 font-semibold", children: "🔴 LIVE ACCOUNT" }, void 0, false, {
+              fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+              lineNumber: 156,
+              columnNumber: 17
+            }, this) : /* @__PURE__ */ jsxDEV("span", { className: "text-yellow-500 font-semibold", children: "📊 DEMO MODE" }, void 0, false, {
+              fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+              lineNumber: 158,
+              columnNumber: 17
+            }, this) }, void 0, false, {
+              fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+              lineNumber: 154,
+              columnNumber: 15
+            }, this)
+          ] }, void 0, true, {
+            fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+            lineNumber: 149,
+            columnNumber: 13
+          }, this),
+          /* @__PURE__ */ jsxDEV("div", { className: "text-right", children: [
+            /* @__PURE__ */ jsxDEV("p", { className: "text-xs text-muted-foreground", children: accountData?.timestamp ? new Date(accountData.timestamp).toLocaleTimeString() : "Loading..." }, void 0, false, {
+              fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+              lineNumber: 163,
+              columnNumber: 15
+            }, this),
+            /* @__PURE__ */ jsxDEV("p", { className: "text-sm text-muted-foreground", children: [
+              accountData?.totalAssets,
+              " assets"
+            ] }, void 0, true, {
+              fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+              lineNumber: 166,
+              columnNumber: 15
+            }, this)
+          ] }, void 0, true, {
+            fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+            lineNumber: 162,
+            columnNumber: 13
+          }, this)
+        ] }, void 0, true, {
+          fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+          lineNumber: 148,
+          columnNumber: 11
+        }, this),
+        accountData?.balances && accountData.balances.length > 0 ? /* @__PURE__ */ jsxDEV("div", { className: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4", children: accountData.balances.map(
+          (balance, index) => /* @__PURE__ */ jsxDEV(
+            "div",
+            {
+              className: "bg-white/5 border border-white/10 rounded-lg p-4 hover:bg-white/10 transition-colors",
+              children: [
+                /* @__PURE__ */ jsxDEV("p", { className: "text-sm text-muted-foreground mb-1", children: balance.asset }, void 0, false, {
+                  fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                  lineNumber: 179,
+                  columnNumber: 19
+                }, this),
+                /* @__PURE__ */ jsxDEV("p", { className: "text-xl font-bold font-display text-green-400", children: balance.total.toFixed(8) }, void 0, false, {
+                  fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                  lineNumber: 180,
+                  columnNumber: 19
+                }, this),
+                balance.locked > 0 && /* @__PURE__ */ jsxDEV("p", { className: "text-xs text-yellow-500 mt-2", children: [
+                  "Locked: ",
+                  balance.locked.toFixed(8)
+                ] }, void 0, true, {
+                  fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                  lineNumber: 184,
+                  columnNumber: 15
+                }, this),
+                /* @__PURE__ */ jsxDEV("p", { className: "text-xs text-muted-foreground mt-1", children: [
+                  "Available: ",
+                  balance.free.toFixed(8)
+                ] }, void 0, true, {
+                  fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                  lineNumber: 188,
+                  columnNumber: 19
+                }, this)
+              ]
+            },
+            `${balance.asset}-${index}`,
+            true,
+            {
+              fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+              lineNumber: 175,
+              columnNumber: 13
+            },
+            this
+          )
+        ) }, void 0, false, {
+          fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+          lineNumber: 173,
+          columnNumber: 11
+        }, this) : /* @__PURE__ */ jsxDEV("div", { className: "text-center py-8", children: /* @__PURE__ */ jsxDEV("p", { className: "text-muted-foreground", children: "Loading account balances..." }, void 0, false, {
+          fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+          lineNumber: 196,
+          columnNumber: 15
+        }, this) }, void 0, false, {
+          fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+          lineNumber: 195,
+          columnNumber: 11
+        }, this)
+      ] }, void 0, true, {
+        fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+        lineNumber: 147,
+        columnNumber: 9
+      }, this),
+      /* @__PURE__ */ jsxDEV(Tabs, { defaultValue: "strategies", className: "w-full", children: [
+        /* @__PURE__ */ jsxDEV("div", { className: "flex items-center justify-between mb-6", children: [
+          /* @__PURE__ */ jsxDEV("h2", { className: "text-2xl font-bold font-display", children: "System Overview" }, void 0, false, {
+            fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+            lineNumber: 204,
+            columnNumber: 13
+          }, this),
+          /* @__PURE__ */ jsxDEV(TabsList, { className: "bg-white/5 border border-white/10 p-1", children: [
+            /* @__PURE__ */ jsxDEV(TabsTrigger, { value: "strategies", className: "data-[state=active]:bg-primary data-[state=active]:text-white", children: "Strategies" }, void 0, false, {
+              fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+              lineNumber: 206,
+              columnNumber: 15
+            }, this),
+            /* @__PURE__ */ jsxDEV(TabsTrigger, { value: "performance", className: "data-[state=active]:bg-primary data-[state=active]:text-white", children: "Performance" }, void 0, false, {
+              fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+              lineNumber: 207,
+              columnNumber: 15
+            }, this),
+            /* @__PURE__ */ jsxDEV(TabsTrigger, { value: "trades", className: "data-[state=active]:bg-primary data-[state=active]:text-white", children: "Live Trades" }, void 0, false, {
+              fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+              lineNumber: 208,
+              columnNumber: 15
+            }, this),
+            /* @__PURE__ */ jsxDEV(TabsTrigger, { value: "decisions", className: "data-[state=active]:bg-primary data-[state=active]:text-white", children: "🔍 Decisions" }, void 0, false, {
+              fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+              lineNumber: 209,
+              columnNumber: 15
+            }, this),
+            /* @__PURE__ */ jsxDEV(TabsTrigger, { value: "advanced", className: "data-[state=active]:bg-primary data-[state=active]:text-white", children: "📊 Advanced" }, void 0, false, {
+              fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+              lineNumber: 210,
+              columnNumber: 15
+            }, this)
+          ] }, void 0, true, {
+            fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+            lineNumber: 205,
+            columnNumber: 13
+          }, this)
+        ] }, void 0, true, {
+          fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+          lineNumber: 203,
+          columnNumber: 11
+        }, this),
+        /* @__PURE__ */ jsxDEV(TabsContent, { value: "strategies", className: "space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500", children: [
+          /* @__PURE__ */ jsxDEV("div", { className: "glass-card p-6 rounded-2xl border border-white/10 mb-6", children: [
+            /* @__PURE__ */ jsxDEV("h3", { className: "text-xl font-bold font-display mb-4", children: "Motif Ensemble Weights" }, void 0, false, {
+              fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+              lineNumber: 216,
+              columnNumber: 15
+            }, this),
+            /* @__PURE__ */ jsxDEV("div", { className: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4", children: motifWeights && Object.entries(motifWeights).map(
+              ([motif, weight]) => /* @__PURE__ */ jsxDEV("div", { className: "bg-white/5 border border-white/10 rounded-lg p-4", children: [
+                /* @__PURE__ */ jsxDEV("p", { className: "text-sm text-muted-foreground mb-2 capitalize", children: motif.replace("_", " ") }, void 0, false, {
+                  fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                  lineNumber: 220,
+                  columnNumber: 21
+                }, this),
+                /* @__PURE__ */ jsxDEV("p", { className: "text-3xl font-bold text-primary", children: [
+                  (weight * 100).toFixed(1),
+                  "%"
+                ] }, void 0, true, {
+                  fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                  lineNumber: 221,
+                  columnNumber: 21
+                }, this),
+                /* @__PURE__ */ jsxDEV("div", { className: "mt-2 w-full bg-white/10 rounded-full h-2 overflow-hidden", children: /* @__PURE__ */ jsxDEV(
+                  "div",
+                  {
+                    className: "bg-gradient-to-r from-primary to-blue-500 h-full transition-all duration-300",
+                    style: { width: `${weight * 100}%` }
+                  },
+                  void 0,
+                  false,
+                  {
+                    fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                    lineNumber: 223,
+                    columnNumber: 23
+                  },
+                  this
+                ) }, void 0, false, {
+                  fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                  lineNumber: 222,
+                  columnNumber: 21
+                }, this)
+              ] }, motif, true, {
+                fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                lineNumber: 219,
+                columnNumber: 17
+              }, this)
+            ) }, void 0, false, {
+              fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+              lineNumber: 217,
+              columnNumber: 15
+            }, this),
+            /* @__PURE__ */ jsxDEV("p", { className: "text-sm text-muted-foreground mt-4", children: "Weights are adaptive and update based on trading performance. Higher weight = better recent performance." }, void 0, false, {
+              fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+              lineNumber: 231,
+              columnNumber: 15
+            }, this)
+          ] }, void 0, true, {
+            fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+            lineNumber: 215,
+            columnNumber: 13
+          }, this),
+          /* @__PURE__ */ jsxDEV("div", { className: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4", children: [
+            /* @__PURE__ */ jsxDEV(
+              StrategyCard,
+              {
+                title: "Market Making",
+                description: "Provides liquidity by placing limit orders on both sides.",
+                active: status?.activeStrategy === "MarketMaking",
+                icon: /* @__PURE__ */ jsxDEV(Scale, { className: "w-6 h-6" }, void 0, false, {
+                  fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                  lineNumber: 241,
+                  columnNumber: 23
+                }, this),
+                explanation: "Continuously places buy and sell limit orders near the current price to capture the bid-ask spread. Profits from stable or range-bound markets.",
+                metrics: [
+                  { label: "Spread", value: "0.15%" },
+                  { label: "Orders", value: "Active" }
+                ]
+              },
+              void 0,
+              false,
+              {
+                fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                lineNumber: 237,
+                columnNumber: 15
+              },
+              this
+            ),
+            /* @__PURE__ */ jsxDEV(
+              StrategyCard,
+              {
+                title: "Arbitrage",
+                description: "Exploits price differences across multiple markets.",
+                active: status?.activeStrategy === "Arbitrage",
+                icon: /* @__PURE__ */ jsxDEV(Zap, { className: "w-6 h-6" }, void 0, false, {
+                  fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                  lineNumber: 252,
+                  columnNumber: 23
+                }, this),
+                explanation: "Monitors different exchanges or pairs for the same asset. Instantly buys lower and sells higher when a discrepancy exceeds fees.",
+                metrics: [
+                  { label: "Opps/hr", value: "12" },
+                  { label: "Avg Profit", value: "0.4%" }
+                ]
+              },
+              void 0,
+              false,
+              {
+                fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                lineNumber: 248,
+                columnNumber: 15
+              },
+              this
+            ),
+            /* @__PURE__ */ jsxDEV(
+              StrategyCard,
+              {
+                title: "Momentum",
+                description: "Follows trends based on news and volume spikes.",
+                active: status?.activeStrategy === "Momentum",
+                icon: /* @__PURE__ */ jsxDEV(TrendingUp, { className: "w-6 h-6" }, void 0, false, {
+                  fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                  lineNumber: 263,
+                  columnNumber: 23
+                }, this),
+                explanation: "Detects strong price movements accompanied by high volume. Enters positions in the direction of the trend and rides it until momentum fades.",
+                metrics: [
+                  { label: "RSI", value: "64" },
+                  { label: "Trend", value: "Bullish" }
+                ]
+              },
+              void 0,
+              false,
+              {
+                fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                lineNumber: 259,
+                columnNumber: 15
+              },
+              this
+            ),
+            /* @__PURE__ */ jsxDEV(
+              StrategyCard,
+              {
+                title: "Bayes + Monte Carlo",
+                description: "Probabilistic modeling for risk-adjusted entries.",
+                active: status?.activeStrategy === "Bayesian",
+                icon: /* @__PURE__ */ jsxDEV(BrainCircuit, { className: "w-6 h-6" }, void 0, false, {
+                  fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                  lineNumber: 274,
+                  columnNumber: 23
+                }, this),
+                explanation: "Uses Bayesian inference to update probability beliefs with new data. Runs Monte Carlo simulations to predict future price paths and assess risk.",
+                metrics: [
+                  { label: "Confidence", value: "87%" },
+                  { label: "Sims", value: "10k" }
+                ]
+              },
+              void 0,
+              false,
+              {
+                fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                lineNumber: 270,
+                columnNumber: 15
+              },
+              this
+            ),
+            /* @__PURE__ */ jsxDEV(
+              StrategyCard,
+              {
+                title: "Reinforcement Learning",
+                description: "Self-optimizing agent that learns from market feedback.",
+                active: status?.activeStrategy === "RL",
+                icon: /* @__PURE__ */ jsxDEV(Activity, { className: "w-6 h-6" }, void 0, false, {
+                  fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                  lineNumber: 285,
+                  columnNumber: 23
+                }, this),
+                explanation: "An AI agent that learns optimal actions (buy, sell, hold) by interacting with the market environment and maximizing a reward function (PnL).",
+                metrics: [
+                  { label: "Epsilon", value: "0.1" },
+                  { label: "Reward", value: "+245" }
+                ]
+              },
+              void 0,
+              false,
+              {
+                fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                lineNumber: 281,
+                columnNumber: 15
+              },
+              this
+            )
+          ] }, void 0, true, {
+            fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+            lineNumber: 236,
+            columnNumber: 13
+          }, this)
+        ] }, void 0, true, {
+          fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+          lineNumber: 214,
+          columnNumber: 11
+        }, this),
+        /* @__PURE__ */ jsxDEV(TabsContent, { value: "performance", className: "animate-in fade-in slide-in-from-bottom-4 duration-500", children: /* @__PURE__ */ jsxDEV("div", { className: "glass-card p-6 rounded-2xl h-[400px]", children: [
+          /* @__PURE__ */ jsxDEV("h3", { className: "text-lg font-bold mb-6", children: "Cumulative Profit/Loss" }, void 0, false, {
+            fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+            lineNumber: 297,
+            columnNumber: 15
+          }, this),
+          /* @__PURE__ */ jsxDEV(ResponsiveContainer, { width: "100%", height: "85%", children: /* @__PURE__ */ jsxDEV(AreaChart, { data: chartData, children: [
+            /* @__PURE__ */ jsxDEV("defs", { children: /* @__PURE__ */ jsxDEV("linearGradient", { id: "colorPnl", x1: "0", y1: "0", x2: "0", y2: "1", children: [
+              /* @__PURE__ */ jsxDEV("stop", { offset: "5%", stopColor: "hsl(var(--primary))", stopOpacity: 0.3 }, void 0, false, {
+                fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                lineNumber: 302,
+                columnNumber: 23
+              }, this),
+              /* @__PURE__ */ jsxDEV("stop", { offset: "95%", stopColor: "hsl(var(--primary))", stopOpacity: 0 }, void 0, false, {
+                fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                lineNumber: 303,
+                columnNumber: 23
+              }, this)
+            ] }, void 0, true, {
+              fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+              lineNumber: 301,
+              columnNumber: 21
+            }, this) }, void 0, false, {
+              fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+              lineNumber: 300,
+              columnNumber: 19
+            }, this),
+            /* @__PURE__ */ jsxDEV(XAxis, { dataKey: "time", hide: true }, void 0, false, {
+              fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+              lineNumber: 306,
+              columnNumber: 19
+            }, this),
+            /* @__PURE__ */ jsxDEV(YAxis, { stroke: "#4b5563", fontSize: 12, tickFormatter: (value) => `$${value}` }, void 0, false, {
+              fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+              lineNumber: 307,
+              columnNumber: 19
+            }, this),
+            /* @__PURE__ */ jsxDEV(
+              ChartTooltip,
+              {
+                contentStyle: { backgroundColor: "hsl(var(--popover))", borderColor: "hsl(var(--border))", color: "white" },
+                itemStyle: { color: "hsl(var(--primary))" }
+              },
+              void 0,
+              false,
+              {
+                fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                lineNumber: 308,
+                columnNumber: 19
+              },
+              this
+            ),
+            /* @__PURE__ */ jsxDEV(
+              Area,
+              {
+                type: "monotone",
+                dataKey: "pnl",
+                stroke: "hsl(var(--primary))",
+                strokeWidth: 2,
+                fillOpacity: 1,
+                fill: "url(#colorPnl)"
+              },
+              void 0,
+              false,
+              {
+                fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                lineNumber: 312,
+                columnNumber: 19
+              },
+              this
+            )
+          ] }, void 0, true, {
+            fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+            lineNumber: 299,
+            columnNumber: 17
+          }, this) }, void 0, false, {
+            fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+            lineNumber: 298,
+            columnNumber: 15
+          }, this)
+        ] }, void 0, true, {
+          fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+          lineNumber: 296,
+          columnNumber: 13
+        }, this) }, void 0, false, {
+          fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+          lineNumber: 295,
+          columnNumber: 11
+        }, this),
+        /* @__PURE__ */ jsxDEV(TabsContent, { value: "trades", className: "animate-in fade-in slide-in-from-bottom-4 duration-500", children: /* @__PURE__ */ jsxDEV(TradeHistory, { trades: trades || [], isLoading: !trades }, void 0, false, {
+          fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+          lineNumber: 326,
+          columnNumber: 13
+        }, this) }, void 0, false, {
+          fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+          lineNumber: 325,
+          columnNumber: 11
+        }, this),
+        /* @__PURE__ */ jsxDEV(TabsContent, { value: "decisions", className: "space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500", children: /* @__PURE__ */ jsxDEV("div", { className: "glass-card p-6 rounded-2xl border border-white/10", children: [
+          /* @__PURE__ */ jsxDEV("h3", { className: "text-xl font-bold font-display mb-6 flex items-center gap-2", children: [
+            /* @__PURE__ */ jsxDEV(BrainCircuit, { className: "w-6 h-6 text-blue-500" }, void 0, false, {
+              fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+              lineNumber: 332,
+              columnNumber: 17
+            }, this),
+            "Trading Decisions Log (Last 20)"
+          ] }, void 0, true, {
+            fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+            lineNumber: 331,
+            columnNumber: 15
+          }, this),
+          decisions && decisions.length > 0 ? /* @__PURE__ */ jsxDEV("div", { className: "space-y-4 max-h-[700px] overflow-y-auto", children: decisions.map(
+            (decision, idx) => /* @__PURE__ */ jsxDEV(
+              "div",
+              {
+                className: "bg-white/5 border border-white/10 rounded-lg p-4 hover:bg-white/10 transition-colors",
+                children: [
+                  /* @__PURE__ */ jsxDEV("div", { className: "flex items-center justify-between mb-3", children: [
+                    /* @__PURE__ */ jsxDEV("div", { className: "flex items-center gap-3", children: [
+                      /* @__PURE__ */ jsxDEV("span", { className: cn(
+                        "px-3 py-1 rounded-full text-sm font-bold",
+                        decision.action === "LONG" ? "bg-green-500/20 text-green-400" : decision.action === "SHORT" ? "bg-red-500/20 text-red-400" : decision.action === "CLOSE_POSITION" ? "bg-orange-500/20 text-orange-400" : "bg-gray-500/20 text-gray-400"
+                      ), children: decision.action }, void 0, false, {
+                        fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                        lineNumber: 346,
+                        columnNumber: 27
+                      }, this),
+                      /* @__PURE__ */ jsxDEV("span", { className: cn(
+                        "px-2 py-1 rounded text-xs font-semibold",
+                        decision.signal > 0.65 ? "bg-green-500/20 text-green-400" : decision.signal < 0.35 ? "bg-red-500/20 text-red-400" : "bg-yellow-500/20 text-yellow-400"
+                      ), children: [
+                        "Signal: ",
+                        (decision.signal * 100).toFixed(1),
+                        "%"
+                      ] }, void 0, true, {
+                        fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                        lineNumber: 355,
+                        columnNumber: 27
+                      }, this),
+                      /* @__PURE__ */ jsxDEV("span", { className: cn(
+                        "px-2 py-1 rounded text-xs font-semibold",
+                        decision.confidence > 0.7 ? "bg-green-500/20 text-green-400" : decision.confidence > 0.5 ? "bg-blue-500/20 text-blue-400" : "bg-red-500/20 text-red-400"
+                      ), children: [
+                        "Confidence: ",
+                        (decision.confidence * 100).toFixed(1),
+                        "%"
+                      ] }, void 0, true, {
+                        fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                        lineNumber: 363,
+                        columnNumber: 27
+                      }, this)
+                    ] }, void 0, true, {
+                      fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                      lineNumber: 345,
+                      columnNumber: 25
+                    }, this),
+                    /* @__PURE__ */ jsxDEV("span", { className: "text-xs text-muted-foreground", children: new Date(decision.timestamp).toLocaleTimeString() }, void 0, false, {
+                      fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                      lineNumber: 372,
+                      columnNumber: 25
+                    }, this)
+                  ] }, void 0, true, {
+                    fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                    lineNumber: 344,
+                    columnNumber: 23
+                  }, this),
+                  /* @__PURE__ */ jsxDEV("p", { className: "text-sm text-muted-foreground mb-4 italic", children: [
+                    '"',
+                    decision.reasoning,
+                    '"'
+                  ] }, void 0, true, {
+                    fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                    lineNumber: 378,
+                    columnNumber: 23
+                  }, this),
+                  /* @__PURE__ */ jsxDEV("div", { className: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2 mb-3", children: decision.motifs && decision.motifs.map(
+                    (motif, mIdx) => /* @__PURE__ */ jsxDEV("div", { className: "bg-black/30 border border-white/5 rounded p-2 text-xs", children: [
+                      /* @__PURE__ */ jsxDEV("p", { className: "font-semibold text-white mb-1", children: motif.type.toUpperCase() }, void 0, false, {
+                        fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                        lineNumber: 386,
+                        columnNumber: 29
+                      }, this),
+                      /* @__PURE__ */ jsxDEV("p", { className: "text-blue-400", children: [
+                        "Signal: ",
+                        (motif.signal * 100).toFixed(1),
+                        "%"
+                      ] }, void 0, true, {
+                        fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                        lineNumber: 387,
+                        columnNumber: 29
+                      }, this),
+                      /* @__PURE__ */ jsxDEV("p", { className: "text-muted-foreground", children: [
+                        "Conf: ",
+                        (motif.confidence * 100).toFixed(1),
+                        "%"
+                      ] }, void 0, true, {
+                        fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                        lineNumber: 388,
+                        columnNumber: 29
+                      }, this),
+                      motif.details && /* @__PURE__ */ jsxDEV("div", { className: "mt-1 text-xs text-muted-foreground space-y-0.5", children: Object.entries(motif.details).map(
+                        ([key, val]) => /* @__PURE__ */ jsxDEV("p", { children: [
+                          key,
+                          ": ",
+                          typeof val === "number" ? val.toFixed(2) : val
+                        ] }, key, true, {
+                          fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                          lineNumber: 392,
+                          columnNumber: 25
+                        }, this)
+                      ) }, void 0, false, {
+                        fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                        lineNumber: 390,
+                        columnNumber: 23
+                      }, this)
+                    ] }, mIdx, true, {
+                      fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                      lineNumber: 385,
+                      columnNumber: 21
+                    }, this)
+                  ) }, void 0, false, {
+                    fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                    lineNumber: 383,
+                    columnNumber: 23
+                  }, this)
+                ]
+              },
+              `${decision.timestamp}-${idx}`,
+              true,
+              {
+                fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                lineNumber: 339,
+                columnNumber: 17
+              },
+              this
+            )
+          ) }, void 0, false, {
+            fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+            lineNumber: 337,
+            columnNumber: 15
+          }, this) : /* @__PURE__ */ jsxDEV("div", { className: "text-center py-12 text-muted-foreground", children: [
+            /* @__PURE__ */ jsxDEV("p", { children: "No trading decisions yet..." }, void 0, false, {
+              fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+              lineNumber: 404,
+              columnNumber: 19
+            }, this),
+            /* @__PURE__ */ jsxDEV("p", { className: "text-sm mt-2", children: "Waiting for bot to analyze market data" }, void 0, false, {
+              fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+              lineNumber: 405,
+              columnNumber: 19
+            }, this)
+          ] }, void 0, true, {
+            fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+            lineNumber: 403,
+            columnNumber: 15
+          }, this)
+        ] }, void 0, true, {
+          fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+          lineNumber: 330,
+          columnNumber: 13
+        }, this) }, void 0, false, {
+          fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+          lineNumber: 329,
+          columnNumber: 11
+        }, this),
+        /* @__PURE__ */ jsxDEV(TabsContent, { value: "positions", className: "animate-in fade-in slide-in-from-bottom-4 duration-500", children: /* @__PURE__ */ jsxDEV("div", { className: "glass-card p-6 rounded-2xl border border-white/10", children: [
+          /* @__PURE__ */ jsxDEV("h3", { className: "text-xl font-bold mb-4", children: "Open Positions (Dynamic Stops)" }, void 0, false, {
+            fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+            lineNumber: 413,
+            columnNumber: 15
+          }, this),
+          positions && positions.length > 0 ? /* @__PURE__ */ jsxDEV("div", { className: "space-y-3", children: positions.map(
+            (pos) => /* @__PURE__ */ jsxDEV("div", { className: "flex items-center justify-between p-3 bg-white/5 rounded", children: [
+              /* @__PURE__ */ jsxDEV("div", { children: [
+                /* @__PURE__ */ jsxDEV("div", { className: "font-semibold", children: [
+                  pos.symbol,
+                  " • ",
+                  pos.side
+                ] }, void 0, true, {
+                  fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                  lineNumber: 419,
+                  columnNumber: 25
+                }, this),
+                /* @__PURE__ */ jsxDEV("div", { className: "text-xs text-muted-foreground", children: [
+                  "Entry: $",
+                  pos.entryPrice.toFixed(2),
+                  " • Qty: ",
+                  pos.quantity.toFixed(4)
+                ] }, void 0, true, {
+                  fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                  lineNumber: 420,
+                  columnNumber: 25
+                }, this)
+              ] }, void 0, true, {
+                fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                lineNumber: 418,
+                columnNumber: 23
+              }, this),
+              /* @__PURE__ */ jsxDEV("div", { className: "text-right", children: [
+                /* @__PURE__ */ jsxDEV("div", { className: "text-sm", children: [
+                  "Stop: $",
+                  pos.stopLoss.toFixed(2)
+                ] }, void 0, true, {
+                  fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                  lineNumber: 423,
+                  columnNumber: 25
+                }, this),
+                /* @__PURE__ */ jsxDEV("div", { className: "text-xs text-muted-foreground", children: [
+                  "Dynamic: $",
+                  pos.dynamicStop ? pos.dynamicStop.toFixed(2) : "-"
+                ] }, void 0, true, {
+                  fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                  lineNumber: 424,
+                  columnNumber: 25
+                }, this)
+              ] }, void 0, true, {
+                fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                lineNumber: 422,
+                columnNumber: 23
+              }, this)
+            ] }, pos.id, true, {
+              fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+              lineNumber: 417,
+              columnNumber: 17
+            }, this)
+          ) }, void 0, false, {
+            fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+            lineNumber: 415,
+            columnNumber: 15
+          }, this) : /* @__PURE__ */ jsxDEV("p", { className: "text-muted-foreground", children: "No open positions" }, void 0, false, {
+            fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+            lineNumber: 430,
+            columnNumber: 15
+          }, this),
+          /* @__PURE__ */ jsxDEV("div", { className: "mt-4", children: [
+            /* @__PURE__ */ jsxDEV("label", { className: "text-sm", children: "ATR Multiplier" }, void 0, false, {
+              fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+              lineNumber: 433,
+              columnNumber: 17
+            }, this),
+            /* @__PURE__ */ jsxDEV("div", { className: "flex items-center gap-3 mt-2", children: [
+              /* @__PURE__ */ jsxDEV(
+                "input",
+                {
+                  type: "number",
+                  step: "0.1",
+                  min: "0.5",
+                  defaultValue: atrConfig?.atrMultiplier ?? 2,
+                  onBlur: (e) => updateAtr.mutate({ atrMultiplier: Number(e.currentTarget.value) }),
+                  className: "w-24 bg-transparent border border-white/10 rounded px-2 py-1"
+                },
+                void 0,
+                false,
+                {
+                  fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                  lineNumber: 435,
+                  columnNumber: 19
+                },
+                this
+              ),
+              /* @__PURE__ */ jsxDEV(Button, { onClick: () => updateAtr.mutate({ atrMultiplier: atrConfig?.atrMultiplier ?? 2 }), children: "Save" }, void 0, false, {
+                fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                lineNumber: 443,
+                columnNumber: 19
+              }, this),
+              /* @__PURE__ */ jsxDEV("p", { className: "text-xs text-muted-foreground", children: [
+                "Current: ",
+                atrConfig?.atrMultiplier ?? 2,
+                "x"
+              ] }, void 0, true, {
+                fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                lineNumber: 446,
+                columnNumber: 19
+              }, this)
+            ] }, void 0, true, {
+              fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+              lineNumber: 434,
+              columnNumber: 17
+            }, this)
+          ] }, void 0, true, {
+            fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+            lineNumber: 432,
+            columnNumber: 15
+          }, this)
+        ] }, void 0, true, {
+          fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+          lineNumber: 412,
+          columnNumber: 13
+        }, this) }, void 0, false, {
+          fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+          lineNumber: 411,
+          columnNumber: 11
+        }, this),
+        /* @__PURE__ */ jsxDEV(TabsContent, { value: "advanced", className: "space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500", children: [
+          /* @__PURE__ */ jsxDEV("div", { className: "grid grid-cols-1 lg:grid-cols-2 gap-6", children: [
+            /* @__PURE__ */ jsxDEV("div", { className: "glass-card p-6 rounded-2xl border border-white/10", children: [
+              /* @__PURE__ */ jsxDEV("h3", { className: "text-xl font-bold font-display mb-4", children: "Market Signals" }, void 0, false, {
+                fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                lineNumber: 456,
+                columnNumber: 17
+              }, this),
+              /* @__PURE__ */ jsxDEV("div", { className: "grid grid-cols-1 gap-3", children: [
+                /* @__PURE__ */ jsxDEV("div", { className: "flex justify-between text-sm", children: [
+                  /* @__PURE__ */ jsxDEV("span", { children: "ETH Transfers (24h)" }, void 0, false, {
+                    fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                    lineNumber: 459,
+                    columnNumber: 21
+                  }, this),
+                  /* @__PURE__ */ jsxDEV("span", { className: "font-mono", children: onchain?.ethTransfers24h ?? "—" }, void 0, false, {
+                    fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                    lineNumber: 460,
+                    columnNumber: 21
+                  }, this)
+                ] }, void 0, true, {
+                  fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                  lineNumber: 458,
+                  columnNumber: 19
+                }, this),
+                /* @__PURE__ */ jsxDEV("div", { className: "flex justify-between text-sm", children: [
+                  /* @__PURE__ */ jsxDEV("span", { children: "Whale Moves (24h)" }, void 0, false, {
+                    fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                    lineNumber: 463,
+                    columnNumber: 21
+                  }, this),
+                  /* @__PURE__ */ jsxDEV("span", { className: "font-mono", children: onchain?.whaleTransfers24h ?? "—" }, void 0, false, {
+                    fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                    lineNumber: 464,
+                    columnNumber: 21
+                  }, this)
+                ] }, void 0, true, {
+                  fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                  lineNumber: 462,
+                  columnNumber: 19
+                }, this),
+                /* @__PURE__ */ jsxDEV("div", { className: "flex justify-between text-sm", children: [
+                  /* @__PURE__ */ jsxDEV("span", { children: "Avg Gas (Gwei)" }, void 0, false, {
+                    fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                    lineNumber: 467,
+                    columnNumber: 21
+                  }, this),
+                  /* @__PURE__ */ jsxDEV("span", { className: "font-mono", children: onchain?.avgGasGwei ?? "—" }, void 0, false, {
+                    fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                    lineNumber: 468,
+                    columnNumber: 21
+                  }, this)
+                ] }, void 0, true, {
+                  fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                  lineNumber: 466,
+                  columnNumber: 19
+                }, this),
+                /* @__PURE__ */ jsxDEV("div", { className: "flex items-center gap-3 mt-2 text-sm", children: [
+                  /* @__PURE__ */ jsxDEV("div", { className: "flex-1", children: [
+                    /* @__PURE__ */ jsxDEV("p", { className: "text-xs text-muted-foreground", children: "Multi-exchange spread" }, void 0, false, {
+                      fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                      lineNumber: 472,
+                      columnNumber: 23
+                    }, this),
+                    /* @__PURE__ */ jsxDEV("p", { className: "font-bold", children: multiExchange?.maxSpreadPercent ? `${multiExchange.maxSpreadPercent}%` : "—" }, void 0, false, {
+                      fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                      lineNumber: 473,
+                      columnNumber: 23
+                    }, this)
+                  ] }, void 0, true, {
+                    fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                    lineNumber: 471,
+                    columnNumber: 21
+                  }, this),
+                  /* @__PURE__ */ jsxDEV("div", { className: "flex-1", children: [
+                    /* @__PURE__ */ jsxDEV("p", { className: "text-xs text-muted-foreground", children: "Price snapshot (BN/CB/KR)" }, void 0, false, {
+                      fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                      lineNumber: 476,
+                      columnNumber: 23
+                    }, this),
+                    /* @__PURE__ */ jsxDEV("p", { className: "font-mono", children: multiExchange ? `${multiExchange.prices.binance}/${multiExchange.prices.coinbase}/${multiExchange.prices.kraken}` : "—" }, void 0, false, {
+                      fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                      lineNumber: 477,
+                      columnNumber: 23
+                    }, this)
+                  ] }, void 0, true, {
+                    fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                    lineNumber: 475,
+                    columnNumber: 21
+                  }, this)
+                ] }, void 0, true, {
+                  fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                  lineNumber: 470,
+                  columnNumber: 19
+                }, this),
+                /* @__PURE__ */ jsxDEV("div", { className: "mt-3", children: [
+                  /* @__PURE__ */ jsxDEV("p", { className: "text-xs text-muted-foreground mb-1", children: "Correlation (ETH vs)" }, void 0, false, {
+                    fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                    lineNumber: 481,
+                    columnNumber: 21
+                  }, this),
+                  /* @__PURE__ */ jsxDEV("div", { className: "flex gap-3 text-sm", children: [
+                    /* @__PURE__ */ jsxDEV("div", { className: "px-2 py-1 bg-white/5 rounded", children: [
+                      "BTC: ",
+                      correlation?.ETH_BTC ? correlation.ETH_BTC.toFixed(2) : "—"
+                    ] }, void 0, true, {
+                      fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                      lineNumber: 483,
+                      columnNumber: 23
+                    }, this),
+                    /* @__PURE__ */ jsxDEV("div", { className: "px-2 py-1 bg-white/5 rounded", children: [
+                      "SOL: ",
+                      correlation?.ETH_SOL ? correlation.ETH_SOL.toFixed(2) : "—"
+                    ] }, void 0, true, {
+                      fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                      lineNumber: 484,
+                      columnNumber: 23
+                    }, this),
+                    /* @__PURE__ */ jsxDEV("div", { className: "px-2 py-1 bg-white/5 rounded", children: [
+                      "AVAX: ",
+                      correlation?.ETH_AVAX ? correlation.ETH_AVAX.toFixed(2) : "—"
+                    ] }, void 0, true, {
+                      fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                      lineNumber: 485,
+                      columnNumber: 23
+                    }, this)
+                  ] }, void 0, true, {
+                    fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                    lineNumber: 482,
+                    columnNumber: 21
+                  }, this)
+                ] }, void 0, true, {
+                  fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                  lineNumber: 480,
+                  columnNumber: 19
+                }, this)
+              ] }, void 0, true, {
+                fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                lineNumber: 457,
+                columnNumber: 17
+              }, this)
+            ] }, void 0, true, {
+              fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+              lineNumber: 455,
+              columnNumber: 15
+            }, this),
+            /* @__PURE__ */ jsxDEV("div", { className: "glass-card p-6 rounded-2xl border border-white/10", children: [
+              /* @__PURE__ */ jsxDEV("h3", { className: "text-xl font-bold font-display mb-4 flex items-center gap-2", children: [
+                /* @__PURE__ */ jsxDEV(LineChart, { className: "w-5 h-5 text-green-500" }, void 0, false, {
+                  fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                  lineNumber: 493,
+                  columnNumber: 19
+                }, this),
+                "Module Performance"
+              ] }, void 0, true, {
+                fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                lineNumber: 492,
+                columnNumber: 17
+              }, this),
+              motifWeights ? /* @__PURE__ */ jsxDEV("div", { className: "space-y-3", children: Object.entries(motifWeights).map(([motif, weight]) => {
+                const successPercent = weight * 100;
+                const heatColor = successPercent > 30 ? "from-green-500" : successPercent > 20 ? "from-yellow-500" : "from-orange-500";
+                return /* @__PURE__ */ jsxDEV("div", { className: "space-y-1", children: [
+                  /* @__PURE__ */ jsxDEV("div", { className: "flex justify-between items-center", children: [
+                    /* @__PURE__ */ jsxDEV("span", { className: "text-sm font-medium capitalize", children: motif.replace("_", " ") }, void 0, false, {
+                      fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                      lineNumber: 505,
+                      columnNumber: 29
+                    }, this),
+                    /* @__PURE__ */ jsxDEV("span", { className: "text-xs bg-white/10 px-2 py-1 rounded", children: [
+                      successPercent.toFixed(1),
+                      "%"
+                    ] }, void 0, true, {
+                      fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                      lineNumber: 506,
+                      columnNumber: 29
+                    }, this)
+                  ] }, void 0, true, {
+                    fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                    lineNumber: 504,
+                    columnNumber: 27
+                  }, this),
+                  /* @__PURE__ */ jsxDEV("div", { className: "w-full bg-white/5 rounded-full h-3 overflow-hidden", children: /* @__PURE__ */ jsxDEV(
+                    "div",
+                    {
+                      className: `bg-gradient-to-r ${heatColor} to-transparent h-full transition-all duration-500`,
+                      style: { width: `${successPercent}%` }
+                    },
+                    void 0,
+                    false,
+                    {
+                      fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                      lineNumber: 509,
+                      columnNumber: 29
+                    },
+                    this
+                  ) }, void 0, false, {
+                    fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                    lineNumber: 508,
+                    columnNumber: 27
+                  }, this)
+                ] }, motif, true, {
+                  fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                  lineNumber: 503,
+                  columnNumber: 23
+                }, this);
+              }) }, void 0, false, {
+                fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                lineNumber: 497,
+                columnNumber: 17
+              }, this) : /* @__PURE__ */ jsxDEV("p", { className: "text-muted-foreground", children: "Loading performance data..." }, void 0, false, {
+                fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                lineNumber: 519,
+                columnNumber: 17
+              }, this)
+            ] }, void 0, true, {
+              fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+              lineNumber: 491,
+              columnNumber: 15
+            }, this),
+            /* @__PURE__ */ jsxDEV("div", { className: "glass-card p-6 rounded-2xl border border-white/10", children: [
+              /* @__PURE__ */ jsxDEV("h3", { className: "text-xl font-bold font-display mb-4 flex items-center gap-2", children: [
+                /* @__PURE__ */ jsxDEV(Activity, { className: "w-5 h-5 text-orange-500" }, void 0, false, {
+                  fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                  lineNumber: 526,
+                  columnNumber: 19
+                }, this),
+                "Portfolio Risk"
+              ] }, void 0, true, {
+                fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                lineNumber: 525,
+                columnNumber: 17
+              }, this),
+              /* @__PURE__ */ jsxDEV("div", { className: "space-y-4", children: stats && /* @__PURE__ */ jsxDEV(Fragment, { children: [
+                /* @__PURE__ */ jsxDEV("div", { className: "space-y-2", children: [
+                  /* @__PURE__ */ jsxDEV("div", { className: "flex justify-between", children: [
+                    /* @__PURE__ */ jsxDEV("span", { className: "text-sm", children: "Active Positions" }, void 0, false, {
+                      fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                      lineNumber: 534,
+                      columnNumber: 27
+                    }, this),
+                    /* @__PURE__ */ jsxDEV("span", { className: "font-bold text-green-400", children: stats.activePositions }, void 0, false, {
+                      fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                      lineNumber: 535,
+                      columnNumber: 27
+                    }, this)
+                  ] }, void 0, true, {
+                    fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                    lineNumber: 533,
+                    columnNumber: 25
+                  }, this),
+                  /* @__PURE__ */ jsxDEV("div", { className: "w-full bg-white/5 h-2 rounded-full overflow-hidden", children: /* @__PURE__ */ jsxDEV("div", { className: "bg-green-500 h-full", style: { width: `${Math.min(stats.activePositions * 33, 100)}%` } }, void 0, false, {
+                    fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                    lineNumber: 538,
+                    columnNumber: 27
+                  }, this) }, void 0, false, {
+                    fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                    lineNumber: 537,
+                    columnNumber: 25
+                  }, this)
+                ] }, void 0, true, {
+                  fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                  lineNumber: 532,
+                  columnNumber: 23
+                }, this),
+                /* @__PURE__ */ jsxDEV("div", { className: "space-y-2", children: [
+                  /* @__PURE__ */ jsxDEV("div", { className: "flex justify-between", children: [
+                    /* @__PURE__ */ jsxDEV("span", { className: "text-sm", children: "Risk per Trade" }, void 0, false, {
+                      fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                      lineNumber: 543,
+                      columnNumber: 27
+                    }, this),
+                    /* @__PURE__ */ jsxDEV("span", { className: "font-bold text-blue-400", children: "2%" }, void 0, false, {
+                      fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                      lineNumber: 544,
+                      columnNumber: 27
+                    }, this)
+                  ] }, void 0, true, {
+                    fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                    lineNumber: 542,
+                    columnNumber: 25
+                  }, this),
+                  /* @__PURE__ */ jsxDEV("div", { className: "w-full bg-white/5 h-2 rounded-full overflow-hidden", children: /* @__PURE__ */ jsxDEV("div", { className: "bg-blue-500 h-full w-[20%]" }, void 0, false, {
+                    fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                    lineNumber: 547,
+                    columnNumber: 27
+                  }, this) }, void 0, false, {
+                    fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                    lineNumber: 546,
+                    columnNumber: 25
+                  }, this)
+                ] }, void 0, true, {
+                  fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                  lineNumber: 541,
+                  columnNumber: 23
+                }, this),
+                /* @__PURE__ */ jsxDEV("div", { className: "space-y-2", children: [
+                  /* @__PURE__ */ jsxDEV("div", { className: "flex justify-between", children: [
+                    /* @__PURE__ */ jsxDEV("span", { className: "text-sm", children: "Total Portfolio Risk" }, void 0, false, {
+                      fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                      lineNumber: 552,
+                      columnNumber: 27
+                    }, this),
+                    /* @__PURE__ */ jsxDEV("span", { className: "font-bold text-orange-400", children: [
+                      (stats.activePositions * 2).toFixed(1),
+                      "%"
+                    ] }, void 0, true, {
+                      fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                      lineNumber: 553,
+                      columnNumber: 27
+                    }, this)
+                  ] }, void 0, true, {
+                    fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                    lineNumber: 551,
+                    columnNumber: 25
+                  }, this),
+                  /* @__PURE__ */ jsxDEV("div", { className: "w-full bg-white/5 h-2 rounded-full overflow-hidden", children: /* @__PURE__ */ jsxDEV("div", { className: "bg-orange-500 h-full", style: { width: `${Math.min(stats.activePositions * 20, 100)}%` } }, void 0, false, {
+                    fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                    lineNumber: 556,
+                    columnNumber: 27
+                  }, this) }, void 0, false, {
+                    fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                    lineNumber: 555,
+                    columnNumber: 25
+                  }, this)
+                ] }, void 0, true, {
+                  fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                  lineNumber: 550,
+                  columnNumber: 23
+                }, this)
+              ] }, void 0, true, {
+                fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                lineNumber: 531,
+                columnNumber: 19
+              }, this) }, void 0, false, {
+                fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                lineNumber: 529,
+                columnNumber: 17
+              }, this)
+            ] }, void 0, true, {
+              fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+              lineNumber: 524,
+              columnNumber: 15
+            }, this)
+          ] }, void 0, true, {
+            fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+            lineNumber: 453,
+            columnNumber: 13
+          }, this),
+          /* @__PURE__ */ jsxDEV("div", { className: "glass-card p-6 rounded-2xl border border-white/10", children: [
+            /* @__PURE__ */ jsxDEV("h3", { className: "text-xl font-bold font-display mb-4 flex items-center gap-2", children: [
+              /* @__PURE__ */ jsxDEV(BrainCircuit, { className: "w-5 h-5 text-purple-500" }, void 0, false, {
+                fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                lineNumber: 568,
+                columnNumber: 17
+              }, this),
+              "Recent Decision Paths (Last 5 Trades)"
+            ] }, void 0, true, {
+              fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+              lineNumber: 567,
+              columnNumber: 15
+            }, this),
+            /* @__PURE__ */ jsxDEV("div", { className: "space-y-4", children: trades && trades.slice(-5).reverse().map((trade, idx) => {
+              const correspondingDecision = decisions?.find((d) => d.timestamp >= (trade.executedAt || 0) - 1e3);
+              return /* @__PURE__ */ jsxDEV("div", { className: "bg-black/30 border border-white/10 rounded-lg p-4", children: [
+                /* @__PURE__ */ jsxDEV("div", { className: "flex items-start justify-between mb-3", children: [
+                  /* @__PURE__ */ jsxDEV("div", { children: [
+                    /* @__PURE__ */ jsxDEV("p", { className: "font-semibold text-white", children: [
+                      trade.side,
+                      " ",
+                      trade.symbol
+                    ] }, void 0, true, {
+                      fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                      lineNumber: 578,
+                      columnNumber: 27
+                    }, this),
+                    /* @__PURE__ */ jsxDEV("p", { className: "text-xs text-muted-foreground", children: [
+                      "$",
+                      trade.entryPrice.toFixed(2),
+                      " • ",
+                      trade.quantity.toFixed(4),
+                      " units"
+                    ] }, void 0, true, {
+                      fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                      lineNumber: 579,
+                      columnNumber: 27
+                    }, this)
+                  ] }, void 0, true, {
+                    fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                    lineNumber: 577,
+                    columnNumber: 25
+                  }, this),
+                  /* @__PURE__ */ jsxDEV("span", { className: `px-2 py-1 rounded text-xs font-bold ${trade.side === "LONG" ? "bg-green-500/20 text-green-400" : "bg-red-500/20 text-red-400"}`, children: correspondingDecision?.action || "N/A" }, void 0, false, {
+                    fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                    lineNumber: 581,
+                    columnNumber: 25
+                  }, this)
+                ] }, void 0, true, {
+                  fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                  lineNumber: 576,
+                  columnNumber: 23
+                }, this),
+                correspondingDecision && /* @__PURE__ */ jsxDEV("div", { className: "flex items-center gap-2 text-xs", children: [
+                  /* @__PURE__ */ jsxDEV(
+                    "div",
+                    {
+                      className: "flex-1 h-1 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full",
+                      style: { width: `${correspondingDecision.signal * 100}%` }
+                    },
+                    void 0,
+                    false,
+                    {
+                      fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                      lineNumber: 589,
+                      columnNumber: 27
+                    },
+                    this
+                  ),
+                  /* @__PURE__ */ jsxDEV("span", { className: "text-muted-foreground", children: [
+                    (correspondingDecision.signal * 100).toFixed(1),
+                    "% signal"
+                  ] }, void 0, true, {
+                    fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                    lineNumber: 591,
+                    columnNumber: 27
+                  }, this)
+                ] }, void 0, true, {
+                  fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                  lineNumber: 588,
+                  columnNumber: 23
+                }, this)
+              ] }, idx, true, {
+                fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                lineNumber: 575,
+                columnNumber: 21
+              }, this);
+            }) }, void 0, false, {
+              fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+              lineNumber: 571,
+              columnNumber: 15
+            }, this)
+          ] }, void 0, true, {
+            fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+            lineNumber: 566,
+            columnNumber: 13
+          }, this),
+          /* @__PURE__ */ jsxDEV("div", { className: "grid grid-cols-1 md:grid-cols-3 gap-4", children: [
+            /* @__PURE__ */ jsxDEV("div", { className: "glass-card p-6 rounded-2xl border border-white/10", children: [
+              /* @__PURE__ */ jsxDEV("p", { className: "text-sm text-muted-foreground mb-2", children: "Sharpe Ratio" }, void 0, false, {
+                fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                lineNumber: 603,
+                columnNumber: 17
+              }, this),
+              /* @__PURE__ */ jsxDEV("p", { className: "text-3xl font-bold text-cyan-400", children: "1.85" }, void 0, false, {
+                fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                lineNumber: 604,
+                columnNumber: 17
+              }, this),
+              /* @__PURE__ */ jsxDEV("p", { className: "text-xs text-green-400 mt-2", children: "+0.15 this week" }, void 0, false, {
+                fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                lineNumber: 605,
+                columnNumber: 17
+              }, this)
+            ] }, void 0, true, {
+              fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+              lineNumber: 602,
+              columnNumber: 15
+            }, this),
+            /* @__PURE__ */ jsxDEV("div", { className: "glass-card p-6 rounded-2xl border border-white/10", children: [
+              /* @__PURE__ */ jsxDEV("p", { className: "text-sm text-muted-foreground mb-2", children: "Max Drawdown" }, void 0, false, {
+                fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                lineNumber: 608,
+                columnNumber: 17
+              }, this),
+              /* @__PURE__ */ jsxDEV("p", { className: "text-3xl font-bold text-yellow-400", children: "-2.3%" }, void 0, false, {
+                fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                lineNumber: 609,
+                columnNumber: 17
+              }, this),
+              /* @__PURE__ */ jsxDEV("p", { className: "text-xs text-muted-foreground mt-2", children: "Well controlled" }, void 0, false, {
+                fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                lineNumber: 610,
+                columnNumber: 17
+              }, this)
+            ] }, void 0, true, {
+              fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+              lineNumber: 607,
+              columnNumber: 15
+            }, this),
+            /* @__PURE__ */ jsxDEV("div", { className: "glass-card p-6 rounded-2xl border border-white/10", children: [
+              /* @__PURE__ */ jsxDEV("p", { className: "text-sm text-muted-foreground mb-2", children: "Profit Factor" }, void 0, false, {
+                fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                lineNumber: 613,
+                columnNumber: 17
+              }, this),
+              /* @__PURE__ */ jsxDEV("p", { className: "text-3xl font-bold text-green-400", children: "1.42" }, void 0, false, {
+                fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                lineNumber: 614,
+                columnNumber: 17
+              }, this),
+              /* @__PURE__ */ jsxDEV("p", { className: "text-xs text-green-400 mt-2", children: "Wins/Losses Ratio" }, void 0, false, {
+                fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+                lineNumber: 615,
+                columnNumber: 17
+              }, this)
+            ] }, void 0, true, {
+              fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+              lineNumber: 612,
+              columnNumber: 15
+            }, this)
+          ] }, void 0, true, {
+            fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+            lineNumber: 601,
+            columnNumber: 13
+          }, this)
+        ] }, void 0, true, {
+          fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+          lineNumber: 452,
+          columnNumber: 11
+        }, this)
+      ] }, void 0, true, {
+        fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+        lineNumber: 202,
+        columnNumber: 9
+      }, this)
+    ] }, void 0, true, {
+      fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+      lineNumber: 80,
+      columnNumber: 7
+    }, this)
+  ] }, void 0, true, {
+    fileName: "C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx",
+    lineNumber: 55,
+    columnNumber: 5
+  }, this);
+}
+_s(Dashboard, "tSfTiNsuO6BRmHfDgNzX2Kinasc=", true, function() {
+  return [useBotStatus, useStats, useTrades, useDecisions, useMotifWeights, useAccountBalance, useBotControl];
+});
+_c = Dashboard;
+var _c;
+$RefreshReg$(_c, "Dashboard");
+if (import.meta.hot && !inWebWorker) {
+  window.$RefreshReg$ = prevRefreshReg;
+  window.$RefreshSig$ = prevRefreshSig;
+}
+if (import.meta.hot && !inWebWorker) {
+  RefreshRuntime.__hmr_import(import.meta.url).then((currentExports) => {
+    RefreshRuntime.registerExportsForReactRefresh("C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx", currentExports);
+    import.meta.hot.accept((nextExports) => {
+      if (!nextExports) return;
+      const invalidateMessage = RefreshRuntime.validateRefreshBoundaryAndEnqueueUpdate("C:/Users/umTCnar/Desktop/Algo-Trader-Pro/client/src/pages/Dashboard.tsx", currentExports, nextExports);
+      if (invalidateMessage) import.meta.hot.invalidate(invalidateMessage);
+    });
+  });
+}
+
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJtYXBwaW5ncyI6IkFBeUNjLFNBK0NJLFVBL0NKOzs7Ozs7Ozs7Ozs7Ozs7OztBQXpDZCxTQUFTQSxlQUFlQyxjQUFjQyxVQUFVQyxXQUFXQyxtQkFBbUJDLGNBQWNDLHVCQUF1QjtBQUNuSCxTQUFTQyxvQkFBb0I7QUFDN0IsU0FBU0MsZ0JBQWdCO0FBQ3pCLFNBQVNDLG9CQUFvQjtBQUM3QixTQUFTQyxtQkFBbUI7QUFDNUIsU0FBU0MsY0FBYztBQUN2QixTQUFTQyxNQUFNQyxhQUFhQyxVQUFVQyxtQkFBbUI7QUFDekQsU0FBU0MsV0FBV0MsTUFBTUMsT0FBT0MsT0FBT0MsV0FBV0MsY0FBY0MsMkJBQTJCO0FBQzVGLFNBQVNDLFVBQVVDLEtBQUtDLE9BQU9DLFlBQVlDLGNBQWNDLFdBQVdDLE1BQU1DLFFBQVFDLFlBQVlDLG9CQUFvQjtBQUNsSCxTQUFTQyxZQUFZO0FBQ3JCLFNBQVNDLFVBQVU7QUFFbkIsd0JBQXdCQyxZQUFZO0FBQUFDLEtBQUE7QUFDbEMsUUFBTSxFQUFFQyxNQUFNQyxPQUFPLElBQUlyQyxhQUFhO0FBQ3RDLFFBQU0sRUFBRW9DLE1BQU1FLE1BQU0sSUFBSXJDLFNBQVM7QUFDakMsUUFBTSxFQUFFbUMsTUFBTUcsT0FBTyxJQUFJckMsVUFBVTtBQUNuQyxRQUFNLEVBQUVrQyxNQUFNSSxVQUFVLElBQUlwQyxhQUFhO0FBQ3pDLFFBQU0sRUFBRWdDLE1BQU1LLGFBQWEsSUFBSXBDLGdCQUFnQjtBQUMvQyxRQUFNLEVBQUUrQixNQUFNTSxZQUFZLElBQUl2QyxrQkFBa0I7QUFDaEQsUUFBTSxFQUFFaUMsTUFBTU8sUUFBUSxJQUFJQyxXQUFXO0FBQ3JDLFFBQU0sRUFBRVIsTUFBTVMsY0FBYyxJQUFJQyxpQkFBaUI7QUFDakQsUUFBTSxFQUFFVixNQUFNVyxZQUFZLElBQUlDLGVBQWU7QUFDN0MsUUFBTSxFQUFFWixNQUFNYSxVQUFVLElBQUlDLGFBQWE7QUFDekMsUUFBTSxFQUFFZCxNQUFNZSxVQUFVLElBQUlDLGFBQWE7QUFDekMsUUFBTUMsWUFBWUMsbUJBQW1CO0FBQ3JDLFFBQU0sRUFBRUMsVUFBVUMsUUFBUSxJQUFJekQsY0FBYztBQUU1QyxRQUFNMEQsWUFBWXBCLFFBQVFvQixhQUFhO0FBR3ZDLFFBQU1DLFlBQVluQixVQUFVQSxPQUFPb0IsU0FBUyxJQUN4Q3BCLE9BQU9xQixJQUFJLENBQUFDLE9BQU0sRUFBRUMsS0FBS0MsT0FBT0YsRUFBRUMsR0FBRyxHQUFHRSxNQUFNSCxFQUFFSSxVQUFVLEVBQUUsSUFDM0RDLE1BQU1DLEtBQUssRUFBRVIsUUFBUSxHQUFHLENBQUMsRUFBRUMsSUFBSSxDQUFDUSxHQUFHQyxPQUFPLEVBQUVQLEtBQUtRLEtBQUtDLE9BQU8sSUFBSSxLQUFLLEdBQUdQLE1BQU1LLEVBQUUsRUFBRTtBQUV2RixTQUNFLHVCQUFDLFNBQUksV0FBVSw0REFFYjtBQUFBLDJCQUFDLFlBQU8sV0FBVSwrRUFDaEIsaUNBQUMsU0FBSSxXQUFVLGlGQUNiO0FBQUEsNkJBQUMsU0FBSSxXQUFVLDJCQUNiO0FBQUEsK0JBQUMsU0FBSSxXQUFVLDhIQUNiLGlDQUFDLFlBQVMsV0FBVSx3QkFBcEI7QUFBQTtBQUFBO0FBQUE7QUFBQSxlQUF3QyxLQUQxQztBQUFBO0FBQUE7QUFBQTtBQUFBLGVBRUE7QUFBQSxRQUNBLHVCQUFDLFNBQ0M7QUFBQSxpQ0FBQyxRQUFHLFdBQVUsOERBQTZELDZCQUEzRTtBQUFBO0FBQUE7QUFBQTtBQUFBLGlCQUF3RjtBQUFBLFVBQ3hGLHVCQUFDLE9BQUUsV0FBVSwrREFBOEQseUNBQTNFO0FBQUE7QUFBQTtBQUFBO0FBQUEsaUJBQW9HO0FBQUEsYUFGdEc7QUFBQTtBQUFBO0FBQUE7QUFBQSxlQUdBO0FBQUEsV0FQRjtBQUFBO0FBQUE7QUFBQTtBQUFBLGFBUUE7QUFBQSxNQUVBLHVCQUFDLFNBQUksV0FBVSwyQkFDYjtBQUFBLCtCQUFDLGVBQVksYUFBYjtBQUFBO0FBQUE7QUFBQTtBQUFBLGVBQWtDO0FBQUEsUUFDbEMsdUJBQUMsUUFBSyxNQUFLLGFBQ1QsaUNBQUMsVUFBTyxTQUFRLFdBQVUsTUFBSyxRQUFPLFdBQVUsNENBQzlDLGlDQUFDLGdCQUFhLFdBQVUsbUNBQXhCO0FBQUE7QUFBQTtBQUFBO0FBQUEsZUFBdUQsS0FEekQ7QUFBQTtBQUFBO0FBQUE7QUFBQSxlQUVBLEtBSEY7QUFBQTtBQUFBO0FBQUE7QUFBQSxlQUlBO0FBQUEsV0FORjtBQUFBO0FBQUE7QUFBQTtBQUFBLGFBT0E7QUFBQSxTQWxCRjtBQUFBO0FBQUE7QUFBQTtBQUFBLFdBbUJBLEtBcEJGO0FBQUE7QUFBQTtBQUFBO0FBQUEsV0FxQkE7QUFBQSxJQUVBLHVCQUFDLFVBQUssV0FBVSx5REFHZDtBQUFBLDZCQUFDLFNBQUksV0FBVSx5Q0FDYjtBQUFBLCtCQUFDLFNBQUksV0FBVSwyQkFDYixpQ0FBQyxTQUFJLFdBQVUsNkdBQ2I7QUFBQSxpQ0FBQyxTQUNDO0FBQUEsbUNBQUMsUUFBRyxXQUFVLHVDQUFzQywyQkFBcEQ7QUFBQTtBQUFBO0FBQUE7QUFBQSxtQkFBK0Q7QUFBQSxZQUMvRCx1QkFBQyxPQUFFLFdBQVUsc0NBQ1ZaLHNCQUNHLGlHQUNBLDhFQUhOO0FBQUE7QUFBQTtBQUFBO0FBQUEsbUJBSUE7QUFBQSxlQU5GO0FBQUE7QUFBQTtBQUFBO0FBQUEsaUJBT0E7QUFBQSxVQUVBO0FBQUEsWUFBQztBQUFBO0FBQUEsY0FDQyxTQUFTLE1BQU1BLFlBQVlELFFBQVFnQixPQUFPLElBQUlqQixTQUFTaUIsT0FBTztBQUFBLGNBQzlELFVBQVVqQixTQUFTa0IsYUFBYWpCLFFBQVFpQjtBQUFBQSxjQUN4QyxXQUFXeEM7QUFBQUEsZ0JBQ1Q7QUFBQSxnQkFDQXdCLFlBQ0ksNEVBQ0E7QUFBQSxjQUNOO0FBQUEsY0FFQ0YsbUJBQVNrQixhQUFhakIsUUFBUWlCLFlBQzdCLGtCQUNFaEIsWUFDRixtQ0FBRTtBQUFBLHVDQUFDLFVBQU8sV0FBVSwrQkFBbEI7QUFBQTtBQUFBO0FBQUE7QUFBQSx1QkFBNkM7QUFBQSxnQkFBRztBQUFBLG1CQUFsRDtBQUFBO0FBQUE7QUFBQTtBQUFBLHFCQUEyRCxJQUUzRCxtQ0FBRTtBQUFBLHVDQUFDLFFBQUssV0FBVSwrQkFBaEI7QUFBQTtBQUFBO0FBQUE7QUFBQSx1QkFBMkM7QUFBQSxnQkFBRztBQUFBLG1CQUFoRDtBQUFBO0FBQUE7QUFBQTtBQUFBLHFCQUEwRDtBQUFBO0FBQUEsWUFmOUQ7QUFBQTtBQUFBO0FBQUE7QUFBQTtBQUFBO0FBQUE7QUFBQTtBQUFBLFVBaUJBO0FBQUEsYUEzQkY7QUFBQTtBQUFBO0FBQUE7QUFBQSxlQTRCQSxLQTdCRjtBQUFBO0FBQUE7QUFBQTtBQUFBLGVBOEJBO0FBQUEsUUFFQSx1QkFBQyxTQUFJLFdBQVUsc0VBQ2I7QUFBQTtBQUFBLFlBQUM7QUFBQTtBQUFBLGNBQ0MsT0FBTTtBQUFBLGNBQ04sT0FBTyxJQUFJbkIsT0FBT29DLFNBQVNDLFFBQVEsQ0FBQyxLQUFLLE1BQU07QUFBQSxjQUMvQyxVQUFTO0FBQUEsY0FDVCxPQUFNO0FBQUEsY0FDTixNQUFNLHVCQUFDLGFBQVUsV0FBVSxhQUFyQjtBQUFBO0FBQUE7QUFBQTtBQUFBLHFCQUE4QjtBQUFBO0FBQUEsWUFMdEM7QUFBQTtBQUFBO0FBQUE7QUFBQTtBQUFBO0FBQUE7QUFBQTtBQUFBLFVBSzBDO0FBQUEsVUFFMUM7QUFBQSxZQUFDO0FBQUE7QUFBQSxjQUNDLE9BQU07QUFBQSxjQUNOLE9BQU8sR0FBR3JDLE9BQU9zQyxRQUFRRCxRQUFRLENBQUMsS0FBSyxLQUFLO0FBQUEsY0FDNUMsVUFBVSxZQUFZckMsT0FBT3VDLGVBQWUsQ0FBQztBQUFBLGNBQzdDLE9BQU07QUFBQSxjQUNOLE1BQU0sdUJBQUMsWUFBUyxXQUFVLGFBQXBCO0FBQUE7QUFBQTtBQUFBO0FBQUEscUJBQTZCO0FBQUE7QUFBQSxZQUxyQztBQUFBO0FBQUE7QUFBQTtBQUFBO0FBQUE7QUFBQTtBQUFBO0FBQUEsVUFLeUM7QUFBQSxVQUV6QztBQUFBLFlBQUM7QUFBQTtBQUFBLGNBQ0MsT0FBTTtBQUFBLGNBQ04sT0FBT3ZDLE9BQU93QyxtQkFBbUI7QUFBQSxjQUNqQyxVQUFVLFVBQVV4QyxPQUFPdUMsZUFBZSxDQUFDO0FBQUEsY0FDM0MsTUFBTSx1QkFBQyxTQUFNLFdBQVUsYUFBakI7QUFBQTtBQUFBO0FBQUE7QUFBQSxxQkFBMEI7QUFBQTtBQUFBLFlBSmxDO0FBQUE7QUFBQTtBQUFBO0FBQUE7QUFBQTtBQUFBO0FBQUE7QUFBQSxVQUlzQztBQUFBLFVBRXRDO0FBQUEsWUFBQztBQUFBO0FBQUEsY0FDQyxPQUFNO0FBQUEsY0FDTixPQUFPdkMsT0FBT3VDLGVBQWU7QUFBQSxjQUM3QixVQUFVLFVBQVV2QyxPQUFPeUMsYUFBYSxHQUFHSixRQUFRLENBQUMsQ0FBQztBQUFBLGNBQ3JELE1BQU0sdUJBQUMsT0FBSSxXQUFVLGFBQWY7QUFBQTtBQUFBO0FBQUE7QUFBQSxxQkFBd0I7QUFBQTtBQUFBLFlBSmhDO0FBQUE7QUFBQTtBQUFBO0FBQUE7QUFBQTtBQUFBO0FBQUE7QUFBQSxVQUlvQztBQUFBLGFBekJ0QztBQUFBO0FBQUE7QUFBQTtBQUFBLGVBMkJBO0FBQUEsV0E1REY7QUFBQTtBQUFBO0FBQUE7QUFBQSxhQTZEQTtBQUFBLE1BR0EsdUJBQUMsU0FBSSxXQUFVLHFEQUNiO0FBQUEsK0JBQUMsU0FBSSxXQUFVLDBDQUNiO0FBQUEsaUNBQUMsU0FDQztBQUFBLG1DQUFDLFFBQUcsV0FBVSwyREFDWjtBQUFBLHFDQUFDLFlBQVMsV0FBVSw0QkFBcEI7QUFBQTtBQUFBO0FBQUE7QUFBQSxxQkFBNEM7QUFBQTtBQUFBLGlCQUQ5QztBQUFBO0FBQUE7QUFBQTtBQUFBLG1CQUdBO0FBQUEsWUFDQSx1QkFBQyxPQUFFLFdBQVUsc0NBQ1ZqQyx1QkFBYXNDLFNBQVMsU0FDckIsdUJBQUMsVUFBSyxXQUFVLGdDQUErQiwrQkFBL0M7QUFBQTtBQUFBO0FBQUE7QUFBQSxtQkFBOEQsSUFFOUQsdUJBQUMsVUFBSyxXQUFVLGlDQUFnQyw0QkFBaEQ7QUFBQTtBQUFBO0FBQUE7QUFBQSxtQkFBNEQsS0FKaEU7QUFBQTtBQUFBO0FBQUE7QUFBQSxtQkFNQTtBQUFBLGVBWEY7QUFBQTtBQUFBO0FBQUE7QUFBQSxpQkFZQTtBQUFBLFVBQ0EsdUJBQUMsU0FBSSxXQUFVLGNBQ2I7QUFBQSxtQ0FBQyxPQUFFLFdBQVUsaUNBQ1Z0Qyx1QkFBYXVDLFlBQVksSUFBSUMsS0FBS3hDLFlBQVl1QyxTQUFTLEVBQUVFLG1CQUFtQixJQUFJLGdCQURuRjtBQUFBO0FBQUE7QUFBQTtBQUFBLG1CQUVBO0FBQUEsWUFDQSx1QkFBQyxPQUFFLFdBQVUsaUNBQ1Z6QztBQUFBQSwyQkFBYTBDO0FBQUFBLGNBQVk7QUFBQSxpQkFENUI7QUFBQTtBQUFBO0FBQUE7QUFBQSxtQkFFQTtBQUFBLGVBTkY7QUFBQTtBQUFBO0FBQUE7QUFBQSxpQkFPQTtBQUFBLGFBckJGO0FBQUE7QUFBQTtBQUFBO0FBQUEsZUFzQkE7QUFBQSxRQUVDMUMsYUFBYTJDLFlBQVkzQyxZQUFZMkMsU0FBUzFCLFNBQVMsSUFDdEQsdUJBQUMsU0FBSSxXQUFVLHdEQUNaakIsc0JBQVkyQyxTQUFTekI7QUFBQUEsVUFBSSxDQUFDMEIsU0FBY0MsVUFDdkM7QUFBQSxZQUFDO0FBQUE7QUFBQSxjQUVDLFdBQVU7QUFBQSxjQUVWO0FBQUEsdUNBQUMsT0FBRSxXQUFVLHNDQUFzQ0Qsa0JBQVFFLFNBQTNEO0FBQUE7QUFBQTtBQUFBO0FBQUEsdUJBQWlFO0FBQUEsZ0JBQ2pFLHVCQUFDLE9BQUUsV0FBVSxpREFDVkYsa0JBQVFHLE1BQU1kLFFBQVEsQ0FBQyxLQUQxQjtBQUFBO0FBQUE7QUFBQTtBQUFBLHVCQUVBO0FBQUEsZ0JBQ0NXLFFBQVFJLFNBQVMsS0FDaEIsdUJBQUMsT0FBRSxXQUFVLGdDQUE4QjtBQUFBO0FBQUEsa0JBQ2hDSixRQUFRSSxPQUFPZixRQUFRLENBQUM7QUFBQSxxQkFEbkM7QUFBQTtBQUFBO0FBQUE7QUFBQSx1QkFFQTtBQUFBLGdCQUVGLHVCQUFDLE9BQUUsV0FBVSxzQ0FBb0M7QUFBQTtBQUFBLGtCQUNuQ1csUUFBUUssS0FBS2hCLFFBQVEsQ0FBQztBQUFBLHFCQURwQztBQUFBO0FBQUE7QUFBQTtBQUFBLHVCQUVBO0FBQUE7QUFBQTtBQUFBLFlBZEssR0FBR1csUUFBUUUsS0FBSyxJQUFJRCxLQUFLO0FBQUEsWUFEaEM7QUFBQTtBQUFBO0FBQUE7QUFBQTtBQUFBO0FBQUE7QUFBQSxVQWdCQTtBQUFBLFFBQ0QsS0FuQkg7QUFBQTtBQUFBO0FBQUE7QUFBQSxlQW9CQSxJQUVBLHVCQUFDLFNBQUksV0FBVSxvQkFDYixpQ0FBQyxPQUFFLFdBQVUseUJBQXdCLDJDQUFyQztBQUFBO0FBQUE7QUFBQTtBQUFBLGVBQWdFLEtBRGxFO0FBQUE7QUFBQTtBQUFBO0FBQUEsZUFFQTtBQUFBLFdBbERKO0FBQUE7QUFBQTtBQUFBO0FBQUEsYUFvREE7QUFBQSxNQUdBLHVCQUFDLFFBQUssY0FBYSxjQUFhLFdBQVUsVUFDeEM7QUFBQSwrQkFBQyxTQUFJLFdBQVUsMENBQ2I7QUFBQSxpQ0FBQyxRQUFHLFdBQVUsbUNBQWtDLCtCQUFoRDtBQUFBO0FBQUE7QUFBQTtBQUFBLGlCQUErRDtBQUFBLFVBQy9ELHVCQUFDLFlBQVMsV0FBVSx5Q0FDbEI7QUFBQSxtQ0FBQyxlQUFZLE9BQU0sY0FBYSxXQUFVLGlFQUFnRSwwQkFBMUc7QUFBQTtBQUFBO0FBQUE7QUFBQSxtQkFBb0g7QUFBQSxZQUNwSCx1QkFBQyxlQUFZLE9BQU0sZUFBYyxXQUFVLGlFQUFnRSwyQkFBM0c7QUFBQTtBQUFBO0FBQUE7QUFBQSxtQkFBc0g7QUFBQSxZQUN0SCx1QkFBQyxlQUFZLE9BQU0sVUFBUyxXQUFVLGlFQUFnRSwyQkFBdEc7QUFBQTtBQUFBO0FBQUE7QUFBQSxtQkFBaUg7QUFBQSxZQUNqSCx1QkFBQyxlQUFZLE9BQU0sYUFBWSxXQUFVLGlFQUFnRSw0QkFBekc7QUFBQTtBQUFBO0FBQUE7QUFBQSxtQkFBcUg7QUFBQSxZQUNySCx1QkFBQyxlQUFZLE9BQU0sWUFBVyxXQUFVLGlFQUFnRSwyQkFBeEc7QUFBQTtBQUFBO0FBQUE7QUFBQSxtQkFBbUg7QUFBQSxlQUxySDtBQUFBO0FBQUE7QUFBQTtBQUFBLGlCQU1BO0FBQUEsYUFSRjtBQUFBO0FBQUE7QUFBQTtBQUFBLGVBU0E7QUFBQSxRQUVBLHVCQUFDLGVBQVksT0FBTSxjQUFhLFdBQVUsb0VBQ3hDO0FBQUEsaUNBQUMsU0FBSSxXQUFVLDBEQUNiO0FBQUEsbUNBQUMsUUFBRyxXQUFVLHVDQUFzQyxzQ0FBcEQ7QUFBQTtBQUFBO0FBQUE7QUFBQSxtQkFBMEU7QUFBQSxZQUMxRSx1QkFBQyxTQUFJLFdBQVUsd0RBQ1o5QywwQkFBZ0JtRCxPQUFPQyxRQUFRcEQsWUFBWSxFQUFFbUI7QUFBQUEsY0FBSSxDQUFDLENBQUNrQyxPQUFPQyxNQUFNLE1BQy9ELHVCQUFDLFNBQWdCLFdBQVUsb0RBQ3pCO0FBQUEsdUNBQUMsT0FBRSxXQUFVLGlEQUFpREQsZ0JBQU1FLFFBQVEsS0FBSyxHQUFHLEtBQXBGO0FBQUE7QUFBQTtBQUFBO0FBQUEsdUJBQXNGO0FBQUEsZ0JBQ3RGLHVCQUFDLE9BQUUsV0FBVSxtQ0FBcUNEO0FBQUFBLDRCQUFvQixLQUFLcEIsUUFBUSxDQUFDO0FBQUEsa0JBQUU7QUFBQSxxQkFBdEY7QUFBQTtBQUFBO0FBQUE7QUFBQSx1QkFBdUY7QUFBQSxnQkFDdkYsdUJBQUMsU0FBSSxXQUFVLDREQUNiO0FBQUEsa0JBQUM7QUFBQTtBQUFBLG9CQUNDLFdBQVU7QUFBQSxvQkFDVixPQUFPLEVBQUVzQixPQUFPLEdBQUlGLFNBQW9CLEdBQUcsSUFBSTtBQUFBO0FBQUEsa0JBRmpEO0FBQUE7QUFBQTtBQUFBO0FBQUE7QUFBQTtBQUFBO0FBQUE7QUFBQSxnQkFFbUQsS0FIckQ7QUFBQTtBQUFBO0FBQUE7QUFBQSx1QkFLQTtBQUFBLG1CQVJRRCxPQUFWO0FBQUE7QUFBQTtBQUFBO0FBQUEscUJBU0E7QUFBQSxZQUNELEtBWkg7QUFBQTtBQUFBO0FBQUE7QUFBQSxtQkFhQTtBQUFBLFlBQ0EsdUJBQUMsT0FBRSxXQUFVLHNDQUFvQyx3SEFBakQ7QUFBQTtBQUFBO0FBQUE7QUFBQSxtQkFFQTtBQUFBLGVBbEJGO0FBQUE7QUFBQTtBQUFBO0FBQUEsaUJBbUJBO0FBQUEsVUFFQSx1QkFBQyxTQUFJLFdBQVUsdUVBQ2I7QUFBQTtBQUFBLGNBQUM7QUFBQTtBQUFBLGdCQUNDLE9BQU07QUFBQSxnQkFDTixhQUFZO0FBQUEsZ0JBQ1osUUFBUXpELFFBQVE2RCxtQkFBbUI7QUFBQSxnQkFDbkMsTUFBTSx1QkFBQyxTQUFNLFdBQVUsYUFBakI7QUFBQTtBQUFBO0FBQUE7QUFBQSx1QkFBMEI7QUFBQSxnQkFDaEMsYUFBWTtBQUFBLGdCQUNaLFNBQVM7QUFBQSxrQkFDUCxFQUFFQyxPQUFPLFVBQVVDLE9BQU8sUUFBUTtBQUFBLGtCQUNsQyxFQUFFRCxPQUFPLFVBQVVDLE9BQU8sU0FBUztBQUFBLGdCQUFDO0FBQUE7QUFBQSxjQVJ4QztBQUFBO0FBQUE7QUFBQTtBQUFBO0FBQUE7QUFBQTtBQUFBO0FBQUEsWUFTSTtBQUFBLFlBRUo7QUFBQSxjQUFDO0FBQUE7QUFBQSxnQkFDQyxPQUFNO0FBQUEsZ0JBQ04sYUFBWTtBQUFBLGdCQUNaLFFBQVEvRCxRQUFRNkQsbUJBQW1CO0FBQUEsZ0JBQ25DLE1BQU0sdUJBQUMsT0FBSSxXQUFVLGFBQWY7QUFBQTtBQUFBO0FBQUE7QUFBQSx1QkFBd0I7QUFBQSxnQkFDOUIsYUFBWTtBQUFBLGdCQUNaLFNBQVM7QUFBQSxrQkFDUCxFQUFFQyxPQUFPLFdBQVdDLE9BQU8sS0FBSztBQUFBLGtCQUNoQyxFQUFFRCxPQUFPLGNBQWNDLE9BQU8sT0FBTztBQUFBLGdCQUFDO0FBQUE7QUFBQSxjQVIxQztBQUFBO0FBQUE7QUFBQTtBQUFBO0FBQUE7QUFBQTtBQUFBO0FBQUEsWUFTSTtBQUFBLFlBRUo7QUFBQSxjQUFDO0FBQUE7QUFBQSxnQkFDQyxPQUFNO0FBQUEsZ0JBQ04sYUFBWTtBQUFBLGdCQUNaLFFBQVEvRCxRQUFRNkQsbUJBQW1CO0FBQUEsZ0JBQ25DLE1BQU0sdUJBQUMsY0FBVyxXQUFVLGFBQXRCO0FBQUE7QUFBQTtBQUFBO0FBQUEsdUJBQStCO0FBQUEsZ0JBQ3JDLGFBQVk7QUFBQSxnQkFDWixTQUFTO0FBQUEsa0JBQ1AsRUFBRUMsT0FBTyxPQUFPQyxPQUFPLEtBQUs7QUFBQSxrQkFDNUIsRUFBRUQsT0FBTyxTQUFTQyxPQUFPLFVBQVU7QUFBQSxnQkFBQztBQUFBO0FBQUEsY0FSeEM7QUFBQTtBQUFBO0FBQUE7QUFBQTtBQUFBO0FBQUE7QUFBQTtBQUFBLFlBU0k7QUFBQSxZQUVKO0FBQUEsY0FBQztBQUFBO0FBQUEsZ0JBQ0MsT0FBTTtBQUFBLGdCQUNOLGFBQVk7QUFBQSxnQkFDWixRQUFRL0QsUUFBUTZELG1CQUFtQjtBQUFBLGdCQUNuQyxNQUFNLHVCQUFDLGdCQUFhLFdBQVUsYUFBeEI7QUFBQTtBQUFBO0FBQUE7QUFBQSx1QkFBaUM7QUFBQSxnQkFDdkMsYUFBWTtBQUFBLGdCQUNaLFNBQVM7QUFBQSxrQkFDUCxFQUFFQyxPQUFPLGNBQWNDLE9BQU8sTUFBTTtBQUFBLGtCQUNwQyxFQUFFRCxPQUFPLFFBQVFDLE9BQU8sTUFBTTtBQUFBLGdCQUFDO0FBQUE7QUFBQSxjQVJuQztBQUFBO0FBQUE7QUFBQTtBQUFBO0FBQUE7QUFBQTtBQUFBO0FBQUEsWUFTSTtBQUFBLFlBRUo7QUFBQSxjQUFDO0FBQUE7QUFBQSxnQkFDQyxPQUFNO0FBQUEsZ0JBQ04sYUFBWTtBQUFBLGdCQUNaLFFBQVEvRCxRQUFRNkQsbUJBQW1CO0FBQUEsZ0JBQ25DLE1BQU0sdUJBQUMsWUFBUyxXQUFVLGFBQXBCO0FBQUE7QUFBQTtBQUFBO0FBQUEsdUJBQTZCO0FBQUEsZ0JBQ25DLGFBQVk7QUFBQSxnQkFDWixTQUFTO0FBQUEsa0JBQ1AsRUFBRUMsT0FBTyxXQUFXQyxPQUFPLE1BQU07QUFBQSxrQkFDakMsRUFBRUQsT0FBTyxVQUFVQyxPQUFPLE9BQU87QUFBQSxnQkFBQztBQUFBO0FBQUEsY0FSdEM7QUFBQTtBQUFBO0FBQUE7QUFBQTtBQUFBO0FBQUE7QUFBQTtBQUFBLFlBU0k7QUFBQSxlQXRETjtBQUFBO0FBQUE7QUFBQTtBQUFBLGlCQXdEQTtBQUFBLGFBOUVGO0FBQUE7QUFBQTtBQUFBO0FBQUEsZUErRUE7QUFBQSxRQUVBLHVCQUFDLGVBQVksT0FBTSxlQUFjLFdBQVUsMERBQ3pDLGlDQUFDLFNBQUksV0FBVSx3Q0FDYjtBQUFBLGlDQUFDLFFBQUcsV0FBVSwwQkFBeUIsc0NBQXZDO0FBQUE7QUFBQTtBQUFBO0FBQUEsaUJBQTZEO0FBQUEsVUFDN0QsdUJBQUMsdUJBQW9CLE9BQU0sUUFBTyxRQUFPLE9BQ3ZDLGlDQUFDLGFBQVUsTUFBTTFDLFdBQ2Y7QUFBQSxtQ0FBQyxVQUNDLGlDQUFDLG9CQUFlLElBQUcsWUFBVyxJQUFHLEtBQUksSUFBRyxLQUFJLElBQUcsS0FBSSxJQUFHLEtBQ3BEO0FBQUEscUNBQUMsVUFBSyxRQUFPLE1BQUssV0FBVSx1QkFBc0IsYUFBYSxPQUEvRDtBQUFBO0FBQUE7QUFBQTtBQUFBLHFCQUFtRTtBQUFBLGNBQ25FLHVCQUFDLFVBQUssUUFBTyxPQUFNLFdBQVUsdUJBQXNCLGFBQWEsS0FBaEU7QUFBQTtBQUFBO0FBQUE7QUFBQSxxQkFBa0U7QUFBQSxpQkFGcEU7QUFBQTtBQUFBO0FBQUE7QUFBQSxtQkFHQSxLQUpGO0FBQUE7QUFBQTtBQUFBO0FBQUEsbUJBS0E7QUFBQSxZQUNBLHVCQUFDLFNBQU0sU0FBUSxRQUFPLE1BQUksUUFBMUI7QUFBQTtBQUFBO0FBQUE7QUFBQSxtQkFBMEI7QUFBQSxZQUMxQix1QkFBQyxTQUFNLFFBQU8sV0FBVSxVQUFVLElBQUksZUFBZSxDQUFDMEMsVUFBVSxJQUFJQSxLQUFLLE1BQXpFO0FBQUE7QUFBQTtBQUFBO0FBQUEsbUJBQTRFO0FBQUEsWUFDNUU7QUFBQSxjQUFDO0FBQUE7QUFBQSxnQkFDQyxjQUFjLEVBQUVDLGlCQUFpQix1QkFBdUJDLGFBQWEsc0JBQXNCQyxPQUFPLFFBQVE7QUFBQSxnQkFDMUcsV0FBVyxFQUFFQSxPQUFPLHNCQUFzQjtBQUFBO0FBQUEsY0FGNUM7QUFBQTtBQUFBO0FBQUE7QUFBQTtBQUFBO0FBQUE7QUFBQTtBQUFBLFlBRThDO0FBQUEsWUFFOUM7QUFBQSxjQUFDO0FBQUE7QUFBQSxnQkFDQyxNQUFLO0FBQUEsZ0JBQ0wsU0FBUTtBQUFBLGdCQUNSLFFBQU87QUFBQSxnQkFDUCxhQUFhO0FBQUEsZ0JBQ2IsYUFBYTtBQUFBLGdCQUNiLE1BQUs7QUFBQTtBQUFBLGNBTlA7QUFBQTtBQUFBO0FBQUE7QUFBQTtBQUFBO0FBQUE7QUFBQTtBQUFBLFlBTXVCO0FBQUEsZUFuQnpCO0FBQUE7QUFBQTtBQUFBO0FBQUEsaUJBcUJBLEtBdEJGO0FBQUE7QUFBQTtBQUFBO0FBQUEsaUJBdUJBO0FBQUEsYUF6QkY7QUFBQTtBQUFBO0FBQUE7QUFBQSxlQTBCQSxLQTNCRjtBQUFBO0FBQUE7QUFBQTtBQUFBLGVBNEJBO0FBQUEsUUFFQSx1QkFBQyxlQUFZLE9BQU0sVUFBUyxXQUFVLDBEQUNwQyxpQ0FBQyxnQkFBYSxRQUFRaEUsVUFBVSxJQUFJLFdBQVcsQ0FBQ0EsVUFBaEQ7QUFBQTtBQUFBO0FBQUE7QUFBQSxlQUF1RCxLQUR6RDtBQUFBO0FBQUE7QUFBQTtBQUFBLGVBRUE7QUFBQSxRQUVBLHVCQUFDLGVBQVksT0FBTSxhQUFZLFdBQVUsb0VBQ3ZDLGlDQUFDLFNBQUksV0FBVSxxREFDYjtBQUFBLGlDQUFDLFFBQUcsV0FBVSwrREFDWjtBQUFBLG1DQUFDLGdCQUFhLFdBQVUsMkJBQXhCO0FBQUE7QUFBQTtBQUFBO0FBQUEsbUJBQStDO0FBQUE7QUFBQSxlQURqRDtBQUFBO0FBQUE7QUFBQTtBQUFBLGlCQUdBO0FBQUEsVUFFQ0MsYUFBYUEsVUFBVW1CLFNBQVMsSUFDL0IsdUJBQUMsU0FBSSxXQUFVLDJDQUNabkIsb0JBQVVvQjtBQUFBQSxZQUFJLENBQUM0QyxVQUFlQyxRQUM3QjtBQUFBLGNBQUM7QUFBQTtBQUFBLGdCQUVDLFdBQVU7QUFBQSxnQkFHVjtBQUFBLHlDQUFDLFNBQUksV0FBVSwwQ0FDYjtBQUFBLDJDQUFDLFNBQUksV0FBVSwyQkFDYjtBQUFBLDZDQUFDLFVBQUssV0FBV3hFO0FBQUFBLHdCQUNmO0FBQUEsd0JBQ0F1RSxTQUFTRSxXQUFXLFNBQVMsbUNBQzdCRixTQUFTRSxXQUFXLFVBQVUsK0JBQzlCRixTQUFTRSxXQUFXLG1CQUFtQixxQ0FDdkM7QUFBQSxzQkFDRixHQUNHRixtQkFBU0UsVUFQWjtBQUFBO0FBQUE7QUFBQTtBQUFBLDZCQVFBO0FBQUEsc0JBQ0EsdUJBQUMsVUFBSyxXQUFXekU7QUFBQUEsd0JBQ2Y7QUFBQSx3QkFDQXVFLFNBQVNHLFNBQVMsT0FBTyxtQ0FDekJILFNBQVNHLFNBQVMsT0FBTywrQkFDekI7QUFBQSxzQkFDRixHQUFFO0FBQUE7QUFBQSx5QkFDVUgsU0FBU0csU0FBUyxLQUFLaEMsUUFBUSxDQUFDO0FBQUEsd0JBQUU7QUFBQSwyQkFOOUM7QUFBQTtBQUFBO0FBQUE7QUFBQSw2QkFPQTtBQUFBLHNCQUNBLHVCQUFDLFVBQUssV0FBVzFDO0FBQUFBLHdCQUNmO0FBQUEsd0JBQ0F1RSxTQUFTSSxhQUFhLE1BQU0sbUNBQzVCSixTQUFTSSxhQUFhLE1BQU0saUNBQzVCO0FBQUEsc0JBQ0YsR0FBRTtBQUFBO0FBQUEseUJBQ2NKLFNBQVNJLGFBQWEsS0FBS2pDLFFBQVEsQ0FBQztBQUFBLHdCQUFFO0FBQUEsMkJBTnREO0FBQUE7QUFBQTtBQUFBO0FBQUEsNkJBT0E7QUFBQSx5QkF6QkY7QUFBQTtBQUFBO0FBQUE7QUFBQSwyQkEwQkE7QUFBQSxvQkFDQSx1QkFBQyxVQUFLLFdBQVUsaUNBQ2IsY0FBSU8sS0FBS3NCLFNBQVN2QixTQUFTLEVBQUVFLG1CQUFtQixLQURuRDtBQUFBO0FBQUE7QUFBQTtBQUFBLDJCQUVBO0FBQUEsdUJBOUJGO0FBQUE7QUFBQTtBQUFBO0FBQUEseUJBK0JBO0FBQUEsa0JBR0EsdUJBQUMsT0FBRSxXQUFVLDZDQUEyQztBQUFBO0FBQUEsb0JBQ3BEcUIsU0FBU0s7QUFBQUEsb0JBQVU7QUFBQSx1QkFEdkI7QUFBQTtBQUFBO0FBQUE7QUFBQSx5QkFFQTtBQUFBLGtCQUdBLHVCQUFDLFNBQUksV0FBVSw2REFDWkwsbUJBQVNNLFVBQVVOLFNBQVNNLE9BQU9sRDtBQUFBQSxvQkFBSSxDQUFDa0MsT0FBWWlCLFNBQ25ELHVCQUFDLFNBQWUsV0FBVSx5REFDeEI7QUFBQSw2Q0FBQyxPQUFFLFdBQVUsaUNBQWlDakIsZ0JBQU1rQixLQUFLQyxZQUFZLEtBQXJFO0FBQUE7QUFBQTtBQUFBO0FBQUEsNkJBQXVFO0FBQUEsc0JBQ3ZFLHVCQUFDLE9BQUUsV0FBVSxpQkFBZ0I7QUFBQTtBQUFBLHlCQUFVbkIsTUFBTWEsU0FBUyxLQUFLaEMsUUFBUSxDQUFDO0FBQUEsd0JBQUU7QUFBQSwyQkFBdEU7QUFBQTtBQUFBO0FBQUE7QUFBQSw2QkFBdUU7QUFBQSxzQkFDdkUsdUJBQUMsT0FBRSxXQUFVLHlCQUF3QjtBQUFBO0FBQUEseUJBQVFtQixNQUFNYyxhQUFhLEtBQUtqQyxRQUFRLENBQUM7QUFBQSx3QkFBRTtBQUFBLDJCQUFoRjtBQUFBO0FBQUE7QUFBQTtBQUFBLDZCQUFpRjtBQUFBLHNCQUNoRm1CLE1BQU1vQixXQUNMLHVCQUFDLFNBQUksV0FBVSxrREFDWnRCLGlCQUFPQyxRQUFRQyxNQUFNb0IsT0FBTyxFQUFFdEQ7QUFBQUEsd0JBQUksQ0FBQyxDQUFDdUQsS0FBS0MsR0FBRyxNQUMzQyx1QkFBQyxPQUFhRDtBQUFBQTtBQUFBQSwwQkFBSTtBQUFBLDBCQUFHLE9BQU9DLFFBQVEsV0FBV0EsSUFBSXpDLFFBQVEsQ0FBQyxJQUFJeUM7QUFBQUEsNkJBQXhERCxLQUFSO0FBQUE7QUFBQTtBQUFBO0FBQUEsK0JBQW9FO0FBQUEsc0JBQ3JFLEtBSEg7QUFBQTtBQUFBO0FBQUE7QUFBQSw2QkFJQTtBQUFBLHlCQVRNSixNQUFWO0FBQUE7QUFBQTtBQUFBO0FBQUEsMkJBV0E7QUFBQSxrQkFDRCxLQWRIO0FBQUE7QUFBQTtBQUFBO0FBQUEseUJBZUE7QUFBQTtBQUFBO0FBQUEsY0ExREssR0FBR1AsU0FBU3ZCLFNBQVMsSUFBSXdCLEdBQUc7QUFBQSxjQURuQztBQUFBO0FBQUE7QUFBQTtBQUFBO0FBQUE7QUFBQTtBQUFBLFlBNERBO0FBQUEsVUFDRCxLQS9ESDtBQUFBO0FBQUE7QUFBQTtBQUFBLGlCQWdFQSxJQUVBLHVCQUFDLFNBQUksV0FBVSwyQ0FDYjtBQUFBLG1DQUFDLE9BQUUsMkNBQUg7QUFBQTtBQUFBO0FBQUE7QUFBQSxtQkFBOEI7QUFBQSxZQUM5Qix1QkFBQyxPQUFFLFdBQVUsZ0JBQWUsc0RBQTVCO0FBQUE7QUFBQTtBQUFBO0FBQUEsbUJBQWtFO0FBQUEsZUFGcEU7QUFBQTtBQUFBO0FBQUE7QUFBQSxpQkFHQTtBQUFBLGFBNUVKO0FBQUE7QUFBQTtBQUFBO0FBQUEsZUE4RUEsS0EvRUY7QUFBQTtBQUFBO0FBQUE7QUFBQSxlQWdGQTtBQUFBLFFBRUEsdUJBQUMsZUFBWSxPQUFNLGFBQVksV0FBVSwwREFDdkMsaUNBQUMsU0FBSSxXQUFVLHFEQUNiO0FBQUEsaUNBQUMsUUFBRyxXQUFVLDBCQUF5Qiw4Q0FBdkM7QUFBQTtBQUFBO0FBQUE7QUFBQSxpQkFBcUU7QUFBQSxVQUNwRXhELGFBQWFBLFVBQVVVLFNBQVMsSUFDL0IsdUJBQUMsU0FBSSxXQUFVLGFBQ1pWLG9CQUFVVztBQUFBQSxZQUFJLENBQUN5RCxRQUNkLHVCQUFDLFNBQWlCLFdBQVUsNERBQzFCO0FBQUEscUNBQUMsU0FDQztBQUFBLHVDQUFDLFNBQUksV0FBVSxpQkFBaUJBO0FBQUFBLHNCQUFJQztBQUFBQSxrQkFBTztBQUFBLGtCQUFJRCxJQUFJRTtBQUFBQSxxQkFBbkQ7QUFBQTtBQUFBO0FBQUE7QUFBQSx1QkFBd0Q7QUFBQSxnQkFDeEQsdUJBQUMsU0FBSSxXQUFVLGlDQUFnQztBQUFBO0FBQUEsa0JBQVNGLElBQUlHLFdBQVc3QyxRQUFRLENBQUM7QUFBQSxrQkFBRTtBQUFBLGtCQUFTMEMsSUFBSUksU0FBUzlDLFFBQVEsQ0FBQztBQUFBLHFCQUFqSDtBQUFBO0FBQUE7QUFBQTtBQUFBLHVCQUFtSDtBQUFBLG1CQUZySDtBQUFBO0FBQUE7QUFBQTtBQUFBLHFCQUdBO0FBQUEsY0FDQSx1QkFBQyxTQUFJLFdBQVUsY0FDYjtBQUFBLHVDQUFDLFNBQUksV0FBVSxXQUFVO0FBQUE7QUFBQSxrQkFBUTBDLElBQUlLLFNBQVMvQyxRQUFRLENBQUM7QUFBQSxxQkFBdkQ7QUFBQTtBQUFBO0FBQUE7QUFBQSx1QkFBeUQ7QUFBQSxnQkFDekQsdUJBQUMsU0FBSSxXQUFVLGlDQUFnQztBQUFBO0FBQUEsa0JBQVcwQyxJQUFJTSxjQUFjTixJQUFJTSxZQUFZaEQsUUFBUSxDQUFDLElBQUk7QUFBQSxxQkFBekc7QUFBQTtBQUFBO0FBQUE7QUFBQSx1QkFBNkc7QUFBQSxtQkFGL0c7QUFBQTtBQUFBO0FBQUE7QUFBQSxxQkFHQTtBQUFBLGlCQVJRMEMsSUFBSU8sSUFBZDtBQUFBO0FBQUE7QUFBQTtBQUFBLG1CQVNBO0FBQUEsVUFDRCxLQVpIO0FBQUE7QUFBQTtBQUFBO0FBQUEsaUJBYUEsSUFFQSx1QkFBQyxPQUFFLFdBQVUseUJBQXdCLGlDQUFyQztBQUFBO0FBQUE7QUFBQTtBQUFBLGlCQUFzRDtBQUFBLFVBRXhELHVCQUFDLFNBQUksV0FBVSxRQUNiO0FBQUEsbUNBQUMsV0FBTSxXQUFVLFdBQVUsOEJBQTNCO0FBQUE7QUFBQTtBQUFBO0FBQUEsbUJBQXlDO0FBQUEsWUFDekMsdUJBQUMsU0FBSSxXQUFVLGdDQUNiO0FBQUE7QUFBQSxnQkFBQztBQUFBO0FBQUEsa0JBQ0MsTUFBSztBQUFBLGtCQUNMLE1BQUs7QUFBQSxrQkFDTCxLQUFJO0FBQUEsa0JBQ0osY0FBY3pFLFdBQVcwRSxpQkFBaUI7QUFBQSxrQkFDMUMsUUFBUSxDQUFDQyxNQUFNekUsVUFBVW1CLE9BQU8sRUFBRXFELGVBQWU5RCxPQUFPK0QsRUFBRUMsY0FBYzNCLEtBQUssRUFBRSxDQUFDO0FBQUEsa0JBQ2hGLFdBQVU7QUFBQTtBQUFBLGdCQU5aO0FBQUE7QUFBQTtBQUFBO0FBQUE7QUFBQTtBQUFBO0FBQUE7QUFBQSxjQU0wRTtBQUFBLGNBRTFFLHVCQUFDLFVBQU8sU0FBUyxNQUFNL0MsVUFBVW1CLE9BQU8sRUFBRXFELGVBQWUxRSxXQUFXMEUsaUJBQWlCLEVBQUUsQ0FBQyxHQUFFLG9CQUExRjtBQUFBO0FBQUE7QUFBQTtBQUFBLHFCQUVBO0FBQUEsY0FDQSx1QkFBQyxPQUFFLFdBQVUsaUNBQWdDO0FBQUE7QUFBQSxnQkFBVTFFLFdBQVcwRSxpQkFBaUI7QUFBQSxnQkFBRTtBQUFBLG1CQUFyRjtBQUFBO0FBQUE7QUFBQTtBQUFBLHFCQUFzRjtBQUFBLGlCQVp4RjtBQUFBO0FBQUE7QUFBQTtBQUFBLG1CQWFBO0FBQUEsZUFmRjtBQUFBO0FBQUE7QUFBQTtBQUFBLGlCQWdCQTtBQUFBLGFBcENGO0FBQUE7QUFBQTtBQUFBO0FBQUEsZUFxQ0EsS0F0Q0Y7QUFBQTtBQUFBO0FBQUE7QUFBQSxlQXVDQTtBQUFBLFFBRUEsdUJBQUMsZUFBWSxPQUFNLFlBQVcsV0FBVSxvRUFDdEM7QUFBQSxpQ0FBQyxTQUFJLFdBQVUseUNBRWI7QUFBQSxtQ0FBQyxTQUFJLFdBQVUscURBQ2I7QUFBQSxxQ0FBQyxRQUFHLFdBQVUsdUNBQXNDLDhCQUFwRDtBQUFBO0FBQUE7QUFBQTtBQUFBLHFCQUFrRTtBQUFBLGNBQ2xFLHVCQUFDLFNBQUksV0FBVSwwQkFDYjtBQUFBLHVDQUFDLFNBQUksV0FBVSxnQ0FDYjtBQUFBLHlDQUFDLFVBQUssbUNBQU47QUFBQTtBQUFBO0FBQUE7QUFBQSx5QkFBeUI7QUFBQSxrQkFDekIsdUJBQUMsVUFBSyxXQUFVLGFBQWFsRixtQkFBU3FGLG1CQUFtQixPQUF6RDtBQUFBO0FBQUE7QUFBQTtBQUFBLHlCQUE2RDtBQUFBLHFCQUYvRDtBQUFBO0FBQUE7QUFBQTtBQUFBLHVCQUdBO0FBQUEsZ0JBQ0EsdUJBQUMsU0FBSSxXQUFVLGdDQUNiO0FBQUEseUNBQUMsVUFBSyxpQ0FBTjtBQUFBO0FBQUE7QUFBQTtBQUFBLHlCQUF1QjtBQUFBLGtCQUN2Qix1QkFBQyxVQUFLLFdBQVUsYUFBYXJGLG1CQUFTc0YscUJBQXFCLE9BQTNEO0FBQUE7QUFBQTtBQUFBO0FBQUEseUJBQStEO0FBQUEscUJBRmpFO0FBQUE7QUFBQTtBQUFBO0FBQUEsdUJBR0E7QUFBQSxnQkFDQSx1QkFBQyxTQUFJLFdBQVUsZ0NBQ2I7QUFBQSx5Q0FBQyxVQUFLLDhCQUFOO0FBQUE7QUFBQTtBQUFBO0FBQUEseUJBQW9CO0FBQUEsa0JBQ3BCLHVCQUFDLFVBQUssV0FBVSxhQUFhdEYsbUJBQVN1RixjQUFjLE9BQXBEO0FBQUE7QUFBQTtBQUFBO0FBQUEseUJBQXdEO0FBQUEscUJBRjFEO0FBQUE7QUFBQTtBQUFBO0FBQUEsdUJBR0E7QUFBQSxnQkFDQSx1QkFBQyxTQUFJLFdBQVUsd0NBQ2I7QUFBQSx5Q0FBQyxTQUFJLFdBQVUsVUFDYjtBQUFBLDJDQUFDLE9BQUUsV0FBVSxpQ0FBZ0MscUNBQTdDO0FBQUE7QUFBQTtBQUFBO0FBQUEsMkJBQWtFO0FBQUEsb0JBQ2xFLHVCQUFDLE9BQUUsV0FBVSxhQUFhckYseUJBQWVzRixtQkFBbUIsR0FBR3RGLGNBQWNzRixnQkFBZ0IsTUFBTSxPQUFuRztBQUFBO0FBQUE7QUFBQTtBQUFBLDJCQUF1RztBQUFBLHVCQUZ6RztBQUFBO0FBQUE7QUFBQTtBQUFBLHlCQUdBO0FBQUEsa0JBQ0EsdUJBQUMsU0FBSSxXQUFVLFVBQ2I7QUFBQSwyQ0FBQyxPQUFFLFdBQVUsaUNBQWdDLHlDQUE3QztBQUFBO0FBQUE7QUFBQTtBQUFBLDJCQUFzRTtBQUFBLG9CQUN0RSx1QkFBQyxPQUFFLFdBQVUsYUFBYXRGLDBCQUFnQixHQUFHQSxjQUFjdUYsT0FBT0MsT0FBTyxJQUFJeEYsY0FBY3VGLE9BQU9FLFFBQVEsSUFBSXpGLGNBQWN1RixPQUFPRyxNQUFNLEtBQUssT0FBOUk7QUFBQTtBQUFBO0FBQUE7QUFBQSwyQkFBa0o7QUFBQSx1QkFGcEo7QUFBQTtBQUFBO0FBQUE7QUFBQSx5QkFHQTtBQUFBLHFCQVJGO0FBQUE7QUFBQTtBQUFBO0FBQUEsdUJBU0E7QUFBQSxnQkFDQSx1QkFBQyxTQUFJLFdBQVUsUUFDYjtBQUFBLHlDQUFDLE9BQUUsV0FBVSxzQ0FBcUMsb0NBQWxEO0FBQUE7QUFBQTtBQUFBO0FBQUEseUJBQXNFO0FBQUEsa0JBQ3RFLHVCQUFDLFNBQUksV0FBVSxzQkFDYjtBQUFBLDJDQUFDLFNBQUksV0FBVSxnQ0FBK0I7QUFBQTtBQUFBLHNCQUFNeEYsYUFBYXlGLFVBQVV6RixZQUFZeUYsUUFBUTdELFFBQVEsQ0FBQyxJQUFJO0FBQUEseUJBQTVHO0FBQUE7QUFBQTtBQUFBO0FBQUEsMkJBQWdIO0FBQUEsb0JBQ2hILHVCQUFDLFNBQUksV0FBVSxnQ0FBK0I7QUFBQTtBQUFBLHNCQUFNNUIsYUFBYTBGLFVBQVUxRixZQUFZMEYsUUFBUTlELFFBQVEsQ0FBQyxJQUFJO0FBQUEseUJBQTVHO0FBQUE7QUFBQTtBQUFBO0FBQUEsMkJBQWdIO0FBQUEsb0JBQ2hILHVCQUFDLFNBQUksV0FBVSxnQ0FBK0I7QUFBQTtBQUFBLHNCQUFPNUIsYUFBYTJGLFdBQVczRixZQUFZMkYsU0FBUy9ELFFBQVEsQ0FBQyxJQUFJO0FBQUEseUJBQS9HO0FBQUE7QUFBQTtBQUFBO0FBQUEsMkJBQW1IO0FBQUEsdUJBSHJIO0FBQUE7QUFBQTtBQUFBO0FBQUEseUJBSUE7QUFBQSxxQkFORjtBQUFBO0FBQUE7QUFBQTtBQUFBLHVCQU9BO0FBQUEsbUJBOUJGO0FBQUE7QUFBQTtBQUFBO0FBQUEscUJBK0JBO0FBQUEsaUJBakNGO0FBQUE7QUFBQTtBQUFBO0FBQUEsbUJBa0NBO0FBQUEsWUFFQSx1QkFBQyxTQUFJLFdBQVUscURBQ2I7QUFBQSxxQ0FBQyxRQUFHLFdBQVUsK0RBQ1o7QUFBQSx1Q0FBQyxhQUFVLFdBQVUsNEJBQXJCO0FBQUE7QUFBQTtBQUFBO0FBQUEsdUJBQTZDO0FBQUE7QUFBQSxtQkFEL0M7QUFBQTtBQUFBO0FBQUE7QUFBQSxxQkFHQTtBQUFBLGNBQ0NsQyxlQUNDLHVCQUFDLFNBQUksV0FBVSxhQUNabUQsaUJBQU9DLFFBQVFwRCxZQUFZLEVBQUVtQixJQUFJLENBQUMsQ0FBQ2tDLE9BQU9DLE1BQU0sTUFBcUI7QUFDcEUsc0JBQU00QyxpQkFBa0I1QyxTQUFvQjtBQUM1QyxzQkFBTTZDLFlBQVlELGlCQUFpQixLQUFLLG1CQUFtQkEsaUJBQWlCLEtBQUssb0JBQW9CO0FBRXJHLHVCQUNFLHVCQUFDLFNBQWdCLFdBQVUsYUFDekI7QUFBQSx5Q0FBQyxTQUFJLFdBQVUscUNBQ2I7QUFBQSwyQ0FBQyxVQUFLLFdBQVUsa0NBQWtDN0MsZ0JBQU1FLFFBQVEsS0FBSyxHQUFHLEtBQXhFO0FBQUE7QUFBQTtBQUFBO0FBQUEsMkJBQTBFO0FBQUEsb0JBQzFFLHVCQUFDLFVBQUssV0FBVSx5Q0FBeUMyQztBQUFBQSxxQ0FBZWhFLFFBQVEsQ0FBQztBQUFBLHNCQUFFO0FBQUEseUJBQW5GO0FBQUE7QUFBQTtBQUFBO0FBQUEsMkJBQW9GO0FBQUEsdUJBRnRGO0FBQUE7QUFBQTtBQUFBO0FBQUEseUJBR0E7QUFBQSxrQkFDQSx1QkFBQyxTQUFJLFdBQVUsc0RBQ2I7QUFBQSxvQkFBQztBQUFBO0FBQUEsc0JBQ0MsV0FBVyxvQkFBb0JpRSxTQUFTO0FBQUEsc0JBQ3hDLE9BQU8sRUFBRTNDLE9BQU8sR0FBRzBDLGNBQWMsSUFBSTtBQUFBO0FBQUEsb0JBRnZDO0FBQUE7QUFBQTtBQUFBO0FBQUE7QUFBQTtBQUFBO0FBQUE7QUFBQSxrQkFFeUMsS0FIM0M7QUFBQTtBQUFBO0FBQUE7QUFBQSx5QkFLQTtBQUFBLHFCQVZRN0MsT0FBVjtBQUFBO0FBQUE7QUFBQTtBQUFBLHVCQVdBO0FBQUEsY0FFSixDQUFDLEtBbkJIO0FBQUE7QUFBQTtBQUFBO0FBQUEscUJBb0JBLElBRUEsdUJBQUMsT0FBRSxXQUFVLHlCQUF3QiwyQ0FBckM7QUFBQTtBQUFBO0FBQUE7QUFBQSxxQkFBZ0U7QUFBQSxpQkE1QnBFO0FBQUE7QUFBQTtBQUFBO0FBQUEsbUJBOEJBO0FBQUEsWUFHQSx1QkFBQyxTQUFJLFdBQVUscURBQ2I7QUFBQSxxQ0FBQyxRQUFHLFdBQVUsK0RBQ1o7QUFBQSx1Q0FBQyxZQUFTLFdBQVUsNkJBQXBCO0FBQUE7QUFBQTtBQUFBO0FBQUEsdUJBQTZDO0FBQUE7QUFBQSxtQkFEL0M7QUFBQTtBQUFBO0FBQUE7QUFBQSxxQkFHQTtBQUFBLGNBQ0EsdUJBQUMsU0FBSSxXQUFVLGFBQ1p4RCxtQkFDQyxtQ0FDRTtBQUFBLHVDQUFDLFNBQUksV0FBVSxhQUNiO0FBQUEseUNBQUMsU0FBSSxXQUFVLHdCQUNiO0FBQUEsMkNBQUMsVUFBSyxXQUFVLFdBQVUsZ0NBQTFCO0FBQUE7QUFBQTtBQUFBO0FBQUEsMkJBQTBDO0FBQUEsb0JBQzFDLHVCQUFDLFVBQUssV0FBVSw0QkFBNEJBLGdCQUFNd0MsbUJBQWxEO0FBQUE7QUFBQTtBQUFBO0FBQUEsMkJBQWtFO0FBQUEsdUJBRnBFO0FBQUE7QUFBQTtBQUFBO0FBQUEseUJBR0E7QUFBQSxrQkFDQSx1QkFBQyxTQUFJLFdBQVUsc0RBQ2IsaUNBQUMsU0FBSSxXQUFVLHVCQUFzQixPQUFPLEVBQUVtQixPQUFPLEdBQUczQixLQUFLdUUsSUFBSXZHLE1BQU13QyxrQkFBa0IsSUFBSSxHQUFHLENBQUMsSUFBSSxLQUFyRztBQUFBO0FBQUE7QUFBQTtBQUFBLHlCQUF1RyxLQUR6RztBQUFBO0FBQUE7QUFBQTtBQUFBLHlCQUVBO0FBQUEscUJBUEY7QUFBQTtBQUFBO0FBQUE7QUFBQSx1QkFRQTtBQUFBLGdCQUNBLHVCQUFDLFNBQUksV0FBVSxhQUNiO0FBQUEseUNBQUMsU0FBSSxXQUFVLHdCQUNiO0FBQUEsMkNBQUMsVUFBSyxXQUFVLFdBQVUsOEJBQTFCO0FBQUE7QUFBQTtBQUFBO0FBQUEsMkJBQXdDO0FBQUEsb0JBQ3hDLHVCQUFDLFVBQUssV0FBVSwyQkFBMEIsa0JBQTFDO0FBQUE7QUFBQTtBQUFBO0FBQUEsMkJBQTRDO0FBQUEsdUJBRjlDO0FBQUE7QUFBQTtBQUFBO0FBQUEseUJBR0E7QUFBQSxrQkFDQSx1QkFBQyxTQUFJLFdBQVUsc0RBQ2IsaUNBQUMsU0FBSSxXQUFVLGdDQUFmO0FBQUE7QUFBQTtBQUFBO0FBQUEseUJBQTJDLEtBRDdDO0FBQUE7QUFBQTtBQUFBO0FBQUEseUJBRUE7QUFBQSxxQkFQRjtBQUFBO0FBQUE7QUFBQTtBQUFBLHVCQVFBO0FBQUEsZ0JBQ0EsdUJBQUMsU0FBSSxXQUFVLGFBQ2I7QUFBQSx5Q0FBQyxTQUFJLFdBQVUsd0JBQ2I7QUFBQSwyQ0FBQyxVQUFLLFdBQVUsV0FBVSxvQ0FBMUI7QUFBQTtBQUFBO0FBQUE7QUFBQSwyQkFBOEM7QUFBQSxvQkFDOUMsdUJBQUMsVUFBSyxXQUFVLDZCQUE4QnhDO0FBQUFBLDZCQUFNd0Msa0JBQWtCLEdBQUdILFFBQVEsQ0FBQztBQUFBLHNCQUFFO0FBQUEseUJBQXBGO0FBQUE7QUFBQTtBQUFBO0FBQUEsMkJBQXFGO0FBQUEsdUJBRnZGO0FBQUE7QUFBQTtBQUFBO0FBQUEseUJBR0E7QUFBQSxrQkFDQSx1QkFBQyxTQUFJLFdBQVUsc0RBQ2IsaUNBQUMsU0FBSSxXQUFVLHdCQUF1QixPQUFPLEVBQUVzQixPQUFPLEdBQUczQixLQUFLdUUsSUFBSXZHLE1BQU13QyxrQkFBa0IsSUFBSSxHQUFHLENBQUMsSUFBSSxLQUF0RztBQUFBO0FBQUE7QUFBQTtBQUFBLHlCQUF3RyxLQUQxRztBQUFBO0FBQUE7QUFBQTtBQUFBLHlCQUVBO0FBQUEscUJBUEY7QUFBQTtBQUFBO0FBQUE7QUFBQSx1QkFRQTtBQUFBLG1CQTNCRjtBQUFBO0FBQUE7QUFBQTtBQUFBLHFCQTRCQSxLQTlCSjtBQUFBO0FBQUE7QUFBQTtBQUFBLHFCQWdDQTtBQUFBLGlCQXJDRjtBQUFBO0FBQUE7QUFBQTtBQUFBLG1CQXNDQTtBQUFBLGVBN0dGO0FBQUE7QUFBQTtBQUFBO0FBQUEsaUJBOEdBO0FBQUEsVUFHQSx1QkFBQyxTQUFJLFdBQVUscURBQ2I7QUFBQSxtQ0FBQyxRQUFHLFdBQVUsK0RBQ1o7QUFBQSxxQ0FBQyxnQkFBYSxXQUFVLDZCQUF4QjtBQUFBO0FBQUE7QUFBQTtBQUFBLHFCQUFpRDtBQUFBO0FBQUEsaUJBRG5EO0FBQUE7QUFBQTtBQUFBO0FBQUEsbUJBR0E7QUFBQSxZQUNBLHVCQUFDLFNBQUksV0FBVSxhQUNadkMsb0JBQVVBLE9BQU91RyxNQUFNLEVBQUUsRUFBRUMsUUFBUSxFQUFFbkYsSUFBSSxDQUFDb0YsT0FBT3ZDLFFBQVE7QUFDeEQsb0JBQU13Qyx3QkFBd0J6RyxXQUFXMEcsS0FBSyxDQUFBQyxNQUFLQSxFQUFFbEUsY0FBYytELE1BQU1JLGNBQWMsS0FBSyxHQUFJO0FBQ2hHLHFCQUNFLHVCQUFDLFNBQWMsV0FBVSxxREFDdkI7QUFBQSx1Q0FBQyxTQUFJLFdBQVUseUNBQ2I7QUFBQSx5Q0FBQyxTQUNDO0FBQUEsMkNBQUMsT0FBRSxXQUFVLDRCQUE0Qko7QUFBQUEsNEJBQU16QjtBQUFBQSxzQkFBSztBQUFBLHNCQUFFeUIsTUFBTTFCO0FBQUFBLHlCQUE1RDtBQUFBO0FBQUE7QUFBQTtBQUFBLDJCQUFtRTtBQUFBLG9CQUNuRSx1QkFBQyxPQUFFLFdBQVUsaUNBQWdDO0FBQUE7QUFBQSxzQkFBRTBCLE1BQU14QixXQUFXN0MsUUFBUSxDQUFDO0FBQUEsc0JBQUU7QUFBQSxzQkFBSXFFLE1BQU12QixTQUFTOUMsUUFBUSxDQUFDO0FBQUEsc0JBQUU7QUFBQSx5QkFBekc7QUFBQTtBQUFBO0FBQUE7QUFBQSwyQkFBK0c7QUFBQSx1QkFGakg7QUFBQTtBQUFBO0FBQUE7QUFBQSx5QkFHQTtBQUFBLGtCQUNBLHVCQUFDLFVBQUssV0FBVyx1Q0FDZnFFLE1BQU16QixTQUFTLFNBQVMsbUNBQW1DLDRCQUE0QixJQUV0RjBCLGlDQUF1QnZDLFVBQVUsU0FIcEM7QUFBQTtBQUFBO0FBQUE7QUFBQSx5QkFJQTtBQUFBLHFCQVRGO0FBQUE7QUFBQTtBQUFBO0FBQUEsdUJBVUE7QUFBQSxnQkFDQ3VDLHlCQUNDLHVCQUFDLFNBQUksV0FBVSxtQ0FDYjtBQUFBO0FBQUEsb0JBQUM7QUFBQTtBQUFBLHNCQUFJLFdBQVU7QUFBQSxzQkFDVixPQUFPLEVBQUVoRCxPQUFPLEdBQUdnRCxzQkFBc0J0QyxTQUFTLEdBQUcsSUFBSTtBQUFBO0FBQUEsb0JBRDlEO0FBQUE7QUFBQTtBQUFBO0FBQUE7QUFBQTtBQUFBO0FBQUE7QUFBQSxrQkFDZ0U7QUFBQSxrQkFDaEUsdUJBQUMsVUFBSyxXQUFVLHlCQUEwQnNDO0FBQUFBLDJDQUFzQnRDLFNBQVMsS0FBS2hDLFFBQVEsQ0FBQztBQUFBLG9CQUFFO0FBQUEsdUJBQXpGO0FBQUE7QUFBQTtBQUFBO0FBQUEseUJBQWlHO0FBQUEscUJBSG5HO0FBQUE7QUFBQTtBQUFBO0FBQUEsdUJBSUE7QUFBQSxtQkFqQk04QixLQUFWO0FBQUE7QUFBQTtBQUFBO0FBQUEscUJBbUJBO0FBQUEsWUFFSixDQUFDLEtBekJIO0FBQUE7QUFBQTtBQUFBO0FBQUEsbUJBMEJBO0FBQUEsZUEvQkY7QUFBQTtBQUFBO0FBQUE7QUFBQSxpQkFnQ0E7QUFBQSxVQUdBLHVCQUFDLFNBQUksV0FBVSx5Q0FDYjtBQUFBLG1DQUFDLFNBQUksV0FBVSxxREFDYjtBQUFBLHFDQUFDLE9BQUUsV0FBVSxzQ0FBcUMsNEJBQWxEO0FBQUE7QUFBQTtBQUFBO0FBQUEscUJBQThEO0FBQUEsY0FDOUQsdUJBQUMsT0FBRSxXQUFVLG9DQUFtQyxvQkFBaEQ7QUFBQTtBQUFBO0FBQUE7QUFBQSxxQkFBb0Q7QUFBQSxjQUNwRCx1QkFBQyxPQUFFLFdBQVUsK0JBQThCLCtCQUEzQztBQUFBO0FBQUE7QUFBQTtBQUFBLHFCQUEwRDtBQUFBLGlCQUg1RDtBQUFBO0FBQUE7QUFBQTtBQUFBLG1CQUlBO0FBQUEsWUFDQSx1QkFBQyxTQUFJLFdBQVUscURBQ2I7QUFBQSxxQ0FBQyxPQUFFLFdBQVUsc0NBQXFDLDRCQUFsRDtBQUFBO0FBQUE7QUFBQTtBQUFBLHFCQUE4RDtBQUFBLGNBQzlELHVCQUFDLE9BQUUsV0FBVSxzQ0FBcUMscUJBQWxEO0FBQUE7QUFBQTtBQUFBO0FBQUEscUJBQXVEO0FBQUEsY0FDdkQsdUJBQUMsT0FBRSxXQUFVLHNDQUFxQywrQkFBbEQ7QUFBQTtBQUFBO0FBQUE7QUFBQSxxQkFBaUU7QUFBQSxpQkFIbkU7QUFBQTtBQUFBO0FBQUE7QUFBQSxtQkFJQTtBQUFBLFlBQ0EsdUJBQUMsU0FBSSxXQUFVLHFEQUNiO0FBQUEscUNBQUMsT0FBRSxXQUFVLHNDQUFxQyw2QkFBbEQ7QUFBQTtBQUFBO0FBQUE7QUFBQSxxQkFBK0Q7QUFBQSxjQUMvRCx1QkFBQyxPQUFFLFdBQVUscUNBQW9DLG9CQUFqRDtBQUFBO0FBQUE7QUFBQTtBQUFBLHFCQUFxRDtBQUFBLGNBQ3JELHVCQUFDLE9BQUUsV0FBVSwrQkFBOEIsaUNBQTNDO0FBQUE7QUFBQTtBQUFBO0FBQUEscUJBQTREO0FBQUEsaUJBSDlEO0FBQUE7QUFBQTtBQUFBO0FBQUEsbUJBSUE7QUFBQSxlQWZGO0FBQUE7QUFBQTtBQUFBO0FBQUEsaUJBZ0JBO0FBQUEsYUFyS0Y7QUFBQTtBQUFBO0FBQUE7QUFBQSxlQXNLQTtBQUFBLFdBaGFGO0FBQUE7QUFBQTtBQUFBO0FBQUEsYUFpYUE7QUFBQSxTQTNoQkY7QUFBQTtBQUFBO0FBQUE7QUFBQSxXQTRoQkE7QUFBQSxPQXJqQkY7QUFBQTtBQUFBO0FBQUE7QUFBQSxTQXNqQkE7QUFFSjtBQUFDdEUsR0Eva0J1QkQsV0FBUztBQUFBLFVBQ05sQyxjQUNEQyxVQUNDQyxXQUNHRSxjQUNHQyxpQkFDREYsbUJBT0FKLGFBQWE7QUFBQTtBQUFBc0osS0FickJuSDtBQUFTLElBQUFtSDtBQUFBQyxhQUFBRCxJQUFBIiwibmFtZXMiOlsidXNlQm90Q29udHJvbCIsInVzZUJvdFN0YXR1cyIsInVzZVN0YXRzIiwidXNlVHJhZGVzIiwidXNlQWNjb3VudEJhbGFuY2UiLCJ1c2VEZWNpc2lvbnMiLCJ1c2VNb3RpZldlaWdodHMiLCJTdHJhdGVneUNhcmQiLCJTdGF0Q2FyZCIsIlRyYWRlSGlzdG9yeSIsIlN0YXR1c0JhZGdlIiwiQnV0dG9uIiwiVGFicyIsIlRhYnNDb250ZW50IiwiVGFic0xpc3QiLCJUYWJzVHJpZ2dlciIsIkFyZWFDaGFydCIsIkFyZWEiLCJYQXhpcyIsIllBeGlzIiwiVG9vbHRpcCIsIkNoYXJ0VG9vbHRpcCIsIlJlc3BvbnNpdmVDb250YWluZXIiLCJBY3Rpdml0eSIsIlphcCIsIlNjYWxlIiwiVHJlbmRpbmdVcCIsIkJyYWluQ2lyY3VpdCIsIkxpbmVDaGFydCIsIlBsYXkiLCJTcXVhcmUiLCJTZXR0aW5ncyIsIlNldHRpbmdzSWNvbiIsIkxpbmsiLCJjbiIsIkRhc2hib2FyZCIsIl9zIiwiZGF0YSIsInN0YXR1cyIsInN0YXRzIiwidHJhZGVzIiwiZGVjaXNpb25zIiwibW90aWZXZWlnaHRzIiwiYWNjb3VudERhdGEiLCJvbmNoYWluIiwidXNlT25DaGFpbiIsIm11bHRpRXhjaGFuZ2UiLCJ1c2VNdWx0aUV4Y2hhbmdlIiwiY29ycmVsYXRpb24iLCJ1c2VDb3JyZWxhdGlvbiIsInBvc2l0aW9ucyIsInVzZVBvc2l0aW9ucyIsImF0ckNvbmZpZyIsInVzZUF0ckNvbmZpZyIsInVwZGF0ZUF0ciIsInVzZVVwZGF0ZUF0ckNvbmZpZyIsInN0YXJ0Qm90Iiwic3RvcEJvdCIsImlzUnVubmluZyIsImNoYXJ0RGF0YSIsImxlbmd0aCIsIm1hcCIsInQiLCJwbmwiLCJOdW1iZXIiLCJ0aW1lIiwiY3JlYXRlZEF0IiwiQXJyYXkiLCJmcm9tIiwiXyIsImkiLCJNYXRoIiwicmFuZG9tIiwibXV0YXRlIiwiaXNQZW5kaW5nIiwidG90YWxQbmwiLCJ0b0ZpeGVkIiwid2luUmF0ZSIsInRvdGFsVHJhZGVzIiwiYWN0aXZlUG9zaXRpb25zIiwidG90YWxSaXNrIiwibW9kZSIsInRpbWVzdGFtcCIsIkRhdGUiLCJ0b0xvY2FsZVRpbWVTdHJpbmciLCJ0b3RhbEFzc2V0cyIsImJhbGFuY2VzIiwiYmFsYW5jZSIsImluZGV4IiwiYXNzZXQiLCJ0b3RhbCIsImxvY2tlZCIsImZyZWUiLCJPYmplY3QiLCJlbnRyaWVzIiwibW90aWYiLCJ3ZWlnaHQiLCJyZXBsYWNlIiwid2lkdGgiLCJhY3RpdmVTdHJhdGVneSIsImxhYmVsIiwidmFsdWUiLCJiYWNrZ3JvdW5kQ29sb3IiLCJib3JkZXJDb2xvciIsImNvbG9yIiwiZGVjaXNpb24iLCJpZHgiLCJhY3Rpb24iLCJzaWduYWwiLCJjb25maWRlbmNlIiwicmVhc29uaW5nIiwibW90aWZzIiwibUlkeCIsInR5cGUiLCJ0b1VwcGVyQ2FzZSIsImRldGFpbHMiLCJrZXkiLCJ2YWwiLCJwb3MiLCJzeW1ib2wiLCJzaWRlIiwiZW50cnlQcmljZSIsInF1YW50aXR5Iiwic3RvcExvc3MiLCJkeW5hbWljU3RvcCIsImlkIiwiYXRyTXVsdGlwbGllciIsImUiLCJjdXJyZW50VGFyZ2V0IiwiZXRoVHJhbnNmZXJzMjRoIiwid2hhbGVUcmFuc2ZlcnMyNGgiLCJhdmdHYXNHd2VpIiwibWF4U3ByZWFkUGVyY2VudCIsInByaWNlcyIsImJpbmFuY2UiLCJjb2luYmFzZSIsImtyYWtlbiIsIkVUSF9CVEMiLCJFVEhfU09MIiwiRVRIX0FWQVgiLCJzdWNjZXNzUGVyY2VudCIsImhlYXRDb2xvciIsIm1pbiIsInNsaWNlIiwicmV2ZXJzZSIsInRyYWRlIiwiY29ycmVzcG9uZGluZ0RlY2lzaW9uIiwiZmluZCIsImQiLCJleGVjdXRlZEF0IiwiX2MiLCIkUmVmcmVzaFJlZyQiXSwiaWdub3JlTGlzdCI6W10sInNvdXJjZXMiOlsiRGFzaGJvYXJkLnRzeCJdLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQgeyB1c2VCb3RDb250cm9sLCB1c2VCb3RTdGF0dXMsIHVzZVN0YXRzLCB1c2VUcmFkZXMsIHVzZUFjY291bnRCYWxhbmNlLCB1c2VEZWNpc2lvbnMsIHVzZU1vdGlmV2VpZ2h0cyB9IGZyb20gXCJAL2hvb2tzL3VzZS1ib3RcIjtcbmltcG9ydCB7IFN0cmF0ZWd5Q2FyZCB9IGZyb20gXCJAL2NvbXBvbmVudHMvU3RyYXRlZ3lDYXJkXCI7XG5pbXBvcnQgeyBTdGF0Q2FyZCB9IGZyb20gXCJAL2NvbXBvbmVudHMvU3RhdENhcmRcIjtcbmltcG9ydCB7IFRyYWRlSGlzdG9yeSB9IGZyb20gXCJAL2NvbXBvbmVudHMvVHJhZGVIaXN0b3J5XCI7XG5pbXBvcnQgeyBTdGF0dXNCYWRnZSB9IGZyb20gXCJAL2NvbXBvbmVudHMvU3RhdHVzQmFkZ2VcIjtcbmltcG9ydCB7IEJ1dHRvbiB9IGZyb20gXCJAL2NvbXBvbmVudHMvdWkvYnV0dG9uXCI7XG5pbXBvcnQgeyBUYWJzLCBUYWJzQ29udGVudCwgVGFic0xpc3QsIFRhYnNUcmlnZ2VyIH0gZnJvbSBcIkAvY29tcG9uZW50cy91aS90YWJzXCI7XG5pbXBvcnQgeyBBcmVhQ2hhcnQsIEFyZWEsIFhBeGlzLCBZQXhpcywgVG9vbHRpcCBhcyBDaGFydFRvb2x0aXAsIFJlc3BvbnNpdmVDb250YWluZXIgfSBmcm9tIFwicmVjaGFydHNcIjtcbmltcG9ydCB7IEFjdGl2aXR5LCBaYXAsIFNjYWxlLCBUcmVuZGluZ1VwLCBCcmFpbkNpcmN1aXQsIExpbmVDaGFydCwgUGxheSwgU3F1YXJlLCBTZXR0aW5ncyBhcyBTZXR0aW5nc0ljb24gfSBmcm9tIFwibHVjaWRlLXJlYWN0XCI7XG5pbXBvcnQgeyBMaW5rIH0gZnJvbSBcIndvdXRlclwiO1xuaW1wb3J0IHsgY24gfSBmcm9tIFwiQC9saWIvdXRpbHNcIjtcblxuZXhwb3J0IGRlZmF1bHQgZnVuY3Rpb24gRGFzaGJvYXJkKCkge1xuICBjb25zdCB7IGRhdGE6IHN0YXR1cyB9ID0gdXNlQm90U3RhdHVzKCk7XG4gIGNvbnN0IHsgZGF0YTogc3RhdHMgfSA9IHVzZVN0YXRzKCk7XG4gIGNvbnN0IHsgZGF0YTogdHJhZGVzIH0gPSB1c2VUcmFkZXMoKTtcbiAgY29uc3QgeyBkYXRhOiBkZWNpc2lvbnMgfSA9IHVzZURlY2lzaW9ucygpO1xuICBjb25zdCB7IGRhdGE6IG1vdGlmV2VpZ2h0cyB9ID0gdXNlTW90aWZXZWlnaHRzKCk7XG4gIGNvbnN0IHsgZGF0YTogYWNjb3VudERhdGEgfSA9IHVzZUFjY291bnRCYWxhbmNlKCk7XG4gIGNvbnN0IHsgZGF0YTogb25jaGFpbiB9ID0gdXNlT25DaGFpbigpO1xuICBjb25zdCB7IGRhdGE6IG11bHRpRXhjaGFuZ2UgfSA9IHVzZU11bHRpRXhjaGFuZ2UoKTtcbiAgY29uc3QgeyBkYXRhOiBjb3JyZWxhdGlvbiB9ID0gdXNlQ29ycmVsYXRpb24oKTtcbiAgY29uc3QgeyBkYXRhOiBwb3NpdGlvbnMgfSA9IHVzZVBvc2l0aW9ucygpO1xuICBjb25zdCB7IGRhdGE6IGF0ckNvbmZpZyB9ID0gdXNlQXRyQ29uZmlnKCk7XG4gIGNvbnN0IHVwZGF0ZUF0ciA9IHVzZVVwZGF0ZUF0ckNvbmZpZygpO1xuICBjb25zdCB7IHN0YXJ0Qm90LCBzdG9wQm90IH0gPSB1c2VCb3RDb250cm9sKCk7XG5cbiAgY29uc3QgaXNSdW5uaW5nID0gc3RhdHVzPy5pc1J1bm5pbmcgfHwgZmFsc2U7XG4gIFxuICAvLyBNb2NrIGRhdGEgZm9yIGNoYXJ0IGlmIG5vdCBlbm91Z2ggdHJhZGVzXG4gIGNvbnN0IGNoYXJ0RGF0YSA9IHRyYWRlcyAmJiB0cmFkZXMubGVuZ3RoID4gNSBcbiAgICA/IHRyYWRlcy5tYXAodCA9PiAoeyBwbmw6IE51bWJlcih0LnBubCksIHRpbWU6IHQuY3JlYXRlZEF0IH0pKVxuICAgIDogQXJyYXkuZnJvbSh7IGxlbmd0aDogMTAgfSkubWFwKChfLCBpKSA9PiAoeyBwbmw6IE1hdGgucmFuZG9tKCkgKiAyMCAtIDUsIHRpbWU6IGkgfSkpO1xuXG4gIHJldHVybiAoXG4gICAgPGRpdiBjbGFzc05hbWU9XCJtaW4taC1zY3JlZW4gYmctYmFja2dyb3VuZCB0ZXh0LWZvcmVncm91bmQgcGItMjAgZ3JpZC1iZ1wiPlxuICAgICAgey8qIEhlYWRlciAqL31cbiAgICAgIDxoZWFkZXIgY2xhc3NOYW1lPVwic3RpY2t5IHRvcC0wIHotNTAgYm9yZGVyLWIgYm9yZGVyLXdoaXRlLzUgYmctYmFja2dyb3VuZC84MCBiYWNrZHJvcC1ibHVyLXhsXCI+XG4gICAgICAgIDxkaXYgY2xhc3NOYW1lPVwibWF4LXctN3hsIG14LWF1dG8gcHgtNCBzbTpweC02IGxnOnB4LTggaC0xNiBmbGV4IGl0ZW1zLWNlbnRlciBqdXN0aWZ5LWJldHdlZW5cIj5cbiAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT1cImZsZXggaXRlbXMtY2VudGVyIGdhcC0zXCI+XG4gICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT1cInctOCBoLTggcm91bmRlZC1sZyBiZy1ncmFkaWVudC10by1iciBmcm9tLXByaW1hcnkgdG8tYmx1ZS02MDAgZmxleCBpdGVtcy1jZW50ZXIganVzdGlmeS1jZW50ZXIgc2hhZG93LWxnIHNoYWRvdy1wcmltYXJ5LzIwXCI+XG4gICAgICAgICAgICAgIDxBY3Rpdml0eSBjbGFzc05hbWU9XCJ3LTUgaC01IHRleHQtd2hpdGVcIiAvPlxuICAgICAgICAgICAgPC9kaXY+XG4gICAgICAgICAgICA8ZGl2PlxuICAgICAgICAgICAgICA8aDEgY2xhc3NOYW1lPVwidGV4dC1sZyBmb250LWJvbGQgZm9udC1kaXNwbGF5IHRyYWNraW5nLXRpZ2h0IGxlYWRpbmctbm9uZVwiPkJpbmFuY2UgUXVhbnQ8L2gxPlxuICAgICAgICAgICAgICA8cCBjbGFzc05hbWU9XCJ0ZXh0LVsxMHB4XSB0ZXh0LW11dGVkLWZvcmVncm91bmQgdXBwZXJjYXNlIHRyYWNraW5nLXdpZGVzdFwiPkF1dG9ub21vdXMgVHJhZGluZyBTeXN0ZW08L3A+XG4gICAgICAgICAgICA8L2Rpdj5cbiAgICAgICAgICA8L2Rpdj5cbiAgICAgICAgICBcbiAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT1cImZsZXggaXRlbXMtY2VudGVyIGdhcC00XCI+XG4gICAgICAgICAgICA8U3RhdHVzQmFkZ2UgaXNSdW5uaW5nPXtpc1J1bm5pbmd9IC8+XG4gICAgICAgICAgICA8TGluayBocmVmPVwiL3NldHRpbmdzXCI+XG4gICAgICAgICAgICAgIDxCdXR0b24gdmFyaWFudD1cIm91dGxpbmVcIiBzaXplPVwiaWNvblwiIGNsYXNzTmFtZT1cImgtOSB3LTkgYm9yZGVyLXdoaXRlLzEwIGhvdmVyOmJnLXdoaXRlLzVcIj5cbiAgICAgICAgICAgICAgICA8U2V0dGluZ3NJY29uIGNsYXNzTmFtZT1cInctNCBoLTQgdGV4dC1tdXRlZC1mb3JlZ3JvdW5kXCIgLz5cbiAgICAgICAgICAgICAgPC9CdXR0b24+XG4gICAgICAgICAgICA8L0xpbms+XG4gICAgICAgICAgPC9kaXY+XG4gICAgICAgIDwvZGl2PlxuICAgICAgPC9oZWFkZXI+XG5cbiAgICAgIDxtYWluIGNsYXNzTmFtZT1cIm1heC13LTd4bCBteC1hdXRvIHB4LTQgc206cHgtNiBsZzpweC04IHB5LTggc3BhY2UteS04XCI+XG4gICAgICAgIFxuICAgICAgICB7LyogQ29udHJvbCBQYW5lbCAmIFN0YXRzICovfVxuICAgICAgICA8ZGl2IGNsYXNzTmFtZT1cImdyaWQgZ3JpZC1jb2xzLTEgbGc6Z3JpZC1jb2xzLTQgZ2FwLTZcIj5cbiAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT1cImxnOmNvbC1zcGFuLTEgc3BhY2UteS02XCI+XG4gICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT1cImdsYXNzLWNhcmQgcC02IHJvdW5kZWQtMnhsIGJvcmRlci1sLTQgYm9yZGVyLWwtcHJpbWFyeSBmbGV4IGZsZXgtY29sIGp1c3RpZnktYmV0d2VlbiBoLWZ1bGwgbWluLWgtWzIwMHB4XVwiPlxuICAgICAgICAgICAgICA8ZGl2PlxuICAgICAgICAgICAgICAgIDxoMiBjbGFzc05hbWU9XCJ0ZXh0LXhsIGZvbnQtYm9sZCBmb250LWRpc3BsYXkgbWItMlwiPkJvdCBDb250cm9sPC9oMj5cbiAgICAgICAgICAgICAgICA8cCBjbGFzc05hbWU9XCJ0ZXh0LXNtIHRleHQtbXV0ZWQtZm9yZWdyb3VuZCBtYi02XCI+XG4gICAgICAgICAgICAgICAgICB7aXNSdW5uaW5nIFxuICAgICAgICAgICAgICAgICAgICA/IFwiU3lzdGVtIGlzIGFjdGl2ZWx5IG1vbml0b3JpbmcgbWFya2V0IGRhdGEgYW5kIGV4ZWN1dGluZyB0cmFkZXMgYmFzZWQgb24gc2VsZWN0ZWQgc3RyYXRlZ2llcy5cIlxuICAgICAgICAgICAgICAgICAgICA6IFwiU3lzdGVtIGlzIG9mZmxpbmUuIFN0cmF0ZWdpZXMgd2lsbCBub3QgZXhlY3V0ZSB1bnRpbCB0aGUgYm90IGlzIHN0YXJ0ZWQuXCJ9XG4gICAgICAgICAgICAgICAgPC9wPlxuICAgICAgICAgICAgICA8L2Rpdj5cbiAgICAgICAgICAgICAgXG4gICAgICAgICAgICAgIDxCdXR0b24gXG4gICAgICAgICAgICAgICAgb25DbGljaz17KCkgPT4gaXNSdW5uaW5nID8gc3RvcEJvdC5tdXRhdGUoKSA6IHN0YXJ0Qm90Lm11dGF0ZSgpfVxuICAgICAgICAgICAgICAgIGRpc2FibGVkPXtzdGFydEJvdC5pc1BlbmRpbmcgfHwgc3RvcEJvdC5pc1BlbmRpbmd9XG4gICAgICAgICAgICAgICAgY2xhc3NOYW1lPXtjbihcbiAgICAgICAgICAgICAgICAgIFwidy1mdWxsIGgtMTIgdGV4dC1iYXNlIGZvbnQtc2VtaWJvbGQgc2hhZG93LXhsIHRyYW5zaXRpb24tYWxsIGhvdmVyOnNjYWxlLVsxLjAyXSBhY3RpdmU6c2NhbGUtWzAuOThdXCIsXG4gICAgICAgICAgICAgICAgICBpc1J1bm5pbmcgXG4gICAgICAgICAgICAgICAgICAgID8gXCJiZy1yZWQtNTAwLzEwIGhvdmVyOmJnLXJlZC01MDAvMjAgdGV4dC1yZWQtNTAwIGJvcmRlciBib3JkZXItcmVkLTUwMC81MFwiIFxuICAgICAgICAgICAgICAgICAgICA6IFwiYmctcHJpbWFyeSBob3ZlcjpiZy1wcmltYXJ5LzkwIHRleHQtd2hpdGUgc2hhZG93LXByaW1hcnkvMjVcIlxuICAgICAgICAgICAgICAgICl9XG4gICAgICAgICAgICAgID5cbiAgICAgICAgICAgICAgICB7c3RhcnRCb3QuaXNQZW5kaW5nIHx8IHN0b3BCb3QuaXNQZW5kaW5nID8gKFxuICAgICAgICAgICAgICAgICAgXCJQcm9jZXNzaW5nLi4uXCJcbiAgICAgICAgICAgICAgICApIDogaXNSdW5uaW5nID8gKFxuICAgICAgICAgICAgICAgICAgPD48U3F1YXJlIGNsYXNzTmFtZT1cInctNCBoLTQgbXItMiBmaWxsLWN1cnJlbnRcIiAvPiBTVE9QIEJPVDwvPlxuICAgICAgICAgICAgICAgICkgOiAoXG4gICAgICAgICAgICAgICAgICA8PjxQbGF5IGNsYXNzTmFtZT1cInctNCBoLTQgbXItMiBmaWxsLWN1cnJlbnRcIiAvPiBTVEFSVCBCT1Q8Lz5cbiAgICAgICAgICAgICAgICApfVxuICAgICAgICAgICAgICA8L0J1dHRvbj5cbiAgICAgICAgICAgIDwvZGl2PlxuICAgICAgICAgIDwvZGl2PlxuXG4gICAgICAgICAgPGRpdiBjbGFzc05hbWU9XCJsZzpjb2wtc3Bhbi0zIGdyaWQgZ3JpZC1jb2xzLTEgc206Z3JpZC1jb2xzLTIgbGc6Z3JpZC1jb2xzLTQgZ2FwLTRcIj5cbiAgICAgICAgICAgIDxTdGF0Q2FyZCBcbiAgICAgICAgICAgICAgbGFiZWw9XCJUb3RhbCBQbkxcIiBcbiAgICAgICAgICAgICAgdmFsdWU9e2AkJHtzdGF0cz8udG90YWxQbmwudG9GaXhlZCgyKSB8fCAnMC4wMCd9YH0gXG4gICAgICAgICAgICAgIHN1YlZhbHVlPVwiKzEyLjUlIHZzIGxhc3Qgd2Vla1wiXG4gICAgICAgICAgICAgIHRyZW5kPVwidXBcIlxuICAgICAgICAgICAgICBpY29uPXs8TGluZUNoYXJ0IGNsYXNzTmFtZT1cInctNSBoLTVcIiAvPn1cbiAgICAgICAgICAgIC8+XG4gICAgICAgICAgICA8U3RhdENhcmQgXG4gICAgICAgICAgICAgIGxhYmVsPVwiV2luIFJhdGVcIiBcbiAgICAgICAgICAgICAgdmFsdWU9e2Ake3N0YXRzPy53aW5SYXRlLnRvRml4ZWQoMSkgfHwgJzAuMCd9JWB9IFxuICAgICAgICAgICAgICBzdWJWYWx1ZT17YEJhc2VkIG9uICR7c3RhdHM/LnRvdGFsVHJhZGVzIHx8IDB9IHRyYWRlc2B9XG4gICAgICAgICAgICAgIHRyZW5kPVwibmV1dHJhbFwiXG4gICAgICAgICAgICAgIGljb249ezxBY3Rpdml0eSBjbGFzc05hbWU9XCJ3LTUgaC01XCIgLz59XG4gICAgICAgICAgICAvPlxuICAgICAgICAgICAgPFN0YXRDYXJkIFxuICAgICAgICAgICAgICBsYWJlbD1cIkFjdGl2ZSBQb3NpdGlvbnNcIiBcbiAgICAgICAgICAgICAgdmFsdWU9e3N0YXRzPy5hY3RpdmVQb3NpdGlvbnMgfHwgMH1cbiAgICAgICAgICAgICAgc3ViVmFsdWU9e2BUb3RhbDogJHtzdGF0cz8udG90YWxUcmFkZXMgfHwgMH0gdHJhZGVzYH1cbiAgICAgICAgICAgICAgaWNvbj17PFNjYWxlIGNsYXNzTmFtZT1cInctNSBoLTVcIiAvPn1cbiAgICAgICAgICAgIC8+XG4gICAgICAgICAgICA8U3RhdENhcmQgXG4gICAgICAgICAgICAgIGxhYmVsPVwiVG90YWwgVHJhZGVzXCIgXG4gICAgICAgICAgICAgIHZhbHVlPXtzdGF0cz8udG90YWxUcmFkZXMgfHwgMH1cbiAgICAgICAgICAgICAgc3ViVmFsdWU9e2BSaXNrOiAkeyhzdGF0cz8udG90YWxSaXNrIHx8IDApLnRvRml4ZWQoMil9JWB9XG4gICAgICAgICAgICAgIGljb249ezxaYXAgY2xhc3NOYW1lPVwidy01IGgtNVwiIC8+fVxuICAgICAgICAgICAgLz5cbiAgICAgICAgICA8L2Rpdj5cbiAgICAgICAgPC9kaXY+XG5cbiAgICAgICAgey8qIEJpbmFuY2UgQWNjb3VudCBCYWxhbmNlcyAqL31cbiAgICAgICAgPGRpdiBjbGFzc05hbWU9XCJnbGFzcy1jYXJkIHAtNiByb3VuZGVkLTJ4bCBib3JkZXIgYm9yZGVyLXdoaXRlLzEwXCI+XG4gICAgICAgICAgPGRpdiBjbGFzc05hbWU9XCJmbGV4IGl0ZW1zLWNlbnRlciBqdXN0aWZ5LWJldHdlZW4gbWItNlwiPlxuICAgICAgICAgICAgPGRpdj5cbiAgICAgICAgICAgICAgPGgyIGNsYXNzTmFtZT1cInRleHQtMnhsIGZvbnQtYm9sZCBmb250LWRpc3BsYXkgZmxleCBpdGVtcy1jZW50ZXIgZ2FwLTJcIj5cbiAgICAgICAgICAgICAgICA8QWN0aXZpdHkgY2xhc3NOYW1lPVwidy02IGgtNiB0ZXh0LWdyZWVuLTUwMFwiIC8+XG4gICAgICAgICAgICAgICAgQmluYW5jZSBBY2NvdW50IEJhbGFuY2VcbiAgICAgICAgICAgICAgPC9oMj5cbiAgICAgICAgICAgICAgPHAgY2xhc3NOYW1lPVwidGV4dC1zbSB0ZXh0LW11dGVkLWZvcmVncm91bmQgbXQtMVwiPlxuICAgICAgICAgICAgICAgIHthY2NvdW50RGF0YT8ubW9kZSA9PT0gJ0xJVkUnID8gKFxuICAgICAgICAgICAgICAgICAgPHNwYW4gY2xhc3NOYW1lPVwidGV4dC1ncmVlbi01MDAgZm9udC1zZW1pYm9sZFwiPvCflLQgTElWRSBBQ0NPVU5UPC9zcGFuPlxuICAgICAgICAgICAgICAgICkgOiAoXG4gICAgICAgICAgICAgICAgICA8c3BhbiBjbGFzc05hbWU9XCJ0ZXh0LXllbGxvdy01MDAgZm9udC1zZW1pYm9sZFwiPvCfk4ogREVNTyBNT0RFPC9zcGFuPlxuICAgICAgICAgICAgICAgICl9XG4gICAgICAgICAgICAgIDwvcD5cbiAgICAgICAgICAgIDwvZGl2PlxuICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9XCJ0ZXh0LXJpZ2h0XCI+XG4gICAgICAgICAgICAgIDxwIGNsYXNzTmFtZT1cInRleHQteHMgdGV4dC1tdXRlZC1mb3JlZ3JvdW5kXCI+XG4gICAgICAgICAgICAgICAge2FjY291bnREYXRhPy50aW1lc3RhbXAgPyBuZXcgRGF0ZShhY2NvdW50RGF0YS50aW1lc3RhbXApLnRvTG9jYWxlVGltZVN0cmluZygpIDogJ0xvYWRpbmcuLi4nfVxuICAgICAgICAgICAgICA8L3A+XG4gICAgICAgICAgICAgIDxwIGNsYXNzTmFtZT1cInRleHQtc20gdGV4dC1tdXRlZC1mb3JlZ3JvdW5kXCI+XG4gICAgICAgICAgICAgICAge2FjY291bnREYXRhPy50b3RhbEFzc2V0c30gYXNzZXRzXG4gICAgICAgICAgICAgIDwvcD5cbiAgICAgICAgICAgIDwvZGl2PlxuICAgICAgICAgIDwvZGl2PlxuXG4gICAgICAgICAge2FjY291bnREYXRhPy5iYWxhbmNlcyAmJiBhY2NvdW50RGF0YS5iYWxhbmNlcy5sZW5ndGggPiAwID8gKFxuICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9XCJncmlkIGdyaWQtY29scy0xIG1kOmdyaWQtY29scy0yIGxnOmdyaWQtY29scy00IGdhcC00XCI+XG4gICAgICAgICAgICAgIHthY2NvdW50RGF0YS5iYWxhbmNlcy5tYXAoKGJhbGFuY2U6IGFueSwgaW5kZXg6IG51bWJlcikgPT4gKFxuICAgICAgICAgICAgICAgIDxkaXYgXG4gICAgICAgICAgICAgICAgICBrZXk9e2Ake2JhbGFuY2UuYXNzZXR9LSR7aW5kZXh9YH1cbiAgICAgICAgICAgICAgICAgIGNsYXNzTmFtZT1cImJnLXdoaXRlLzUgYm9yZGVyIGJvcmRlci13aGl0ZS8xMCByb3VuZGVkLWxnIHAtNCBob3ZlcjpiZy13aGl0ZS8xMCB0cmFuc2l0aW9uLWNvbG9yc1wiXG4gICAgICAgICAgICAgICAgPlxuICAgICAgICAgICAgICAgICAgPHAgY2xhc3NOYW1lPVwidGV4dC1zbSB0ZXh0LW11dGVkLWZvcmVncm91bmQgbWItMVwiPntiYWxhbmNlLmFzc2V0fTwvcD5cbiAgICAgICAgICAgICAgICAgIDxwIGNsYXNzTmFtZT1cInRleHQteGwgZm9udC1ib2xkIGZvbnQtZGlzcGxheSB0ZXh0LWdyZWVuLTQwMFwiPlxuICAgICAgICAgICAgICAgICAgICB7YmFsYW5jZS50b3RhbC50b0ZpeGVkKDgpfVxuICAgICAgICAgICAgICAgICAgPC9wPlxuICAgICAgICAgICAgICAgICAge2JhbGFuY2UubG9ja2VkID4gMCAmJiAoXG4gICAgICAgICAgICAgICAgICAgIDxwIGNsYXNzTmFtZT1cInRleHQteHMgdGV4dC15ZWxsb3ctNTAwIG10LTJcIj5cbiAgICAgICAgICAgICAgICAgICAgICBMb2NrZWQ6IHtiYWxhbmNlLmxvY2tlZC50b0ZpeGVkKDgpfVxuICAgICAgICAgICAgICAgICAgICA8L3A+XG4gICAgICAgICAgICAgICAgICApfVxuICAgICAgICAgICAgICAgICAgPHAgY2xhc3NOYW1lPVwidGV4dC14cyB0ZXh0LW11dGVkLWZvcmVncm91bmQgbXQtMVwiPlxuICAgICAgICAgICAgICAgICAgICBBdmFpbGFibGU6IHtiYWxhbmNlLmZyZWUudG9GaXhlZCg4KX1cbiAgICAgICAgICAgICAgICAgIDwvcD5cbiAgICAgICAgICAgICAgICA8L2Rpdj5cbiAgICAgICAgICAgICAgKSl9XG4gICAgICAgICAgICA8L2Rpdj5cbiAgICAgICAgICApIDogKFxuICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9XCJ0ZXh0LWNlbnRlciBweS04XCI+XG4gICAgICAgICAgICAgIDxwIGNsYXNzTmFtZT1cInRleHQtbXV0ZWQtZm9yZWdyb3VuZFwiPkxvYWRpbmcgYWNjb3VudCBiYWxhbmNlcy4uLjwvcD5cbiAgICAgICAgICAgIDwvZGl2PlxuICAgICAgICAgICl9XG4gICAgICAgIDwvZGl2PlxuXG4gICAgICAgIHsvKiBNYWluIENvbnRlbnQgVGFicyAqL31cbiAgICAgICAgPFRhYnMgZGVmYXVsdFZhbHVlPVwic3RyYXRlZ2llc1wiIGNsYXNzTmFtZT1cInctZnVsbFwiPlxuICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPVwiZmxleCBpdGVtcy1jZW50ZXIganVzdGlmeS1iZXR3ZWVuIG1iLTZcIj5cbiAgICAgICAgICAgIDxoMiBjbGFzc05hbWU9XCJ0ZXh0LTJ4bCBmb250LWJvbGQgZm9udC1kaXNwbGF5XCI+U3lzdGVtIE92ZXJ2aWV3PC9oMj5cbiAgICAgICAgICAgIDxUYWJzTGlzdCBjbGFzc05hbWU9XCJiZy13aGl0ZS81IGJvcmRlciBib3JkZXItd2hpdGUvMTAgcC0xXCI+XG4gICAgICAgICAgICAgIDxUYWJzVHJpZ2dlciB2YWx1ZT1cInN0cmF0ZWdpZXNcIiBjbGFzc05hbWU9XCJkYXRhLVtzdGF0ZT1hY3RpdmVdOmJnLXByaW1hcnkgZGF0YS1bc3RhdGU9YWN0aXZlXTp0ZXh0LXdoaXRlXCI+U3RyYXRlZ2llczwvVGFic1RyaWdnZXI+XG4gICAgICAgICAgICAgIDxUYWJzVHJpZ2dlciB2YWx1ZT1cInBlcmZvcm1hbmNlXCIgY2xhc3NOYW1lPVwiZGF0YS1bc3RhdGU9YWN0aXZlXTpiZy1wcmltYXJ5IGRhdGEtW3N0YXRlPWFjdGl2ZV06dGV4dC13aGl0ZVwiPlBlcmZvcm1hbmNlPC9UYWJzVHJpZ2dlcj5cbiAgICAgICAgICAgICAgPFRhYnNUcmlnZ2VyIHZhbHVlPVwidHJhZGVzXCIgY2xhc3NOYW1lPVwiZGF0YS1bc3RhdGU9YWN0aXZlXTpiZy1wcmltYXJ5IGRhdGEtW3N0YXRlPWFjdGl2ZV06dGV4dC13aGl0ZVwiPkxpdmUgVHJhZGVzPC9UYWJzVHJpZ2dlcj5cbiAgICAgICAgICAgICAgPFRhYnNUcmlnZ2VyIHZhbHVlPVwiZGVjaXNpb25zXCIgY2xhc3NOYW1lPVwiZGF0YS1bc3RhdGU9YWN0aXZlXTpiZy1wcmltYXJ5IGRhdGEtW3N0YXRlPWFjdGl2ZV06dGV4dC13aGl0ZVwiPvCflI0gRGVjaXNpb25zPC9UYWJzVHJpZ2dlcj5cbiAgICAgICAgICAgICAgPFRhYnNUcmlnZ2VyIHZhbHVlPVwiYWR2YW5jZWRcIiBjbGFzc05hbWU9XCJkYXRhLVtzdGF0ZT1hY3RpdmVdOmJnLXByaW1hcnkgZGF0YS1bc3RhdGU9YWN0aXZlXTp0ZXh0LXdoaXRlXCI+8J+TiiBBZHZhbmNlZDwvVGFic1RyaWdnZXI+XG4gICAgICAgICAgICA8L1RhYnNMaXN0PlxuICAgICAgICAgIDwvZGl2PlxuXG4gICAgICAgICAgPFRhYnNDb250ZW50IHZhbHVlPVwic3RyYXRlZ2llc1wiIGNsYXNzTmFtZT1cInNwYWNlLXktNiBhbmltYXRlLWluIGZhZGUtaW4gc2xpZGUtaW4tZnJvbS1ib3R0b20tNCBkdXJhdGlvbi01MDBcIj5cbiAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPVwiZ2xhc3MtY2FyZCBwLTYgcm91bmRlZC0yeGwgYm9yZGVyIGJvcmRlci13aGl0ZS8xMCBtYi02XCI+XG4gICAgICAgICAgICAgIDxoMyBjbGFzc05hbWU9XCJ0ZXh0LXhsIGZvbnQtYm9sZCBmb250LWRpc3BsYXkgbWItNFwiPk1vdGlmIEVuc2VtYmxlIFdlaWdodHM8L2gzPlxuICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT1cImdyaWQgZ3JpZC1jb2xzLTEgbWQ6Z3JpZC1jb2xzLTIgbGc6Z3JpZC1jb2xzLTQgZ2FwLTRcIj5cbiAgICAgICAgICAgICAgICB7bW90aWZXZWlnaHRzICYmIE9iamVjdC5lbnRyaWVzKG1vdGlmV2VpZ2h0cykubWFwKChbbW90aWYsIHdlaWdodF06IFtzdHJpbmcsIGFueV0pID0+IChcbiAgICAgICAgICAgICAgICAgIDxkaXYga2V5PXttb3RpZn0gY2xhc3NOYW1lPVwiYmctd2hpdGUvNSBib3JkZXIgYm9yZGVyLXdoaXRlLzEwIHJvdW5kZWQtbGcgcC00XCI+XG4gICAgICAgICAgICAgICAgICAgIDxwIGNsYXNzTmFtZT1cInRleHQtc20gdGV4dC1tdXRlZC1mb3JlZ3JvdW5kIG1iLTIgY2FwaXRhbGl6ZVwiPnttb3RpZi5yZXBsYWNlKCdfJywgJyAnKX08L3A+XG4gICAgICAgICAgICAgICAgICAgIDxwIGNsYXNzTmFtZT1cInRleHQtM3hsIGZvbnQtYm9sZCB0ZXh0LXByaW1hcnlcIj57KCh3ZWlnaHQgYXMgbnVtYmVyKSAqIDEwMCkudG9GaXhlZCgxKX0lPC9wPlxuICAgICAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT1cIm10LTIgdy1mdWxsIGJnLXdoaXRlLzEwIHJvdW5kZWQtZnVsbCBoLTIgb3ZlcmZsb3ctaGlkZGVuXCI+XG4gICAgICAgICAgICAgICAgICAgICAgPGRpdiBcbiAgICAgICAgICAgICAgICAgICAgICAgIGNsYXNzTmFtZT1cImJnLWdyYWRpZW50LXRvLXIgZnJvbS1wcmltYXJ5IHRvLWJsdWUtNTAwIGgtZnVsbCB0cmFuc2l0aW9uLWFsbCBkdXJhdGlvbi0zMDBcIlxuICAgICAgICAgICAgICAgICAgICAgICAgc3R5bGU9e3sgd2lkdGg6IGAkeyh3ZWlnaHQgYXMgbnVtYmVyKSAqIDEwMH0lYCB9fVxuICAgICAgICAgICAgICAgICAgICAgIC8+XG4gICAgICAgICAgICAgICAgICAgIDwvZGl2PlxuICAgICAgICAgICAgICAgICAgPC9kaXY+XG4gICAgICAgICAgICAgICAgKSl9XG4gICAgICAgICAgICAgIDwvZGl2PlxuICAgICAgICAgICAgICA8cCBjbGFzc05hbWU9XCJ0ZXh0LXNtIHRleHQtbXV0ZWQtZm9yZWdyb3VuZCBtdC00XCI+XG4gICAgICAgICAgICAgICAgV2VpZ2h0cyBhcmUgYWRhcHRpdmUgYW5kIHVwZGF0ZSBiYXNlZCBvbiB0cmFkaW5nIHBlcmZvcm1hbmNlLiBIaWdoZXIgd2VpZ2h0ID0gYmV0dGVyIHJlY2VudCBwZXJmb3JtYW5jZS5cbiAgICAgICAgICAgICAgPC9wPlxuICAgICAgICAgICAgPC9kaXY+XG5cbiAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPVwiZ3JpZCBncmlkLWNvbHMtMSBtZDpncmlkLWNvbHMtMiBsZzpncmlkLWNvbHMtMyB4bDpncmlkLWNvbHMtNCBnYXAtNFwiPlxuICAgICAgICAgICAgICA8U3RyYXRlZ3lDYXJkIFxuICAgICAgICAgICAgICAgIHRpdGxlPVwiTWFya2V0IE1ha2luZ1wiXG4gICAgICAgICAgICAgICAgZGVzY3JpcHRpb249XCJQcm92aWRlcyBsaXF1aWRpdHkgYnkgcGxhY2luZyBsaW1pdCBvcmRlcnMgb24gYm90aCBzaWRlcy5cIlxuICAgICAgICAgICAgICAgIGFjdGl2ZT17c3RhdHVzPy5hY3RpdmVTdHJhdGVneSA9PT0gJ01hcmtldE1ha2luZyd9XG4gICAgICAgICAgICAgICAgaWNvbj17PFNjYWxlIGNsYXNzTmFtZT1cInctNiBoLTZcIiAvPn1cbiAgICAgICAgICAgICAgICBleHBsYW5hdGlvbj1cIkNvbnRpbnVvdXNseSBwbGFjZXMgYnV5IGFuZCBzZWxsIGxpbWl0IG9yZGVycyBuZWFyIHRoZSBjdXJyZW50IHByaWNlIHRvIGNhcHR1cmUgdGhlIGJpZC1hc2sgc3ByZWFkLiBQcm9maXRzIGZyb20gc3RhYmxlIG9yIHJhbmdlLWJvdW5kIG1hcmtldHMuXCJcbiAgICAgICAgICAgICAgICBtZXRyaWNzPXtbXG4gICAgICAgICAgICAgICAgICB7IGxhYmVsOiBcIlNwcmVhZFwiLCB2YWx1ZTogXCIwLjE1JVwiIH0sXG4gICAgICAgICAgICAgICAgICB7IGxhYmVsOiBcIk9yZGVyc1wiLCB2YWx1ZTogXCJBY3RpdmVcIiB9XG4gICAgICAgICAgICAgICAgXX1cbiAgICAgICAgICAgICAgLz5cbiAgICAgICAgICAgICAgPFN0cmF0ZWd5Q2FyZCBcbiAgICAgICAgICAgICAgICB0aXRsZT1cIkFyYml0cmFnZVwiXG4gICAgICAgICAgICAgICAgZGVzY3JpcHRpb249XCJFeHBsb2l0cyBwcmljZSBkaWZmZXJlbmNlcyBhY3Jvc3MgbXVsdGlwbGUgbWFya2V0cy5cIlxuICAgICAgICAgICAgICAgIGFjdGl2ZT17c3RhdHVzPy5hY3RpdmVTdHJhdGVneSA9PT0gJ0FyYml0cmFnZSd9XG4gICAgICAgICAgICAgICAgaWNvbj17PFphcCBjbGFzc05hbWU9XCJ3LTYgaC02XCIgLz59XG4gICAgICAgICAgICAgICAgZXhwbGFuYXRpb249XCJNb25pdG9ycyBkaWZmZXJlbnQgZXhjaGFuZ2VzIG9yIHBhaXJzIGZvciB0aGUgc2FtZSBhc3NldC4gSW5zdGFudGx5IGJ1eXMgbG93ZXIgYW5kIHNlbGxzIGhpZ2hlciB3aGVuIGEgZGlzY3JlcGFuY3kgZXhjZWVkcyBmZWVzLlwiXG4gICAgICAgICAgICAgICAgbWV0cmljcz17W1xuICAgICAgICAgICAgICAgICAgeyBsYWJlbDogXCJPcHBzL2hyXCIsIHZhbHVlOiBcIjEyXCIgfSxcbiAgICAgICAgICAgICAgICAgIHsgbGFiZWw6IFwiQXZnIFByb2ZpdFwiLCB2YWx1ZTogXCIwLjQlXCIgfVxuICAgICAgICAgICAgICAgIF19XG4gICAgICAgICAgICAgIC8+XG4gICAgICAgICAgICAgIDxTdHJhdGVneUNhcmQgXG4gICAgICAgICAgICAgICAgdGl0bGU9XCJNb21lbnR1bVwiXG4gICAgICAgICAgICAgICAgZGVzY3JpcHRpb249XCJGb2xsb3dzIHRyZW5kcyBiYXNlZCBvbiBuZXdzIGFuZCB2b2x1bWUgc3Bpa2VzLlwiXG4gICAgICAgICAgICAgICAgYWN0aXZlPXtzdGF0dXM/LmFjdGl2ZVN0cmF0ZWd5ID09PSAnTW9tZW50dW0nfVxuICAgICAgICAgICAgICAgIGljb249ezxUcmVuZGluZ1VwIGNsYXNzTmFtZT1cInctNiBoLTZcIiAvPn1cbiAgICAgICAgICAgICAgICBleHBsYW5hdGlvbj1cIkRldGVjdHMgc3Ryb25nIHByaWNlIG1vdmVtZW50cyBhY2NvbXBhbmllZCBieSBoaWdoIHZvbHVtZS4gRW50ZXJzIHBvc2l0aW9ucyBpbiB0aGUgZGlyZWN0aW9uIG9mIHRoZSB0cmVuZCBhbmQgcmlkZXMgaXQgdW50aWwgbW9tZW50dW0gZmFkZXMuXCJcbiAgICAgICAgICAgICAgICBtZXRyaWNzPXtbXG4gICAgICAgICAgICAgICAgICB7IGxhYmVsOiBcIlJTSVwiLCB2YWx1ZTogXCI2NFwiIH0sXG4gICAgICAgICAgICAgICAgICB7IGxhYmVsOiBcIlRyZW5kXCIsIHZhbHVlOiBcIkJ1bGxpc2hcIiB9XG4gICAgICAgICAgICAgICAgXX1cbiAgICAgICAgICAgICAgLz5cbiAgICAgICAgICAgICAgPFN0cmF0ZWd5Q2FyZCBcbiAgICAgICAgICAgICAgICB0aXRsZT1cIkJheWVzICsgTW9udGUgQ2FybG9cIlxuICAgICAgICAgICAgICAgIGRlc2NyaXB0aW9uPVwiUHJvYmFiaWxpc3RpYyBtb2RlbGluZyBmb3Igcmlzay1hZGp1c3RlZCBlbnRyaWVzLlwiXG4gICAgICAgICAgICAgICAgYWN0aXZlPXtzdGF0dXM/LmFjdGl2ZVN0cmF0ZWd5ID09PSAnQmF5ZXNpYW4nfVxuICAgICAgICAgICAgICAgIGljb249ezxCcmFpbkNpcmN1aXQgY2xhc3NOYW1lPVwidy02IGgtNlwiIC8+fVxuICAgICAgICAgICAgICAgIGV4cGxhbmF0aW9uPVwiVXNlcyBCYXllc2lhbiBpbmZlcmVuY2UgdG8gdXBkYXRlIHByb2JhYmlsaXR5IGJlbGllZnMgd2l0aCBuZXcgZGF0YS4gUnVucyBNb250ZSBDYXJsbyBzaW11bGF0aW9ucyB0byBwcmVkaWN0IGZ1dHVyZSBwcmljZSBwYXRocyBhbmQgYXNzZXNzIHJpc2suXCJcbiAgICAgICAgICAgICAgICBtZXRyaWNzPXtbXG4gICAgICAgICAgICAgICAgICB7IGxhYmVsOiBcIkNvbmZpZGVuY2VcIiwgdmFsdWU6IFwiODclXCIgfSxcbiAgICAgICAgICAgICAgICAgIHsgbGFiZWw6IFwiU2ltc1wiLCB2YWx1ZTogXCIxMGtcIiB9XG4gICAgICAgICAgICAgICAgXX1cbiAgICAgICAgICAgICAgLz5cbiAgICAgICAgICAgICAgPFN0cmF0ZWd5Q2FyZCBcbiAgICAgICAgICAgICAgICB0aXRsZT1cIlJlaW5mb3JjZW1lbnQgTGVhcm5pbmdcIlxuICAgICAgICAgICAgICAgIGRlc2NyaXB0aW9uPVwiU2VsZi1vcHRpbWl6aW5nIGFnZW50IHRoYXQgbGVhcm5zIGZyb20gbWFya2V0IGZlZWRiYWNrLlwiXG4gICAgICAgICAgICAgICAgYWN0aXZlPXtzdGF0dXM/LmFjdGl2ZVN0cmF0ZWd5ID09PSAnUkwnfVxuICAgICAgICAgICAgICAgIGljb249ezxBY3Rpdml0eSBjbGFzc05hbWU9XCJ3LTYgaC02XCIgLz59XG4gICAgICAgICAgICAgICAgZXhwbGFuYXRpb249XCJBbiBBSSBhZ2VudCB0aGF0IGxlYXJucyBvcHRpbWFsIGFjdGlvbnMgKGJ1eSwgc2VsbCwgaG9sZCkgYnkgaW50ZXJhY3Rpbmcgd2l0aCB0aGUgbWFya2V0IGVudmlyb25tZW50IGFuZCBtYXhpbWl6aW5nIGEgcmV3YXJkIGZ1bmN0aW9uIChQbkwpLlwiXG4gICAgICAgICAgICAgICAgbWV0cmljcz17W1xuICAgICAgICAgICAgICAgICAgeyBsYWJlbDogXCJFcHNpbG9uXCIsIHZhbHVlOiBcIjAuMVwiIH0sXG4gICAgICAgICAgICAgICAgICB7IGxhYmVsOiBcIlJld2FyZFwiLCB2YWx1ZTogXCIrMjQ1XCIgfVxuICAgICAgICAgICAgICAgIF19XG4gICAgICAgICAgICAgIC8+XG4gICAgICAgICAgICA8L2Rpdj5cbiAgICAgICAgICA8L1RhYnNDb250ZW50PlxuXG4gICAgICAgICAgPFRhYnNDb250ZW50IHZhbHVlPVwicGVyZm9ybWFuY2VcIiBjbGFzc05hbWU9XCJhbmltYXRlLWluIGZhZGUtaW4gc2xpZGUtaW4tZnJvbS1ib3R0b20tNCBkdXJhdGlvbi01MDBcIj5cbiAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPVwiZ2xhc3MtY2FyZCBwLTYgcm91bmRlZC0yeGwgaC1bNDAwcHhdXCI+XG4gICAgICAgICAgICAgIDxoMyBjbGFzc05hbWU9XCJ0ZXh0LWxnIGZvbnQtYm9sZCBtYi02XCI+Q3VtdWxhdGl2ZSBQcm9maXQvTG9zczwvaDM+XG4gICAgICAgICAgICAgIDxSZXNwb25zaXZlQ29udGFpbmVyIHdpZHRoPVwiMTAwJVwiIGhlaWdodD1cIjg1JVwiPlxuICAgICAgICAgICAgICAgIDxBcmVhQ2hhcnQgZGF0YT17Y2hhcnREYXRhfT5cbiAgICAgICAgICAgICAgICAgIDxkZWZzPlxuICAgICAgICAgICAgICAgICAgICA8bGluZWFyR3JhZGllbnQgaWQ9XCJjb2xvclBubFwiIHgxPVwiMFwiIHkxPVwiMFwiIHgyPVwiMFwiIHkyPVwiMVwiPlxuICAgICAgICAgICAgICAgICAgICAgIDxzdG9wIG9mZnNldD1cIjUlXCIgc3RvcENvbG9yPVwiaHNsKHZhcigtLXByaW1hcnkpKVwiIHN0b3BPcGFjaXR5PXswLjN9Lz5cbiAgICAgICAgICAgICAgICAgICAgICA8c3RvcCBvZmZzZXQ9XCI5NSVcIiBzdG9wQ29sb3I9XCJoc2wodmFyKC0tcHJpbWFyeSkpXCIgc3RvcE9wYWNpdHk9ezB9Lz5cbiAgICAgICAgICAgICAgICAgICAgPC9saW5lYXJHcmFkaWVudD5cbiAgICAgICAgICAgICAgICAgIDwvZGVmcz5cbiAgICAgICAgICAgICAgICAgIDxYQXhpcyBkYXRhS2V5PVwidGltZVwiIGhpZGUgLz5cbiAgICAgICAgICAgICAgICAgIDxZQXhpcyBzdHJva2U9XCIjNGI1NTYzXCIgZm9udFNpemU9ezEyfSB0aWNrRm9ybWF0dGVyPXsodmFsdWUpID0+IGAkJHt2YWx1ZX1gfSAvPlxuICAgICAgICAgICAgICAgICAgPENoYXJ0VG9vbHRpcCBcbiAgICAgICAgICAgICAgICAgICAgY29udGVudFN0eWxlPXt7IGJhY2tncm91bmRDb2xvcjogJ2hzbCh2YXIoLS1wb3BvdmVyKSknLCBib3JkZXJDb2xvcjogJ2hzbCh2YXIoLS1ib3JkZXIpKScsIGNvbG9yOiAnd2hpdGUnIH19XG4gICAgICAgICAgICAgICAgICAgIGl0ZW1TdHlsZT17eyBjb2xvcjogJ2hzbCh2YXIoLS1wcmltYXJ5KSknIH19XG4gICAgICAgICAgICAgICAgICAvPlxuICAgICAgICAgICAgICAgICAgPEFyZWEgXG4gICAgICAgICAgICAgICAgICAgIHR5cGU9XCJtb25vdG9uZVwiIFxuICAgICAgICAgICAgICAgICAgICBkYXRhS2V5PVwicG5sXCIgXG4gICAgICAgICAgICAgICAgICAgIHN0cm9rZT1cImhzbCh2YXIoLS1wcmltYXJ5KSlcIiBcbiAgICAgICAgICAgICAgICAgICAgc3Ryb2tlV2lkdGg9ezJ9XG4gICAgICAgICAgICAgICAgICAgIGZpbGxPcGFjaXR5PXsxfSBcbiAgICAgICAgICAgICAgICAgICAgZmlsbD1cInVybCgjY29sb3JQbmwpXCIgXG4gICAgICAgICAgICAgICAgICAvPlxuICAgICAgICAgICAgICAgIDwvQXJlYUNoYXJ0PlxuICAgICAgICAgICAgICA8L1Jlc3BvbnNpdmVDb250YWluZXI+XG4gICAgICAgICAgICA8L2Rpdj5cbiAgICAgICAgICA8L1RhYnNDb250ZW50PlxuXG4gICAgICAgICAgPFRhYnNDb250ZW50IHZhbHVlPVwidHJhZGVzXCIgY2xhc3NOYW1lPVwiYW5pbWF0ZS1pbiBmYWRlLWluIHNsaWRlLWluLWZyb20tYm90dG9tLTQgZHVyYXRpb24tNTAwXCI+XG4gICAgICAgICAgICA8VHJhZGVIaXN0b3J5IHRyYWRlcz17dHJhZGVzIHx8IFtdfSBpc0xvYWRpbmc9eyF0cmFkZXN9IC8+XG4gICAgICAgICAgPC9UYWJzQ29udGVudD5cblxuICAgICAgICAgIDxUYWJzQ29udGVudCB2YWx1ZT1cImRlY2lzaW9uc1wiIGNsYXNzTmFtZT1cInNwYWNlLXktNiBhbmltYXRlLWluIGZhZGUtaW4gc2xpZGUtaW4tZnJvbS1ib3R0b20tNCBkdXJhdGlvbi01MDBcIj5cbiAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPVwiZ2xhc3MtY2FyZCBwLTYgcm91bmRlZC0yeGwgYm9yZGVyIGJvcmRlci13aGl0ZS8xMFwiPlxuICAgICAgICAgICAgICA8aDMgY2xhc3NOYW1lPVwidGV4dC14bCBmb250LWJvbGQgZm9udC1kaXNwbGF5IG1iLTYgZmxleCBpdGVtcy1jZW50ZXIgZ2FwLTJcIj5cbiAgICAgICAgICAgICAgICA8QnJhaW5DaXJjdWl0IGNsYXNzTmFtZT1cInctNiBoLTYgdGV4dC1ibHVlLTUwMFwiIC8+XG4gICAgICAgICAgICAgICAgVHJhZGluZyBEZWNpc2lvbnMgTG9nIChMYXN0IDIwKVxuICAgICAgICAgICAgICA8L2gzPlxuXG4gICAgICAgICAgICAgIHtkZWNpc2lvbnMgJiYgZGVjaXNpb25zLmxlbmd0aCA+IDAgPyAoXG4gICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9XCJzcGFjZS15LTQgbWF4LWgtWzcwMHB4XSBvdmVyZmxvdy15LWF1dG9cIj5cbiAgICAgICAgICAgICAgICAgIHtkZWNpc2lvbnMubWFwKChkZWNpc2lvbjogYW55LCBpZHg6IG51bWJlcikgPT4gKFxuICAgICAgICAgICAgICAgICAgICA8ZGl2IFxuICAgICAgICAgICAgICAgICAgICAgIGtleT17YCR7ZGVjaXNpb24udGltZXN0YW1wfS0ke2lkeH1gfVxuICAgICAgICAgICAgICAgICAgICAgIGNsYXNzTmFtZT1cImJnLXdoaXRlLzUgYm9yZGVyIGJvcmRlci13aGl0ZS8xMCByb3VuZGVkLWxnIHAtNCBob3ZlcjpiZy13aGl0ZS8xMCB0cmFuc2l0aW9uLWNvbG9yc1wiXG4gICAgICAgICAgICAgICAgICAgID5cbiAgICAgICAgICAgICAgICAgICAgICB7LyogSGVhZGVyIHdpdGggYWN0aW9uIGFuZCB0aW1lICovfVxuICAgICAgICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPVwiZmxleCBpdGVtcy1jZW50ZXIganVzdGlmeS1iZXR3ZWVuIG1iLTNcIj5cbiAgICAgICAgICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPVwiZmxleCBpdGVtcy1jZW50ZXIgZ2FwLTNcIj5cbiAgICAgICAgICAgICAgICAgICAgICAgICAgPHNwYW4gY2xhc3NOYW1lPXtjbihcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICBcInB4LTMgcHktMSByb3VuZGVkLWZ1bGwgdGV4dC1zbSBmb250LWJvbGRcIixcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICBkZWNpc2lvbi5hY3Rpb24gPT09ICdMT05HJyA/IFwiYmctZ3JlZW4tNTAwLzIwIHRleHQtZ3JlZW4tNDAwXCIgOlxuICAgICAgICAgICAgICAgICAgICAgICAgICAgIGRlY2lzaW9uLmFjdGlvbiA9PT0gJ1NIT1JUJyA/IFwiYmctcmVkLTUwMC8yMCB0ZXh0LXJlZC00MDBcIiA6XG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgZGVjaXNpb24uYWN0aW9uID09PSAnQ0xPU0VfUE9TSVRJT04nID8gXCJiZy1vcmFuZ2UtNTAwLzIwIHRleHQtb3JhbmdlLTQwMFwiIDpcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICBcImJnLWdyYXktNTAwLzIwIHRleHQtZ3JheS00MDBcIlxuICAgICAgICAgICAgICAgICAgICAgICAgICApfT5cbiAgICAgICAgICAgICAgICAgICAgICAgICAgICB7ZGVjaXNpb24uYWN0aW9ufVxuICAgICAgICAgICAgICAgICAgICAgICAgICA8L3NwYW4+XG4gICAgICAgICAgICAgICAgICAgICAgICAgIDxzcGFuIGNsYXNzTmFtZT17Y24oXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgXCJweC0yIHB5LTEgcm91bmRlZCB0ZXh0LXhzIGZvbnQtc2VtaWJvbGRcIixcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICBkZWNpc2lvbi5zaWduYWwgPiAwLjY1ID8gXCJiZy1ncmVlbi01MDAvMjAgdGV4dC1ncmVlbi00MDBcIiA6XG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgZGVjaXNpb24uc2lnbmFsIDwgMC4zNSA/IFwiYmctcmVkLTUwMC8yMCB0ZXh0LXJlZC00MDBcIiA6XG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgXCJiZy15ZWxsb3ctNTAwLzIwIHRleHQteWVsbG93LTQwMFwiXG4gICAgICAgICAgICAgICAgICAgICAgICAgICl9PlxuICAgICAgICAgICAgICAgICAgICAgICAgICAgIFNpZ25hbDogeyhkZWNpc2lvbi5zaWduYWwgKiAxMDApLnRvRml4ZWQoMSl9JVxuICAgICAgICAgICAgICAgICAgICAgICAgICA8L3NwYW4+XG4gICAgICAgICAgICAgICAgICAgICAgICAgIDxzcGFuIGNsYXNzTmFtZT17Y24oXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgXCJweC0yIHB5LTEgcm91bmRlZCB0ZXh0LXhzIGZvbnQtc2VtaWJvbGRcIixcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICBkZWNpc2lvbi5jb25maWRlbmNlID4gMC43ID8gXCJiZy1ncmVlbi01MDAvMjAgdGV4dC1ncmVlbi00MDBcIiA6XG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgZGVjaXNpb24uY29uZmlkZW5jZSA+IDAuNSA/IFwiYmctYmx1ZS01MDAvMjAgdGV4dC1ibHVlLTQwMFwiIDpcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICBcImJnLXJlZC01MDAvMjAgdGV4dC1yZWQtNDAwXCJcbiAgICAgICAgICAgICAgICAgICAgICAgICAgKX0+XG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgQ29uZmlkZW5jZTogeyhkZWNpc2lvbi5jb25maWRlbmNlICogMTAwKS50b0ZpeGVkKDEpfSVcbiAgICAgICAgICAgICAgICAgICAgICAgICAgPC9zcGFuPlxuICAgICAgICAgICAgICAgICAgICAgICAgPC9kaXY+XG4gICAgICAgICAgICAgICAgICAgICAgICA8c3BhbiBjbGFzc05hbWU9XCJ0ZXh0LXhzIHRleHQtbXV0ZWQtZm9yZWdyb3VuZFwiPlxuICAgICAgICAgICAgICAgICAgICAgICAgICB7bmV3IERhdGUoZGVjaXNpb24udGltZXN0YW1wKS50b0xvY2FsZVRpbWVTdHJpbmcoKX1cbiAgICAgICAgICAgICAgICAgICAgICAgIDwvc3Bhbj5cbiAgICAgICAgICAgICAgICAgICAgICA8L2Rpdj5cblxuICAgICAgICAgICAgICAgICAgICAgIHsvKiBSZWFzb25pbmcgKi99XG4gICAgICAgICAgICAgICAgICAgICAgPHAgY2xhc3NOYW1lPVwidGV4dC1zbSB0ZXh0LW11dGVkLWZvcmVncm91bmQgbWItNCBpdGFsaWNcIj5cbiAgICAgICAgICAgICAgICAgICAgICAgIFwie2RlY2lzaW9uLnJlYXNvbmluZ31cIlxuICAgICAgICAgICAgICAgICAgICAgIDwvcD5cblxuICAgICAgICAgICAgICAgICAgICAgIHsvKiBNb3RpZnMgYnJlYWtkb3duICovfVxuICAgICAgICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPVwiZ3JpZCBncmlkLWNvbHMtMSBtZDpncmlkLWNvbHMtMiBsZzpncmlkLWNvbHMtNCBnYXAtMiBtYi0zXCI+XG4gICAgICAgICAgICAgICAgICAgICAgICB7ZGVjaXNpb24ubW90aWZzICYmIGRlY2lzaW9uLm1vdGlmcy5tYXAoKG1vdGlmOiBhbnksIG1JZHg6IG51bWJlcikgPT4gKFxuICAgICAgICAgICAgICAgICAgICAgICAgICA8ZGl2IGtleT17bUlkeH0gY2xhc3NOYW1lPVwiYmctYmxhY2svMzAgYm9yZGVyIGJvcmRlci13aGl0ZS81IHJvdW5kZWQgcC0yIHRleHQteHNcIj5cbiAgICAgICAgICAgICAgICAgICAgICAgICAgICA8cCBjbGFzc05hbWU9XCJmb250LXNlbWlib2xkIHRleHQtd2hpdGUgbWItMVwiPnttb3RpZi50eXBlLnRvVXBwZXJDYXNlKCl9PC9wPlxuICAgICAgICAgICAgICAgICAgICAgICAgICAgIDxwIGNsYXNzTmFtZT1cInRleHQtYmx1ZS00MDBcIj5TaWduYWw6IHsobW90aWYuc2lnbmFsICogMTAwKS50b0ZpeGVkKDEpfSU8L3A+XG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgPHAgY2xhc3NOYW1lPVwidGV4dC1tdXRlZC1mb3JlZ3JvdW5kXCI+Q29uZjogeyhtb3RpZi5jb25maWRlbmNlICogMTAwKS50b0ZpeGVkKDEpfSU8L3A+XG4gICAgICAgICAgICAgICAgICAgICAgICAgICAge21vdGlmLmRldGFpbHMgJiYgKFxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9XCJtdC0xIHRleHQteHMgdGV4dC1tdXRlZC1mb3JlZ3JvdW5kIHNwYWNlLXktMC41XCI+XG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHtPYmplY3QuZW50cmllcyhtb3RpZi5kZXRhaWxzKS5tYXAoKFtrZXksIHZhbF06IFtzdHJpbmcsIGFueV0pID0+IChcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA8cCBrZXk9e2tleX0+e2tleX06IHt0eXBlb2YgdmFsID09PSAnbnVtYmVyJyA/IHZhbC50b0ZpeGVkKDIpIDogdmFsfTwvcD5cbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgKSl9XG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICA8L2Rpdj5cbiAgICAgICAgICAgICAgICAgICAgICAgICAgICApfVxuICAgICAgICAgICAgICAgICAgICAgICAgICA8L2Rpdj5cbiAgICAgICAgICAgICAgICAgICAgICAgICkpfVxuICAgICAgICAgICAgICAgICAgICAgIDwvZGl2PlxuICAgICAgICAgICAgICAgICAgICA8L2Rpdj5cbiAgICAgICAgICAgICAgICAgICkpfVxuICAgICAgICAgICAgICAgIDwvZGl2PlxuICAgICAgICAgICAgICApIDogKFxuICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPVwidGV4dC1jZW50ZXIgcHktMTIgdGV4dC1tdXRlZC1mb3JlZ3JvdW5kXCI+XG4gICAgICAgICAgICAgICAgICA8cD5ObyB0cmFkaW5nIGRlY2lzaW9ucyB5ZXQuLi48L3A+XG4gICAgICAgICAgICAgICAgICA8cCBjbGFzc05hbWU9XCJ0ZXh0LXNtIG10LTJcIj5XYWl0aW5nIGZvciBib3QgdG8gYW5hbHl6ZSBtYXJrZXQgZGF0YTwvcD5cbiAgICAgICAgICAgICAgICA8L2Rpdj5cbiAgICAgICAgICAgICAgKX1cbiAgICAgICAgICAgIDwvZGl2PlxuICAgICAgICAgIDwvVGFic0NvbnRlbnQ+XG5cbiAgICAgICAgICA8VGFic0NvbnRlbnQgdmFsdWU9XCJwb3NpdGlvbnNcIiBjbGFzc05hbWU9XCJhbmltYXRlLWluIGZhZGUtaW4gc2xpZGUtaW4tZnJvbS1ib3R0b20tNCBkdXJhdGlvbi01MDBcIj5cbiAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPVwiZ2xhc3MtY2FyZCBwLTYgcm91bmRlZC0yeGwgYm9yZGVyIGJvcmRlci13aGl0ZS8xMFwiPlxuICAgICAgICAgICAgICA8aDMgY2xhc3NOYW1lPVwidGV4dC14bCBmb250LWJvbGQgbWItNFwiPk9wZW4gUG9zaXRpb25zIChEeW5hbWljIFN0b3BzKTwvaDM+XG4gICAgICAgICAgICAgIHtwb3NpdGlvbnMgJiYgcG9zaXRpb25zLmxlbmd0aCA+IDAgPyAoXG4gICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9XCJzcGFjZS15LTNcIj5cbiAgICAgICAgICAgICAgICAgIHtwb3NpdGlvbnMubWFwKChwb3M6IGFueSkgPT4gKFxuICAgICAgICAgICAgICAgICAgICA8ZGl2IGtleT17cG9zLmlkfSBjbGFzc05hbWU9XCJmbGV4IGl0ZW1zLWNlbnRlciBqdXN0aWZ5LWJldHdlZW4gcC0zIGJnLXdoaXRlLzUgcm91bmRlZFwiPlxuICAgICAgICAgICAgICAgICAgICAgIDxkaXY+XG4gICAgICAgICAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT1cImZvbnQtc2VtaWJvbGRcIj57cG9zLnN5bWJvbH0g4oCiIHtwb3Muc2lkZX08L2Rpdj5cbiAgICAgICAgICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPVwidGV4dC14cyB0ZXh0LW11dGVkLWZvcmVncm91bmRcIj5FbnRyeTogJHtwb3MuZW50cnlQcmljZS50b0ZpeGVkKDIpfSDigKIgUXR5OiB7cG9zLnF1YW50aXR5LnRvRml4ZWQoNCl9PC9kaXY+XG4gICAgICAgICAgICAgICAgICAgICAgPC9kaXY+XG4gICAgICAgICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9XCJ0ZXh0LXJpZ2h0XCI+XG4gICAgICAgICAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT1cInRleHQtc21cIj5TdG9wOiAke3Bvcy5zdG9wTG9zcy50b0ZpeGVkKDIpfTwvZGl2PlxuICAgICAgICAgICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9XCJ0ZXh0LXhzIHRleHQtbXV0ZWQtZm9yZWdyb3VuZFwiPkR5bmFtaWM6ICR7cG9zLmR5bmFtaWNTdG9wID8gcG9zLmR5bmFtaWNTdG9wLnRvRml4ZWQoMikgOiAnLSd9PC9kaXY+XG4gICAgICAgICAgICAgICAgICAgICAgPC9kaXY+XG4gICAgICAgICAgICAgICAgICAgIDwvZGl2PlxuICAgICAgICAgICAgICAgICAgKSl9XG4gICAgICAgICAgICAgICAgPC9kaXY+XG4gICAgICAgICAgICAgICkgOiAoXG4gICAgICAgICAgICAgICAgPHAgY2xhc3NOYW1lPVwidGV4dC1tdXRlZC1mb3JlZ3JvdW5kXCI+Tm8gb3BlbiBwb3NpdGlvbnM8L3A+XG4gICAgICAgICAgICAgICl9XG4gICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPVwibXQtNFwiPlxuICAgICAgICAgICAgICAgIDxsYWJlbCBjbGFzc05hbWU9XCJ0ZXh0LXNtXCI+QVRSIE11bHRpcGxpZXI8L2xhYmVsPlxuICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPVwiZmxleCBpdGVtcy1jZW50ZXIgZ2FwLTMgbXQtMlwiPlxuICAgICAgICAgICAgICAgICAgPGlucHV0XG4gICAgICAgICAgICAgICAgICAgIHR5cGU9XCJudW1iZXJcIlxuICAgICAgICAgICAgICAgICAgICBzdGVwPVwiMC4xXCJcbiAgICAgICAgICAgICAgICAgICAgbWluPVwiMC41XCJcbiAgICAgICAgICAgICAgICAgICAgZGVmYXVsdFZhbHVlPXthdHJDb25maWc/LmF0ck11bHRpcGxpZXIgPz8gMn1cbiAgICAgICAgICAgICAgICAgICAgb25CbHVyPXsoZSkgPT4gdXBkYXRlQXRyLm11dGF0ZSh7IGF0ck11bHRpcGxpZXI6IE51bWJlcihlLmN1cnJlbnRUYXJnZXQudmFsdWUpIH0pfVxuICAgICAgICAgICAgICAgICAgICBjbGFzc05hbWU9XCJ3LTI0IGJnLXRyYW5zcGFyZW50IGJvcmRlciBib3JkZXItd2hpdGUvMTAgcm91bmRlZCBweC0yIHB5LTFcIlxuICAgICAgICAgICAgICAgICAgLz5cbiAgICAgICAgICAgICAgICAgIDxCdXR0b24gb25DbGljaz17KCkgPT4gdXBkYXRlQXRyLm11dGF0ZSh7IGF0ck11bHRpcGxpZXI6IGF0ckNvbmZpZz8uYXRyTXVsdGlwbGllciA/PyAyIH0pfT5cbiAgICAgICAgICAgICAgICAgICAgU2F2ZVxuICAgICAgICAgICAgICAgICAgPC9CdXR0b24+XG4gICAgICAgICAgICAgICAgICA8cCBjbGFzc05hbWU9XCJ0ZXh0LXhzIHRleHQtbXV0ZWQtZm9yZWdyb3VuZFwiPkN1cnJlbnQ6IHthdHJDb25maWc/LmF0ck11bHRpcGxpZXIgPz8gMn14PC9wPlxuICAgICAgICAgICAgICAgIDwvZGl2PlxuICAgICAgICAgICAgICA8L2Rpdj5cbiAgICAgICAgICAgIDwvZGl2PlxuICAgICAgICAgIDwvVGFic0NvbnRlbnQ+XG5cbiAgICAgICAgICA8VGFic0NvbnRlbnQgdmFsdWU9XCJhZHZhbmNlZFwiIGNsYXNzTmFtZT1cInNwYWNlLXktNiBhbmltYXRlLWluIGZhZGUtaW4gc2xpZGUtaW4tZnJvbS1ib3R0b20tNCBkdXJhdGlvbi01MDBcIj5cbiAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPVwiZ3JpZCBncmlkLWNvbHMtMSBsZzpncmlkLWNvbHMtMiBnYXAtNlwiPlxuICAgICAgICAgICAgICB7LyogTWFya2V0IFNpZ25hbHMgKG9uLWNoYWluIC8gbXVsdGktZXhjaGFuZ2UgLyBjb3JyZWxhdGlvbnMpICovfVxuICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT1cImdsYXNzLWNhcmQgcC02IHJvdW5kZWQtMnhsIGJvcmRlciBib3JkZXItd2hpdGUvMTBcIj5cbiAgICAgICAgICAgICAgICA8aDMgY2xhc3NOYW1lPVwidGV4dC14bCBmb250LWJvbGQgZm9udC1kaXNwbGF5IG1iLTRcIj5NYXJrZXQgU2lnbmFsczwvaDM+XG4gICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9XCJncmlkIGdyaWQtY29scy0xIGdhcC0zXCI+XG4gICAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT1cImZsZXgganVzdGlmeS1iZXR3ZWVuIHRleHQtc21cIj5cbiAgICAgICAgICAgICAgICAgICAgPHNwYW4+RVRIIFRyYW5zZmVycyAoMjRoKTwvc3Bhbj5cbiAgICAgICAgICAgICAgICAgICAgPHNwYW4gY2xhc3NOYW1lPVwiZm9udC1tb25vXCI+e29uY2hhaW4/LmV0aFRyYW5zZmVyczI0aCA/PyAn4oCUJ308L3NwYW4+XG4gICAgICAgICAgICAgICAgICA8L2Rpdj5cbiAgICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPVwiZmxleCBqdXN0aWZ5LWJldHdlZW4gdGV4dC1zbVwiPlxuICAgICAgICAgICAgICAgICAgICA8c3Bhbj5XaGFsZSBNb3ZlcyAoMjRoKTwvc3Bhbj5cbiAgICAgICAgICAgICAgICAgICAgPHNwYW4gY2xhc3NOYW1lPVwiZm9udC1tb25vXCI+e29uY2hhaW4/LndoYWxlVHJhbnNmZXJzMjRoID8/ICfigJQnfTwvc3Bhbj5cbiAgICAgICAgICAgICAgICAgIDwvZGl2PlxuICAgICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9XCJmbGV4IGp1c3RpZnktYmV0d2VlbiB0ZXh0LXNtXCI+XG4gICAgICAgICAgICAgICAgICAgIDxzcGFuPkF2ZyBHYXMgKEd3ZWkpPC9zcGFuPlxuICAgICAgICAgICAgICAgICAgICA8c3BhbiBjbGFzc05hbWU9XCJmb250LW1vbm9cIj57b25jaGFpbj8uYXZnR2FzR3dlaSA/PyAn4oCUJ308L3NwYW4+XG4gICAgICAgICAgICAgICAgICA8L2Rpdj5cbiAgICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPVwiZmxleCBpdGVtcy1jZW50ZXIgZ2FwLTMgbXQtMiB0ZXh0LXNtXCI+XG4gICAgICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPVwiZmxleC0xXCI+XG4gICAgICAgICAgICAgICAgICAgICAgPHAgY2xhc3NOYW1lPVwidGV4dC14cyB0ZXh0LW11dGVkLWZvcmVncm91bmRcIj5NdWx0aS1leGNoYW5nZSBzcHJlYWQ8L3A+XG4gICAgICAgICAgICAgICAgICAgICAgPHAgY2xhc3NOYW1lPVwiZm9udC1ib2xkXCI+e211bHRpRXhjaGFuZ2U/Lm1heFNwcmVhZFBlcmNlbnQgPyBgJHttdWx0aUV4Y2hhbmdlLm1heFNwcmVhZFBlcmNlbnR9JWAgOiAn4oCUJ308L3A+XG4gICAgICAgICAgICAgICAgICAgIDwvZGl2PlxuICAgICAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT1cImZsZXgtMVwiPlxuICAgICAgICAgICAgICAgICAgICAgIDxwIGNsYXNzTmFtZT1cInRleHQteHMgdGV4dC1tdXRlZC1mb3JlZ3JvdW5kXCI+UHJpY2Ugc25hcHNob3QgKEJOL0NCL0tSKTwvcD5cbiAgICAgICAgICAgICAgICAgICAgICA8cCBjbGFzc05hbWU9XCJmb250LW1vbm9cIj57bXVsdGlFeGNoYW5nZSA/IGAke211bHRpRXhjaGFuZ2UucHJpY2VzLmJpbmFuY2V9LyR7bXVsdGlFeGNoYW5nZS5wcmljZXMuY29pbmJhc2V9LyR7bXVsdGlFeGNoYW5nZS5wcmljZXMua3Jha2VufWAgOiAn4oCUJ308L3A+XG4gICAgICAgICAgICAgICAgICAgIDwvZGl2PlxuICAgICAgICAgICAgICAgICAgPC9kaXY+XG4gICAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT1cIm10LTNcIj5cbiAgICAgICAgICAgICAgICAgICAgPHAgY2xhc3NOYW1lPVwidGV4dC14cyB0ZXh0LW11dGVkLWZvcmVncm91bmQgbWItMVwiPkNvcnJlbGF0aW9uIChFVEggdnMpPC9wPlxuICAgICAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT1cImZsZXggZ2FwLTMgdGV4dC1zbVwiPlxuICAgICAgICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPVwicHgtMiBweS0xIGJnLXdoaXRlLzUgcm91bmRlZFwiPkJUQzoge2NvcnJlbGF0aW9uPy5FVEhfQlRDID8gY29ycmVsYXRpb24uRVRIX0JUQy50b0ZpeGVkKDIpIDogJ+KAlCd9PC9kaXY+XG4gICAgICAgICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9XCJweC0yIHB5LTEgYmctd2hpdGUvNSByb3VuZGVkXCI+U09MOiB7Y29ycmVsYXRpb24/LkVUSF9TT0wgPyBjb3JyZWxhdGlvbi5FVEhfU09MLnRvRml4ZWQoMikgOiAn4oCUJ308L2Rpdj5cbiAgICAgICAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT1cInB4LTIgcHktMSBiZy13aGl0ZS81IHJvdW5kZWRcIj5BVkFYOiB7Y29ycmVsYXRpb24/LkVUSF9BVkFYID8gY29ycmVsYXRpb24uRVRIX0FWQVgudG9GaXhlZCgyKSA6ICfigJQnfTwvZGl2PlxuICAgICAgICAgICAgICAgICAgICA8L2Rpdj5cbiAgICAgICAgICAgICAgICAgIDwvZGl2PlxuICAgICAgICAgICAgICAgIDwvZGl2PlxuICAgICAgICAgICAgICA8L2Rpdj5cbiAgICAgICAgICAgICAgey8qIE1vdGlmIFBlcmZvcm1hbmNlIEhlYXRtYXAgKi99XG4gICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPVwiZ2xhc3MtY2FyZCBwLTYgcm91bmRlZC0yeGwgYm9yZGVyIGJvcmRlci13aGl0ZS8xMFwiPlxuICAgICAgICAgICAgICAgIDxoMyBjbGFzc05hbWU9XCJ0ZXh0LXhsIGZvbnQtYm9sZCBmb250LWRpc3BsYXkgbWItNCBmbGV4IGl0ZW1zLWNlbnRlciBnYXAtMlwiPlxuICAgICAgICAgICAgICAgICAgPExpbmVDaGFydCBjbGFzc05hbWU9XCJ3LTUgaC01IHRleHQtZ3JlZW4tNTAwXCIgLz5cbiAgICAgICAgICAgICAgICAgIE1vZHVsZSBQZXJmb3JtYW5jZVxuICAgICAgICAgICAgICAgIDwvaDM+XG4gICAgICAgICAgICAgICAge21vdGlmV2VpZ2h0cyA/IChcbiAgICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPVwic3BhY2UteS0zXCI+XG4gICAgICAgICAgICAgICAgICAgIHtPYmplY3QuZW50cmllcyhtb3RpZldlaWdodHMpLm1hcCgoW21vdGlmLCB3ZWlnaHRdOiBbc3RyaW5nLCBhbnldKSA9PiB7XG4gICAgICAgICAgICAgICAgICAgICAgY29uc3Qgc3VjY2Vzc1BlcmNlbnQgPSAod2VpZ2h0IGFzIG51bWJlcikgKiAxMDA7XG4gICAgICAgICAgICAgICAgICAgICAgY29uc3QgaGVhdENvbG9yID0gc3VjY2Vzc1BlcmNlbnQgPiAzMCA/ICdmcm9tLWdyZWVuLTUwMCcgOiBzdWNjZXNzUGVyY2VudCA+IDIwID8gJ2Zyb20teWVsbG93LTUwMCcgOiAnZnJvbS1vcmFuZ2UtNTAwJztcbiAgICAgICAgICAgICAgICAgICAgICBcbiAgICAgICAgICAgICAgICAgICAgICByZXR1cm4gKFxuICAgICAgICAgICAgICAgICAgICAgICAgPGRpdiBrZXk9e21vdGlmfSBjbGFzc05hbWU9XCJzcGFjZS15LTFcIj5cbiAgICAgICAgICAgICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9XCJmbGV4IGp1c3RpZnktYmV0d2VlbiBpdGVtcy1jZW50ZXJcIj5cbiAgICAgICAgICAgICAgICAgICAgICAgICAgICA8c3BhbiBjbGFzc05hbWU9XCJ0ZXh0LXNtIGZvbnQtbWVkaXVtIGNhcGl0YWxpemVcIj57bW90aWYucmVwbGFjZSgnXycsICcgJyl9PC9zcGFuPlxuICAgICAgICAgICAgICAgICAgICAgICAgICAgIDxzcGFuIGNsYXNzTmFtZT1cInRleHQteHMgYmctd2hpdGUvMTAgcHgtMiBweS0xIHJvdW5kZWRcIj57c3VjY2Vzc1BlcmNlbnQudG9GaXhlZCgxKX0lPC9zcGFuPlxuICAgICAgICAgICAgICAgICAgICAgICAgICA8L2Rpdj5cbiAgICAgICAgICAgICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9XCJ3LWZ1bGwgYmctd2hpdGUvNSByb3VuZGVkLWZ1bGwgaC0zIG92ZXJmbG93LWhpZGRlblwiPlxuICAgICAgICAgICAgICAgICAgICAgICAgICAgIDxkaXYgXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICBjbGFzc05hbWU9e2BiZy1ncmFkaWVudC10by1yICR7aGVhdENvbG9yfSB0by10cmFuc3BhcmVudCBoLWZ1bGwgdHJhbnNpdGlvbi1hbGwgZHVyYXRpb24tNTAwYH1cbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHN0eWxlPXt7IHdpZHRoOiBgJHtzdWNjZXNzUGVyY2VudH0lYCB9fVxuICAgICAgICAgICAgICAgICAgICAgICAgICAgIC8+XG4gICAgICAgICAgICAgICAgICAgICAgICAgIDwvZGl2PlxuICAgICAgICAgICAgICAgICAgICAgICAgPC9kaXY+XG4gICAgICAgICAgICAgICAgICAgICAgKTtcbiAgICAgICAgICAgICAgICAgICAgfSl9XG4gICAgICAgICAgICAgICAgICA8L2Rpdj5cbiAgICAgICAgICAgICAgICApIDogKFxuICAgICAgICAgICAgICAgICAgPHAgY2xhc3NOYW1lPVwidGV4dC1tdXRlZC1mb3JlZ3JvdW5kXCI+TG9hZGluZyBwZXJmb3JtYW5jZSBkYXRhLi4uPC9wPlxuICAgICAgICAgICAgICAgICl9XG4gICAgICAgICAgICAgIDwvZGl2PlxuXG4gICAgICAgICAgICAgIHsvKiBSaXNrIEFsbG9jYXRpb24gKi99XG4gICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPVwiZ2xhc3MtY2FyZCBwLTYgcm91bmRlZC0yeGwgYm9yZGVyIGJvcmRlci13aGl0ZS8xMFwiPlxuICAgICAgICAgICAgICAgIDxoMyBjbGFzc05hbWU9XCJ0ZXh0LXhsIGZvbnQtYm9sZCBmb250LWRpc3BsYXkgbWItNCBmbGV4IGl0ZW1zLWNlbnRlciBnYXAtMlwiPlxuICAgICAgICAgICAgICAgICAgPEFjdGl2aXR5IGNsYXNzTmFtZT1cInctNSBoLTUgdGV4dC1vcmFuZ2UtNTAwXCIgLz5cbiAgICAgICAgICAgICAgICAgIFBvcnRmb2xpbyBSaXNrXG4gICAgICAgICAgICAgICAgPC9oMz5cbiAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT1cInNwYWNlLXktNFwiPlxuICAgICAgICAgICAgICAgICAge3N0YXRzICYmIChcbiAgICAgICAgICAgICAgICAgICAgPD5cbiAgICAgICAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT1cInNwYWNlLXktMlwiPlxuICAgICAgICAgICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9XCJmbGV4IGp1c3RpZnktYmV0d2VlblwiPlxuICAgICAgICAgICAgICAgICAgICAgICAgICA8c3BhbiBjbGFzc05hbWU9XCJ0ZXh0LXNtXCI+QWN0aXZlIFBvc2l0aW9uczwvc3Bhbj5cbiAgICAgICAgICAgICAgICAgICAgICAgICAgPHNwYW4gY2xhc3NOYW1lPVwiZm9udC1ib2xkIHRleHQtZ3JlZW4tNDAwXCI+e3N0YXRzLmFjdGl2ZVBvc2l0aW9uc308L3NwYW4+XG4gICAgICAgICAgICAgICAgICAgICAgICA8L2Rpdj5cbiAgICAgICAgICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPVwidy1mdWxsIGJnLXdoaXRlLzUgaC0yIHJvdW5kZWQtZnVsbCBvdmVyZmxvdy1oaWRkZW5cIj5cbiAgICAgICAgICAgICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9XCJiZy1ncmVlbi01MDAgaC1mdWxsXCIgc3R5bGU9e3sgd2lkdGg6IGAke01hdGgubWluKHN0YXRzLmFjdGl2ZVBvc2l0aW9ucyAqIDMzLCAxMDApfSVgIH19IC8+XG4gICAgICAgICAgICAgICAgICAgICAgICA8L2Rpdj5cbiAgICAgICAgICAgICAgICAgICAgICA8L2Rpdj5cbiAgICAgICAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT1cInNwYWNlLXktMlwiPlxuICAgICAgICAgICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9XCJmbGV4IGp1c3RpZnktYmV0d2VlblwiPlxuICAgICAgICAgICAgICAgICAgICAgICAgICA8c3BhbiBjbGFzc05hbWU9XCJ0ZXh0LXNtXCI+UmlzayBwZXIgVHJhZGU8L3NwYW4+XG4gICAgICAgICAgICAgICAgICAgICAgICAgIDxzcGFuIGNsYXNzTmFtZT1cImZvbnQtYm9sZCB0ZXh0LWJsdWUtNDAwXCI+MiU8L3NwYW4+XG4gICAgICAgICAgICAgICAgICAgICAgICA8L2Rpdj5cbiAgICAgICAgICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPVwidy1mdWxsIGJnLXdoaXRlLzUgaC0yIHJvdW5kZWQtZnVsbCBvdmVyZmxvdy1oaWRkZW5cIj5cbiAgICAgICAgICAgICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9XCJiZy1ibHVlLTUwMCBoLWZ1bGwgdy1bMjAlXVwiIC8+XG4gICAgICAgICAgICAgICAgICAgICAgICA8L2Rpdj5cbiAgICAgICAgICAgICAgICAgICAgICA8L2Rpdj5cbiAgICAgICAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT1cInNwYWNlLXktMlwiPlxuICAgICAgICAgICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9XCJmbGV4IGp1c3RpZnktYmV0d2VlblwiPlxuICAgICAgICAgICAgICAgICAgICAgICAgICA8c3BhbiBjbGFzc05hbWU9XCJ0ZXh0LXNtXCI+VG90YWwgUG9ydGZvbGlvIFJpc2s8L3NwYW4+XG4gICAgICAgICAgICAgICAgICAgICAgICAgIDxzcGFuIGNsYXNzTmFtZT1cImZvbnQtYm9sZCB0ZXh0LW9yYW5nZS00MDBcIj57KHN0YXRzLmFjdGl2ZVBvc2l0aW9ucyAqIDIpLnRvRml4ZWQoMSl9JTwvc3Bhbj5cbiAgICAgICAgICAgICAgICAgICAgICAgIDwvZGl2PlxuICAgICAgICAgICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9XCJ3LWZ1bGwgYmctd2hpdGUvNSBoLTIgcm91bmRlZC1mdWxsIG92ZXJmbG93LWhpZGRlblwiPlxuICAgICAgICAgICAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT1cImJnLW9yYW5nZS01MDAgaC1mdWxsXCIgc3R5bGU9e3sgd2lkdGg6IGAke01hdGgubWluKHN0YXRzLmFjdGl2ZVBvc2l0aW9ucyAqIDIwLCAxMDApfSVgIH19IC8+XG4gICAgICAgICAgICAgICAgICAgICAgICA8L2Rpdj5cbiAgICAgICAgICAgICAgICAgICAgICA8L2Rpdj5cbiAgICAgICAgICAgICAgICAgICAgPC8+XG4gICAgICAgICAgICAgICAgICApfVxuICAgICAgICAgICAgICAgIDwvZGl2PlxuICAgICAgICAgICAgICA8L2Rpdj5cbiAgICAgICAgICAgIDwvZGl2PlxuXG4gICAgICAgICAgICB7LyogRGVjaXNpb24gVHJlZSAtIExhc3QgNSBUcmFkZXMgKi99XG4gICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT1cImdsYXNzLWNhcmQgcC02IHJvdW5kZWQtMnhsIGJvcmRlciBib3JkZXItd2hpdGUvMTBcIj5cbiAgICAgICAgICAgICAgPGgzIGNsYXNzTmFtZT1cInRleHQteGwgZm9udC1ib2xkIGZvbnQtZGlzcGxheSBtYi00IGZsZXggaXRlbXMtY2VudGVyIGdhcC0yXCI+XG4gICAgICAgICAgICAgICAgPEJyYWluQ2lyY3VpdCBjbGFzc05hbWU9XCJ3LTUgaC01IHRleHQtcHVycGxlLTUwMFwiIC8+XG4gICAgICAgICAgICAgICAgUmVjZW50IERlY2lzaW9uIFBhdGhzIChMYXN0IDUgVHJhZGVzKVxuICAgICAgICAgICAgICA8L2gzPlxuICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT1cInNwYWNlLXktNFwiPlxuICAgICAgICAgICAgICAgIHt0cmFkZXMgJiYgdHJhZGVzLnNsaWNlKC01KS5yZXZlcnNlKCkubWFwKCh0cmFkZSwgaWR4KSA9PiB7XG4gICAgICAgICAgICAgICAgICBjb25zdCBjb3JyZXNwb25kaW5nRGVjaXNpb24gPSBkZWNpc2lvbnM/LmZpbmQoZCA9PiBkLnRpbWVzdGFtcCA+PSAodHJhZGUuZXhlY3V0ZWRBdCB8fCAwKSAtIDEwMDApO1xuICAgICAgICAgICAgICAgICAgcmV0dXJuIChcbiAgICAgICAgICAgICAgICAgICAgPGRpdiBrZXk9e2lkeH0gY2xhc3NOYW1lPVwiYmctYmxhY2svMzAgYm9yZGVyIGJvcmRlci13aGl0ZS8xMCByb3VuZGVkLWxnIHAtNFwiPlxuICAgICAgICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPVwiZmxleCBpdGVtcy1zdGFydCBqdXN0aWZ5LWJldHdlZW4gbWItM1wiPlxuICAgICAgICAgICAgICAgICAgICAgICAgPGRpdj5cbiAgICAgICAgICAgICAgICAgICAgICAgICAgPHAgY2xhc3NOYW1lPVwiZm9udC1zZW1pYm9sZCB0ZXh0LXdoaXRlXCI+e3RyYWRlLnNpZGV9IHt0cmFkZS5zeW1ib2x9PC9wPlxuICAgICAgICAgICAgICAgICAgICAgICAgICA8cCBjbGFzc05hbWU9XCJ0ZXh0LXhzIHRleHQtbXV0ZWQtZm9yZWdyb3VuZFwiPiR7dHJhZGUuZW50cnlQcmljZS50b0ZpeGVkKDIpfSDigKIge3RyYWRlLnF1YW50aXR5LnRvRml4ZWQoNCl9IHVuaXRzPC9wPlxuICAgICAgICAgICAgICAgICAgICAgICAgPC9kaXY+XG4gICAgICAgICAgICAgICAgICAgICAgICA8c3BhbiBjbGFzc05hbWU9e2BweC0yIHB5LTEgcm91bmRlZCB0ZXh0LXhzIGZvbnQtYm9sZCAke1xuICAgICAgICAgICAgICAgICAgICAgICAgICB0cmFkZS5zaWRlID09PSAnTE9ORycgPyAnYmctZ3JlZW4tNTAwLzIwIHRleHQtZ3JlZW4tNDAwJyA6ICdiZy1yZWQtNTAwLzIwIHRleHQtcmVkLTQwMCdcbiAgICAgICAgICAgICAgICAgICAgICAgIH1gfT5cbiAgICAgICAgICAgICAgICAgICAgICAgICAge2NvcnJlc3BvbmRpbmdEZWNpc2lvbj8uYWN0aW9uIHx8ICdOL0EnfVxuICAgICAgICAgICAgICAgICAgICAgICAgPC9zcGFuPlxuICAgICAgICAgICAgICAgICAgICAgIDwvZGl2PlxuICAgICAgICAgICAgICAgICAgICAgIHtjb3JyZXNwb25kaW5nRGVjaXNpb24gJiYgKFxuICAgICAgICAgICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9XCJmbGV4IGl0ZW1zLWNlbnRlciBnYXAtMiB0ZXh0LXhzXCI+XG4gICAgICAgICAgICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPVwiZmxleC0xIGgtMSBiZy1ncmFkaWVudC10by1yIGZyb20tYmx1ZS01MDAgdG8tcHVycGxlLTUwMCByb3VuZGVkLWZ1bGxcIiBcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBzdHlsZT17eyB3aWR0aDogYCR7Y29ycmVzcG9uZGluZ0RlY2lzaW9uLnNpZ25hbCAqIDEwMH0lYCB9fSAvPlxuICAgICAgICAgICAgICAgICAgICAgICAgICA8c3BhbiBjbGFzc05hbWU9XCJ0ZXh0LW11dGVkLWZvcmVncm91bmRcIj57KGNvcnJlc3BvbmRpbmdEZWNpc2lvbi5zaWduYWwgKiAxMDApLnRvRml4ZWQoMSl9JSBzaWduYWw8L3NwYW4+XG4gICAgICAgICAgICAgICAgICAgICAgICA8L2Rpdj5cbiAgICAgICAgICAgICAgICAgICAgICApfVxuICAgICAgICAgICAgICAgICAgICA8L2Rpdj5cbiAgICAgICAgICAgICAgICAgICk7XG4gICAgICAgICAgICAgICAgfSl9XG4gICAgICAgICAgICAgIDwvZGl2PlxuICAgICAgICAgICAgPC9kaXY+XG5cbiAgICAgICAgICAgIHsvKiBQZXJmb3JtYW5jZSBNZXRyaWNzICovfVxuICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9XCJncmlkIGdyaWQtY29scy0xIG1kOmdyaWQtY29scy0zIGdhcC00XCI+XG4gICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPVwiZ2xhc3MtY2FyZCBwLTYgcm91bmRlZC0yeGwgYm9yZGVyIGJvcmRlci13aGl0ZS8xMFwiPlxuICAgICAgICAgICAgICAgIDxwIGNsYXNzTmFtZT1cInRleHQtc20gdGV4dC1tdXRlZC1mb3JlZ3JvdW5kIG1iLTJcIj5TaGFycGUgUmF0aW88L3A+XG4gICAgICAgICAgICAgICAgPHAgY2xhc3NOYW1lPVwidGV4dC0zeGwgZm9udC1ib2xkIHRleHQtY3lhbi00MDBcIj4xLjg1PC9wPlxuICAgICAgICAgICAgICAgIDxwIGNsYXNzTmFtZT1cInRleHQteHMgdGV4dC1ncmVlbi00MDAgbXQtMlwiPiswLjE1IHRoaXMgd2VlazwvcD5cbiAgICAgICAgICAgICAgPC9kaXY+XG4gICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPVwiZ2xhc3MtY2FyZCBwLTYgcm91bmRlZC0yeGwgYm9yZGVyIGJvcmRlci13aGl0ZS8xMFwiPlxuICAgICAgICAgICAgICAgIDxwIGNsYXNzTmFtZT1cInRleHQtc20gdGV4dC1tdXRlZC1mb3JlZ3JvdW5kIG1iLTJcIj5NYXggRHJhd2Rvd248L3A+XG4gICAgICAgICAgICAgICAgPHAgY2xhc3NOYW1lPVwidGV4dC0zeGwgZm9udC1ib2xkIHRleHQteWVsbG93LTQwMFwiPi0yLjMlPC9wPlxuICAgICAgICAgICAgICAgIDxwIGNsYXNzTmFtZT1cInRleHQteHMgdGV4dC1tdXRlZC1mb3JlZ3JvdW5kIG10LTJcIj5XZWxsIGNvbnRyb2xsZWQ8L3A+XG4gICAgICAgICAgICAgIDwvZGl2PlxuICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT1cImdsYXNzLWNhcmQgcC02IHJvdW5kZWQtMnhsIGJvcmRlciBib3JkZXItd2hpdGUvMTBcIj5cbiAgICAgICAgICAgICAgICA8cCBjbGFzc05hbWU9XCJ0ZXh0LXNtIHRleHQtbXV0ZWQtZm9yZWdyb3VuZCBtYi0yXCI+UHJvZml0IEZhY3RvcjwvcD5cbiAgICAgICAgICAgICAgICA8cCBjbGFzc05hbWU9XCJ0ZXh0LTN4bCBmb250LWJvbGQgdGV4dC1ncmVlbi00MDBcIj4xLjQyPC9wPlxuICAgICAgICAgICAgICAgIDxwIGNsYXNzTmFtZT1cInRleHQteHMgdGV4dC1ncmVlbi00MDAgbXQtMlwiPldpbnMvTG9zc2VzIFJhdGlvPC9wPlxuICAgICAgICAgICAgICA8L2Rpdj5cbiAgICAgICAgICAgIDwvZGl2PlxuICAgICAgICAgIDwvVGFic0NvbnRlbnQ+XG4gICAgICAgIDwvVGFicz5cbiAgICAgIDwvbWFpbj5cbiAgICA8L2Rpdj5cbiAgKTtcbn1cbiJdLCJmaWxlIjoiQzovVXNlcnMvdW1UQ25hci9EZXNrdG9wL0FsZ28tVHJhZGVyLVByby9jbGllbnQvc3JjL3BhZ2VzL0Rhc2hib2FyZC50c3gifQ==
