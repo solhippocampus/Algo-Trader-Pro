@@ -30,7 +30,7 @@ export class BinanceAPIClient {
 
   constructor() {
     this.apiKey = process.env.BINANCE_API_KEY || '';
-    this.apiSecret = process.env.BINANCE_SECRET_KEY || '';
+    this.apiSecret = process.env.BINANCE_API_SECRET || process.env.BINANCE_SECRET_KEY || '';
 
     if (!this.apiKey || !this.apiSecret) {
       console.warn('[Binance] API keys not configured - DEMO MODE ENABLED');
