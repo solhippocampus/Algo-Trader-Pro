@@ -136,7 +136,7 @@ export class TradingBot {
           console.log('[TradingBot] executeDecision returned null');
         }
       } else {
-        console.log(`[TradingBot] Execution skipped: action=${decision.action}, confidence=${decision.confidence} (need >0.4)`);
+        console.log(`[TradingBot] Execution skipped: action=${decision.action}, confidence=${decision.confidence} (need >0.60 and strong signal)`);
       }
 
       // Update learning
@@ -149,9 +149,10 @@ export class TradingBot {
 
   private async placeActualOrder(execution: any) {
     try {
+      const orderSide = execution.side === 'LONG' ? 'BUY' : 'SELL';
       const order = await binanceClient.placeLimitOrder(
         execution.symbol,
-        execution.side,
+        orderSide,
         execution.quantity,
         execution.entryPrice
       );

@@ -13,10 +13,16 @@ try {
 }
 
 export function serveStatic(app: Express) {
-  const distPath = path.resolve(__dirname, "..", "client", "dist");
-  if (!fs.existsSync(distPath)) {
+  const candidatePaths = [
+    path.resolve(process.cwd(), "client", "dist"),
+    path.resolve(__dirname, "..", "client", "dist"),
+    path.resolve(__dirname, "client", "dist"),
+  ];
+
+  const distPath = candidatePaths.find((candidate) => fs.existsSync(candidate));
+  if (!distPath) {
     throw new Error(
-      `Could not find the build directory: ${distPath}, make sure to build the client first`,
+      `Could not find the build directory. Checked: ${candidatePaths.join(", ")}. Make sure to build the client first`,
     );
   }
 
