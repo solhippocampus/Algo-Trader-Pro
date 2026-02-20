@@ -363,5 +363,18 @@ export async function registerRoutes(
     }
   }, 2000);
 
+  // Auto-start bot if AUTO_START_BOT is enabled (for production/Render)
+  setTimeout(async () => {
+    try {
+      if (process.env.AUTO_START_BOT === 'true' || process.env.NODE_ENV === 'production') {
+        await tradingBot.start();
+        await storage.updateConfig({ isRunning: true });
+        console.log(`[Bot] Auto-started in ${process.env.NODE_ENV || 'development'} mode`);
+      }
+    } catch (e) {
+      console.error("[Bot] Failed to auto-start:", e);
+    }
+  }, 5000);
+
   return httpServer;
 }
