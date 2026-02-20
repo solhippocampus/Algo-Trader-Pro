@@ -387,9 +387,12 @@ export async function registerRoutes(
   app.get('/api/multi-strategy/markets', async (req, res) => {
     try {
       const { marketRotationEngine } = await import('./trading/market-rotation');
+      // Ensure market data is fetched
+      await marketRotationEngine.fetchMarketData();
       const topCoins = marketRotationEngine.getTopCoins(9);
       res.json(topCoins);
     } catch (err) {
+      console.error('[API] Error fetching multi-strategy markets:', err);
       res.status(500).json({ message: String(err) });
     }
   });
