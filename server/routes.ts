@@ -376,5 +376,77 @@ export async function registerRoutes(
     }
   }, 5000);
 
+  // ===== MULTI-STRATEGY ENDPOINTS =====
+  
+  app.get('/api/multi-strategy/markets', async (req, res) => {
+    try {
+      const { marketRotationEngine } = await import('./trading/market-rotation');
+      const topCoins = marketRotationEngine.getTopCoins(9);
+      res.json(topCoins);
+    } catch (err) {
+      res.status(500).json({ message: String(err) });
+    }
+  });
+
+  app.get('/api/multi-strategy/ensemble-weights', async (req, res) => {
+    try {
+      const { ensembleEngine } = await import('./trading/multi-strategy-engine');
+      const weights = ensembleEngine.getEnsembleWeights();
+      res.json(weights);
+    } catch (err) {
+      res.status(500).json({ message: String(err) });
+    }
+  });
+
+  app.get('/api/multi-strategy/motif-patterns', async (req, res) => {
+    try {
+      const { ensembleEngine } = await import('./trading/multi-strategy-engine');
+      const motifs = ensembleEngine.getMotifs();
+      res.json(motifs);
+    } catch (err) {
+      res.status(500).json({ message: String(err) });
+    }
+  });
+
+  app.post('/api/multi-strategy/start-bot', async (req, res) => {
+    try {
+      const { multiStrategyBot } = await import('./trading/multi-strategy-trader');
+      await multiStrategyBot.start();
+      res.json({ message: 'Multi-strategy bot started', status: multiStrategyBot.getStatus() });
+    } catch (err) {
+      res.status(500).json({ message: String(err) });
+    }
+  });
+
+  app.post('/api/multi-strategy/stop-bot', async (req, res) => {
+    try {
+      const { multiStrategyBot } = await import('./trading/multi-strategy-trader');
+      await multiStrategyBot.stop();
+      res.json({ message: 'Multi-strategy bot stopped' });
+    } catch (err) {
+      res.status(500).json({ message: String(err) });
+    }
+  });
+
+  app.get('/api/multi-strategy/bot-status', async (req, res) => {
+    try {
+      const { multiStrategyBot } = await import('./trading/multi-strategy-trader');
+      const status = multiStrategyBot.getStatus();
+      res.json(status);
+    } catch (err) {
+      res.status(500).json({ message: String(err) });
+    }
+  });
+
+  app.get('/api/multi-strategy/positions', async (req, res) => {
+    try {
+      const { multiStrategyBot } = await import('./trading/multi-strategy-trader');
+      const positions = multiStrategyBot.getOpenPositions();
+      res.json(positions);
+    } catch (err) {
+      res.status(500).json({ message: String(err) });
+    }
+  });
+
   return httpServer;
 }

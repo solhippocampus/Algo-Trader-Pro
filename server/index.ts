@@ -2,6 +2,7 @@ import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { serveStatic } from "./static";
 import { createServer } from "http";
+import { connectMongoDB } from "./db-mongo";
 
 // Global process-level handlers to keep the server alive and log unexpected
 // errors during development. These make crashes less likely to silently kill
@@ -71,6 +72,10 @@ app.use((req, res, next) => {
 });
 
 (async () => {
+  // Initialize MongoDB connection
+  console.log('[Startup] Connecting to MongoDB...');
+  await connectMongoDB();
+
   await registerRoutes(httpServer, app);
 
   app.use((err: any, _req: Request, res: Response, next: NextFunction) => {
