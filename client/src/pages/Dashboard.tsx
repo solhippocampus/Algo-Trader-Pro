@@ -1,4 +1,4 @@
-import { useBotControl, useBotStatus, useStats, useTrades, useAccountBalance, useDecisions, useMotifWeights, useOnChain, useMultiExchange, useCorrelation, usePositions, useAtrConfig, useUpdateAtrConfig } from "@/hooks/use-bot";
+import { useBotControl, useBotStatus, useStats, useTrades, useAccountBalance, useDecisions, useMotifWeights, useOnChain, useMultiExchange, useCorrelation, usePositions, useAtrConfig, useUpdateAtrConfig, useTradesClosed, usePnlSummary } from "@/hooks/use-bot";
 import { StrategyCard } from "@/components/StrategyCard";
 import { StatCard } from "@/components/StatCard";
 import { TradeHistory } from "@/components/TradeHistory";
@@ -22,15 +22,28 @@ export default function Dashboard() {
   const { data: correlation } = useCorrelation();
   const { data: positions } = usePositions();
   const { data: atrConfig } = useAtrConfig();
+  const { data: closedTrades } = useTradesClosed();
+  const { data: pnlSummary } = usePnlSummary();
   const updateAtr = useUpdateAtrConfig();
   const { startBot, stopBot } = useBotControl();
 
   const isRunning = status?.isRunning || false;
   
-  // Mock data for chart if not enough trades
-  const chartData = trades && trades.length > 5 
-    ? trades.map(t => ({ pnl: Number(t.pnl), time: t.createdAt }))
-    : Array.from({ length: 10 }).map((_, i) => ({ pnl: Math.random() * 20 - 5, time: i }));
+  // Build chart data from closed trades with cumulative PnL
+  const chartData = closedTrades && closedTrades.length > 0
+    ? closedTrades.reduce((acc: any[], trade: any, index: number) => {
+        const cumPnL = acc.length > 0 
+          ? acc[acc.length - 1].cumPnL + (trade.pnl || 0)
+          : (trade.pnl || 0);
+        return [...acc, { 
+          symbol: trade.symbol,
+          pnl: trade.pnl || 0,
+          cumPnL,
+          time: new Date(trade.closedAt || trade.executedAt).toLocaleTimeString(),
+          date: index.toString()
+        }];
+      }, [])
+    : Array.from({ length: 10 }).map((_, i) => ({ cumPnL: Math.random() * 20 - 5, time: i, date: i.toString() }));
 
   return (
     <div className="min-h-screen bg-background text-foreground pb-20 grid-bg">
@@ -118,7 +131,7 @@ export default function Dashboard() {
             <StatCard 
               label="Total Trades" 
               value={stats?.totalTrades || 0}
-              subValue={`Risk: ${(stats?.totalRisk || 0).toFixed(2)}%`}
+              subValue={`Win Rate: ${(pnlSummary?.winRate || 0).toFixed(1)}%`}
               icon={<Zap className="w-5 h-5" />}
             />
           </div>
@@ -185,6 +198,7 @@ export default function Dashboard() {
             <h2 className="text-2xl font-bold font-display">System Overview</h2>
             <TabsList className="bg-white/5 border border-white/10 p-1">
               <TabsTrigger value="strategies" className="data-[state=active]:bg-primary data-[state=active]:text-white">Strategies</TabsTrigger>
+              <TabsTrigger value="pnl" className="data-[state=active]:bg-primary data-[state=active]:text-white">📈 P&L</TabsTrigger>
               <TabsTrigger value="performance" className="data-[state=active]:bg-primary data-[state=active]:text-white">Performance</TabsTrigger>
               <TabsTrigger value="trades" className="data-[state=active]:bg-primary data-[state=active]:text-white">Live Trades</TabsTrigger>
               <TabsTrigger value="decisions" className="data-[state=active]:bg-primary data-[state=active]:text-white">🔍 Decisions</TabsTrigger>
@@ -292,7 +306,7 @@ export default function Dashboard() {
                   />
                   <Area 
                     type="monotone" 
-                    dataKey="pnl" 
+                    dataKey="cumPnL" 
                     stroke="hsl(var(--primary))" 
                     strokeWidth={2}
                     fillOpacity={1} 
@@ -300,6 +314,85 @@ export default function Dashboard() {
                   />
                 </AreaChart>
               </ResponsiveContainer>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="pnl" className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+            {/* PnL Summary Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="glass-card p-6 rounded-2xl border border-white/10">
+                <p className="text-sm text-muted-foreground mb-2">Total PnL</p>
+                <p className={cn("text-3xl font-bold", (pnlSummary?.totalPnl || 0) >= 0 ? "text-green-400" : "text-red-400")}>
+                  ${(pnlSummary?.totalPnl || 0).toFixed(2)}
+                </p>
+              </div>
+              <div className="glass-card p-6 rounded-2xl border border-white/10">
+                <p className="text-sm text-muted-foreground mb-2">Win Rate</p>
+                <p className="text-3xl font-bold text-blue-400">
+                  {((pnlSummary?.winRate || 0) * 1).toFixed(1)}%
+                </p>
+              </div>
+              <div className="glass-card p-6 rounded-2xl border border-white/10">
+                <p className="text-sm text-muted-foreground mb-2">Total Trades</p>
+                <p className="text-3xl font-bold text-primary">
+                  {pnlSummary?.totalTrades || 0}
+                </p>
+              </div>
+              <div className="glass-card p-6 rounded-2xl border border-white/10">
+                <p className="text-sm text-muted-foreground mb-2">Profit Factor</p>
+                <p className="text-3xl font-bold text-purple-400">
+                  {(pnlSummary?.profitFactor || 0).toFixed(2)}x
+                </p>
+              </div>
+            </div>
+
+            {/* Closed Trades Table */}
+            <div className="glass-card p-6 rounded-2xl border border-white/10">
+              <h3 className="text-lg font-bold mb-4">Closed Trades</h3>
+              {closedTrades && closedTrades.length > 0 ? (
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead className="border-b border-white/10">
+                      <tr className="text-muted-foreground">
+                        <th className="text-left py-3 px-4">Symbol</th>
+                        <th className="text-left py-3 px-4">Side</th>
+                        <th className="text-right py-3 px-4">Entry</th>
+                        <th className="text-right py-3 px-4">Exit</th>
+                        <th className="text-right py-3 px-4">PnL ($)</th>
+                        <th className="text-right py-3 px-4">PnL %</th>
+                        <th className="text-left py-3 px-4">Time</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-white/10">
+                      {closedTrades.slice(-20).reverse().map((trade: any, idx: number) => (
+                        <tr key={idx} className="hover:bg-white/5 transition-colors">
+                          <td className="py-3 px-4 font-medium">{trade.symbol}</td>
+                          <td className="py-3 px-4">
+                            <span className={cn("px-2 py-1 rounded text-xs font-semibold", 
+                              trade.side === 'LONG' ? "bg-green-500/20 text-green-400" : "bg-red-500/20 text-red-400"
+                            )}>
+                              {trade.side}
+                            </span>
+                          </td>
+                          <td className="text-right py-3 px-4">${(trade.entryPrice || 0).toFixed(2)}</td>
+                          <td className="text-right py-3 px-4">${(trade.exitPrice || 0).toFixed(2)}</td>
+                          <td className={cn("text-right py-3 px-4 font-semibold", (trade.pnl || 0) >= 0 ? "text-green-400" : "text-red-400")}>
+                            ${(trade.pnl || 0).toFixed(2)}
+                          </td>
+                          <td className={cn("text-right py-3 px-4 font-semibold", (trade.pnlPercent || 0) >= 0 ? "text-green-400" : "text-red-400")}>
+                            {((trade.pnlPercent || 0) * 1).toFixed(2)}%
+                          </td>
+                          <td className="py-3 px-4 text-muted-foreground text-xs">
+                            {new Date(trade.closedAt || trade.executedAt).toLocaleString()}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                <p className="text-muted-foreground">No closed trades yet. Trade execution and closure PnL will appear here.</p>
+              )}
             </div>
           </TabsContent>
 
@@ -550,14 +643,14 @@ export default function Dashboard() {
                 Recent Decision Paths (Last 5 Trades)
               </h3>
               <div className="space-y-4">
-                {trades && trades.slice(-5).reverse().map((trade, idx) => {
-                  const correspondingDecision = decisions?.find(d => d.timestamp >= (trade.executedAt || 0) - 1000);
+                {trades && trades.slice(-5).reverse().map((trade: any, idx: number) => {
+                  const correspondingDecision = decisions?.find((d: any) => d.timestamp >= (new Date(trade.createdAt).getTime() - 1000));
                   return (
                     <div key={idx} className="bg-black/30 border border-white/10 rounded-lg p-4">
                       <div className="flex items-start justify-between mb-3">
                           <div>
                             <p className="font-semibold text-white">{trade.side} {trade.symbol}</p>
-                            <p className="text-xs text-muted-foreground">${(trade.entryPrice ?? 0).toFixed(2)} • {(trade.quantity ?? 0).toFixed(4)} units</p>
+                            <p className="text-xs text-muted-foreground">${(Number(trade.price) || 0).toFixed(2)} • {(Number(trade.amount) || 0).toFixed(4)} units</p>
                           </div>
                         <span className={`px-2 py-1 rounded text-xs font-bold ${
                           trade.side === 'LONG' ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'

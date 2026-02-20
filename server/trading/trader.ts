@@ -104,14 +104,26 @@ export class TradingBot {
       // Check positions and updates
       const positions = strategyEngine.getOpenPositions();
       for (const position of positions) {
-        strategyEngine.recordTradeOutcome(position.symbol, marketData.currentPrice, 'trend');
+        // Check profit-taking levels (0.5% or 1%)
+        const profitTarget = strategyEngine.checkProfitTargets(
+          `${position.symbol}_${position.createdAt}`,
+          marketData.currentPrice
+        );
+        
+        if (profitTarget.shouldClose) {
+          console.log(`[TradingBot] 💰 PROFIT TARGET HIT: ${profitTarget.level} - Closing position`);
+          strategyEngine.recordTradeOutcome(position.symbol, marketData.currentPrice, 'momentum');
+        } else {
+          // Regular update (stops, checks)
+          strategyEngine.recordTradeOutcome(position.symbol, marketData.currentPrice, 'trend');
+        }
       }
 
       // Execute if signal is strong enough
       console.log(`[TradingBot] Checking execution conditions: action=${decision.action}, signal=${decision.signal}, confidence=${decision.confidence}`);
-      // Require higher confidence and a clear signal separation to reduce low-quality trades
-      const strongSignal = (decision.action === 'LONG' && decision.signal > 0.58) || (decision.action === 'SHORT' && decision.signal < 0.42);
-      if (decision.action !== 'NEUTRAL' && decision.confidence > 0.6 && strongSignal) {
+      // Require HIGHER confidence and CLEARER signal separation for better win rate
+      const strongSignal = (decision.action === 'LONG' && decision.signal > 0.55) || (decision.action === 'SHORT' && decision.signal < 0.45);
+      if (decision.action !== 'NEUTRAL' && decision.confidence > 0.60 && strongSignal) {
         console.log('[TradingBot] EXECUTING TRADE');
         const execution = strategyEngine.executeDecision(decision, marketData);
         if (execution) {

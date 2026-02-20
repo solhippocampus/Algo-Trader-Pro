@@ -75,6 +75,30 @@ export function useTrades() {
   });
 }
 
+export function useTradesClosed() {
+  return useQuery({
+    queryKey: ["/api/trading/trades-closed"],
+    queryFn: async () => {
+      const res = await fetch("/api/trading/trades-closed");
+      if (!res.ok) throw new Error("Failed to fetch closed trades");
+      return await res.json();
+    },
+    refetchInterval: 10000, // Update every 10s for closed trades
+  });
+}
+
+export function usePnlSummary() {
+  return useQuery({
+    queryKey: ["/api/trading/pnl-summary"],
+    queryFn: async () => {
+      const res = await fetch("/api/trading/pnl-summary");
+      if (!res.ok) throw new Error("Failed to fetch PnL summary");
+      return await res.json();
+    },
+    refetchInterval: 10000, // Update every 10s for PnL metrics
+  });
+}
+
 export function useConfig() {
   return useQuery({
     queryKey: [api.config.get.path],

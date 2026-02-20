@@ -1,0 +1,6 @@
+[build]
+  command = "npm run build:client"
+  publish = "client/dist"
+
+[context.production.environment]
+  NODE_ENV = "production"

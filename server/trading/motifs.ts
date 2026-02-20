@@ -1,5 +1,6 @@
 import { IndicatorValues, calculateVolatilityScore } from './indicators';
 import { v4 as uuidv4 } from 'uuid';
+import { coinmarketClient } from './coinmarket-client';
 
 export type MotifType = 'trend' | 'momentum' | 'volatility' | 'sentiment';
 export type TradeSignal = 'STRONG_LONG' | 'LONG' | 'NEUTRAL' | 'SHORT' | 'STRONG_SHORT';
@@ -189,23 +190,48 @@ export class SentimentMotif {
   private motifId: string = uuidv4();
   private sentimentCache: Map<string, number> = new Map();
 
-  analyze(symbol: string, priceHistory: number[]): MotifSignal {
-    const signal = this.calculateSignal(symbol, priceHistory);
-    const confidence = this.calculateConfidence(priceHistory);
+  async analyze(symbol: string, priceHistory: number[]): Promise<MotifSignal> {
+    const localSignal = this.calculateSignal(symbol, priceHistory);
+    const globalSentiment = await this.getGlobalSentiment();
+    
+    // Blend local and global sentiment: 60% local price action, 40% market sentiment
+    const blendedSignal = localSignal * 0.6 + globalSentiment * 0.4;
+    const confidence = this.calculateConfidence(priceHistory, globalSentiment);
 
     return {
       motifId: this.motifId,
       type: 'sentiment',
-      signal,
+      signal: blendedSignal,
       confidence,
       details: {
         priceChangePercent: priceHistory.length > 1 
           ? ((priceHistory[priceHistory.length - 1] - priceHistory[0]) / priceHistory[0]) * 100
           : 0,
         momentum: this.calculatePriceMomentum(priceHistory),
+        globalSentiment: globalSentiment.toFixed(3),
+        fearGreedIndex: (await coinmarketClient.getMarketIntelligence())?.fearGreedIndex || 50,
       },
       timestamp: Date.now(),
     };
+  }
+
+  private async getGlobalSentiment(): Promise<number> {
+    try {
+      const marketData = await coinmarketClient.getMarketIntelligence();
+      if (!marketData) return 0.5;
+
+      // Convert Fear & Greed (0-100) to signal (0-1)
+      const fgSignal = marketData.fearGreedIndex / 100;
+      
+      // Adjust for BTC dominance (higher dominance = healthier market)
+      const domFactor = (marketData.btcDominance - 30) / 40; // Normalized to 0-1
+      
+      // Blend them
+      return fgSignal * 0.7 + domFactor * 0.3;
+    } catch (error) {
+      console.warn('[SentimentMotif] Error fetching global sentiment:', error instanceof Error ? error.message : error);
+      return 0.5; // Neutral on error
+    }
   }
 
   private calculateSignal(symbol: string, priceHistory: number[]): number {
@@ -222,9 +248,17 @@ export class SentimentMotif {
     return Math.min(Math.max(sentimentScore, 0), 1);
   }
 
-  private calculateConfidence(priceHistory: number[]): number {
-    // More price history = higher confidence
-    return Math.min(0.3 + (priceHistory.length / 100) * 0.3, 0.7);
+  private calculateConfidence(priceHistory: number[], globalSentiment?: number): number {
+    // Base confidence from price history length
+    let confidence = Math.min(0.3 + (priceHistory.length / 100) * 0.3, 0.7);
+    
+    // Boost confidence when global sentiment is extreme (very fearful or very greedy)
+    if (globalSentiment !== undefined) {
+      const extremeness = Math.abs(globalSentiment - 0.5);
+      confidence += extremeness * 0.2;
+    }
+    
+    return Math.min(confidence, 0.95);
   }
 
   private calculatePriceMomentum(priceHistory: number[]): number {
@@ -252,27 +286,27 @@ export class MotifEnsemble {
     this.volatilityMotif = new VolatilityMotif();
     this.sentimentMotif = new SentimentMotif();
 
-    // Initial equal weights
+    // Optimized weights - Trend & Momentum dominant, sentiment as filter
     this.weights = {
-      trend: 0.35,
-      momentum: 0.25,
-      volatility: 0.20,
-      sentiment: 0.20,
+      trend: 0.40,           // Stronger trend emphasis
+      momentum: 0.30,        // Strong momentum confirmation
+      volatility: 0.20,      // Volatility risk management
+      sentiment: 0.10,       // Sentiment as confirmation only (not dominant)
     };
   }
 
-  analyze(
+  async analyze(
     indicators: IndicatorValues,
     price: number,
     symbol: string,
     orderBook: any,
     priceHistory: number[]
-  ): { signal: number; confidence: number; motifs: MotifSignal[] } {
+  ): Promise<{ signal: number; confidence: number; motifs: MotifSignal[] }> {
     const motifs: MotifSignal[] = [
       this.trendMotif.analyze(indicators, price),
       this.momentumMotif.analyze(indicators),
       this.volatilityMotif.analyze(indicators, price, orderBook),
-      this.sentimentMotif.analyze(symbol, priceHistory),
+      await this.sentimentMotif.analyze(symbol, priceHistory),
     ];
 
     // Weighted ensemble

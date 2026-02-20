@@ -150,6 +150,16 @@ export async function registerRoutes(
     res.json(trades);
   });
 
+  app.get("/api/trading/trades-closed", async (req, res) => {
+    const closed = strategyEngine.getClosedTrades(50);
+    res.json(closed);
+  });
+
+  app.get("/api/trading/pnl-summary", async (req, res) => {
+    const summary = strategyEngine.getPnlSummary();
+    res.json(summary);
+  });
+
   app.get("/api/trading/metrics", async (req, res) => {
     const metrics = strategyEngine.getMetrics();
     res.json(metrics);
@@ -319,13 +329,13 @@ export async function registerRoutes(
 
       for (let i = 0; i < cycles; i++) {
         const decision = await strategyEngine.analyzeAndDecide(symbol);
-        const md = await (await import('./market-data')).marketDataFetcher.fetchMarketData(symbol);
+        const md = await (await import('./trading/market-data')).marketDataFetcher.fetchMarketData(symbol);
         if (!decision || !md) {
           results.push({ cycle: i, status: 'no-data' });
           continue;
         }
 
-        const exec = strategyEngine.executeDecision(decision, md);
+          const exec = strategyEngine.executeDecision(decision, md);
         results.push({ cycle: i, decision: decision.action, signal: decision.signal, executed: !!exec });
         // small delay to avoid hammering any remote APIs
         await new Promise(r => setTimeout(r, 50));

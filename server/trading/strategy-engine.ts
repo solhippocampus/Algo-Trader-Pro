@@ -26,6 +26,10 @@ export interface StrategyExecution {
   takeProfit: number;
   executedAt: number;
   positionId?: string;
+  exitPrice?: number;    // Set when position closed
+  closedAt?: number;     // Set when position closed
+  pnl?: number;          // Profit/loss in USD when closed
+  pnlPercent?: number;   // Profit/loss percentage when closed
 }
 
 export class StrategyEngine {
@@ -63,7 +67,7 @@ export class StrategyEngine {
       }
 
       // Get ensemble signal
-      const ensembleResult = this.motifEnsemble.analyze(
+      const ensembleResult = await this.motifEnsemble.analyze(
         marketData.indicators,
         marketData.currentPrice,
         symbol,
@@ -92,11 +96,19 @@ export class StrategyEngine {
         reasoning = `Neutral market condition (signal: ${ensembleResult.signal.toFixed(3)})`;
       }
 
-      // Check for position closure
+      // Check for position closure or SMART INVERSION (force reversal on very strong opposite signal)
       const openPositions = this.riskManager.getOpenPositions();
-      if (openPositions.length > 0 && action !== 'NEUTRAL') {
+      if (openPositions.length > 0) {
         const position = openPositions[0];
-        if ((action === 'LONG' && position.side === 'SHORT') || (action === 'SHORT' && position.side === 'LONG')) {
+        const oppositeDirSignal = action === 'LONG' ? (1 - ensembleResult.signal) : ensembleResult.signal;
+        
+        // Smart Inversion: if opposite signal is VERY strong (>0.75 after inversion), switch immediately
+        if ((action === 'LONG' && position.side === 'SHORT' && ensembleResult.signal > 0.75) ||
+            (action === 'SHORT' && position.side === 'LONG' && ensembleResult.signal < 0.25)) {
+          action = 'CLOSE_POSITION';
+          reasoning = `🔄 SMART INVERSION: Closing ${position.side} position (opposite signal: ${oppositeDirSignal.toFixed(3)}) to open ${action}`;
+        } else if ((action === 'LONG' && position.side === 'SHORT') || (action === 'SHORT' && position.side === 'LONG')) {
+          // Regular reversal if simply opposite
           action = 'CLOSE_POSITION';
           reasoning = `Reversal signal: closing ${position.side} position to open ${action}`;
         }
@@ -117,7 +129,8 @@ export class StrategyEngine {
 
       return decision;
     } catch (error) {
-      console.error(`[StrategyEngine] Error analyzing ${symbol}:`, error);
+      console.error(`[StrategyEngine] Error analyzing ${symbol}:`, error instanceof Error ? error.message : error);
+      console.error(`[StrategyEngine] Stack:`, error instanceof Error ? error.stack : 'no stack');
       return null;
     }
   }
@@ -152,11 +165,20 @@ export class StrategyEngine {
         2.5 // Risk/reward ratio
       );
 
+      // Extract sentiment risk adjustment from motifs
+      let sentimentRiskAdjustment = 1.0;
+      const sentimentMotif = decision.motifs?.find((m: any) => m.type === 'sentiment');
+      if (sentimentMotif?.details?.riskAdjustment) {
+        sentimentRiskAdjustment = sentimentMotif.details.riskAdjustment;
+      }
+
       const quantity = this.riskManager.calculatePositionSize(
         marketData.currentPrice,
         stopLoss,
         decision.signal,
-        decision.confidence
+        decision.confidence,
+        marketData.indicators.atr14 ? (marketData.indicators.atr14 / marketData.currentPrice) : 0.5,  // volatility factor
+        sentimentRiskAdjustment  // sentiment-based risk adjustment
       );
 
       if (quantity === 0) {
@@ -201,14 +223,15 @@ export class StrategyEngine {
     }
   }
 
-  recordTradeOutcome(symbol: string, exitPrice: number, motifType: 'trend' | 'momentum' | 'volatility' | 'sentiment') {
+  async recordTradeOutcome(symbol: string, exitPrice: number, motifType: 'trend' | 'momentum' | 'volatility' | 'sentiment') {
     const positions = this.riskManager.getOpenPositions();
     const position = positions.find(p => p.symbol === symbol);
 
     if (position) {
       const pnl = (exitPrice - position.entryPrice) * position.quantity * (position.side === 'LONG' ? 1 : -1);
+      const pnlPercent = (pnl / (position.entryPrice * position.quantity)) * 100;
       const success = pnl > 0;
-      const currentState = this.motifEnsemble.analyze({} as any, exitPrice, symbol, null, []).signal.toFixed(2);
+      const currentState = (await this.motifEnsemble.analyze({} as any, exitPrice, symbol, null, [])).signal.toFixed(2);
       const nextState = (exitPrice * 1.01).toString();
 
       this.learningEngine.recordTradeOutcome(
@@ -222,7 +245,18 @@ export class StrategyEngine {
       const positionId = `${symbol}_${position.createdAt}`;
       this.riskManager.closePosition(positionId, exitPrice);
 
-      console.log(`[StrategyEngine] Trade outcome recorded: ${motifType}, PnL: ${pnl}, Success: ${success}`);
+      // Update the corresponding trade in trades[] with close info and PnL
+      for (const trade of this.trades) {
+        if (trade.positionId === positionId && !trade.closedAt) {
+          trade.exitPrice = exitPrice;
+          trade.closedAt = Date.now();
+          trade.pnl = pnl;
+          trade.pnlPercent = pnlPercent;
+          break;
+        }
+      }
+
+      console.log(`[StrategyEngine] Trade outcome recorded: ${symbol}, PnL: ${pnl.toFixed(2)} (${pnlPercent.toFixed(2)}%), Success: ${success}`);
     }
   }
 
@@ -252,12 +286,44 @@ export class StrategyEngine {
     return this.trades.slice(-limit);
   }
 
+  getClosedTrades(limit: number = 50): StrategyExecution[] {
+    return this.trades.filter(t => t.closedAt).slice(-limit);
+  }
+
+  getPnlSummary() {
+    const closed = this.trades.filter(t => t.closedAt);
+    const wins = closed.filter(t => (t.pnl || 0) > 0);
+    const losses = closed.filter(t => (t.pnl || 0) < 0);
+    const totalPnl = closed.reduce((sum, t) => sum + (t.pnl || 0), 0);
+    const avgWin = wins.length > 0 ? wins.reduce((sum, t) => sum + (t.pnl || 0), 0) / wins.length : 0;
+    const avgLoss = losses.length > 0 ? losses.reduce((sum, t) => sum + Math.abs(t.pnl || 0), 0) / losses.length : 0;
+
+    return {
+      totalTrades: closed.length,
+      totalPnl,
+      winRate: closed.length > 0 ? (wins.length / closed.length) * 100 : 0,
+      wins: wins.length,
+      losses: losses.length,
+      avgWin,
+      avgLoss,
+      profitFactor: avgLoss > 0 ? avgWin / avgLoss : (avgWin > 0 ? Infinity : 0),
+    };
+  }
+
   getLearningStats() {
     return this.learningEngine.getStats();
   }
 
+  checkProfitTargets(positionId: string, currentPrice: number) {
+    return this.riskManager.checkProfitTargets(positionId, currentPrice);
+  }
+
   getMotifWeights() {
     return this.motifEnsemble.getWeights();
+  }
+
+  getTradeHistory() {
+    return this.trades;
   }
 
   async refreshDynamicStops() {
@@ -289,3 +355,6 @@ export class StrategyEngine {
 }
 
 export const strategyEngine = new StrategyEngine(10000); // Initialize with $10k
+
+// Export types for use in routes
+export type { StrategyExecution };

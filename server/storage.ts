@@ -82,10 +82,10 @@ let storage: IStorage;
 // Check if database is available
 async function initStorage() {
   try {
-    if (process.env.DATABASE_URL && process.env.DATABASE_URL.includes('localhost')) {
-      console.log('[Storage] Using In-Memory Storage (database not available)');
+    if (!process.env.DATABASE_URL || process.env.DATABASE_URL.includes('localhost') || process.env.DATABASE_URL.startsWith('file:')) {
+      console.log('[Storage] Using In-Memory Storage (database not available or using SQLite)');
       storage = new InMemoryStorage();
-    } else if (process.env.DATABASE_URL) {
+    } else {
       const { db } = await import("./db");
       const { botConfig, trades } = await import("@shared/schema");
       const { eq, desc } = await import("drizzle-orm");
@@ -93,9 +93,6 @@ async function initStorage() {
       // Try to connect and use database
       storage = new DatabaseStorage(db, botConfig, trades, eq, desc);
       console.log('[Storage] Using Database Storage');
-    } else {
-      console.log('[Storage] Using In-Memory Storage');
-      storage = new InMemoryStorage();
     }
   } catch (e) {
     console.log('[Storage] Database connection failed, using In-Memory Storage');

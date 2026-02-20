@@ -12,6 +12,10 @@ export interface Position {
   initialSignal?: number;
   dynamicStop?: number;
   lastAtr?: number;
+  trailingStopPrice?: number;  // Current trailing stop price
+  highestPrice?: number;       // Highest price reached (for LONG positions)
+  lowestPrice?: number;        // Lowest price reached (for SHORT positions)
+  partialClosedQuantity?: number;  // Quantity closed at first profit tier
 }
 
 export interface RiskMetrics {
@@ -26,11 +30,11 @@ export class RiskManager {
   private portfolio: Map<string, Position> = new Map();
   private accountBalance: number = 0;
   private tradeHistory: any[] = [];
-  private maxPositionRisk: number = 0.01; // 1% per trade (more conservative)
+  private maxPositionRisk: number = 0.015; // 1.5% per trade (optimized)
   private maxTotalRisk: number = 0.10; // 10% max total risk
-  private riskRewardRatioMin: number = 1.5; // Minimum 1.5:1 ratio
+  private riskRewardRatioMin: number = 1.3; // Minimum 1.3:1 ratio (more realistic)
   private isDemoMode: boolean = false; // Live trading
-  private atrMultiplier: number = 1.5; // ATR multiplier for dynamic stop-loss (tighter stops)
+  private atrMultiplier: number = 1.2; // ATR multiplier for dynamic stop-loss (balanced)
 
   constructor(initialBalance: number = 10000) {
     this.accountBalance = initialBalance;
@@ -40,7 +44,9 @@ export class RiskManager {
     entryPrice: number,
     stopLoss: number,
     signal: number,
-    confidence: number
+    confidence: number,
+    volatility: number = 0.5,  // Optional volatility factor (0-1)
+    sentimentRiskAdjustment: number = 1.0  // Optional sentiment adjustment (0.5-1.2)
   ): number {
     const riskPerTrade = this.accountBalance * this.maxPositionRisk; // Amount in USD to risk
     const priceRisk = Math.abs(entryPrice - stopLoss); // Price difference per unit
@@ -50,15 +56,22 @@ export class RiskManager {
     // Calculate quantity: how many coins can we buy with risk amount
     let quantity = riskPerTrade / priceRisk; // Quantity based on risk
 
-    // Adjust by confidence
-    quantity *= (0.3 + confidence * 0.5); // scale: 30-80% based on confidence (more conservative)
+    // Adjust by confidence - more aggressive with high confidence
+    quantity *= (0.4 + confidence * 0.6); // scale: 40-100% based on confidence
 
-    // Adjust by signal strength
+    // Adjust by signal strength - prioritize clear trends
     const signalStrength = Math.abs(signal - 0.5) * 2; // 0-1 scale
-    quantity *= (0.5 + signalStrength * 0.5); // 50-100% based on signal strength
+    quantity *= (0.6 + signalStrength * 0.4); // 60-100% based on signal strength
 
-    // Cap quantity to not exceed 2% of account balance in position value (more conservative)
-    const maxPositionValue = this.accountBalance * 0.02;
+    // Volatility-based sizing: reduce size in high volatility
+    const volatilityAdjustment = 1 - (volatility * 0.25); // Up to 25% reduction in high volatility
+    quantity *= volatilityAdjustment;
+
+    // Apply sentiment-based risk adjustment (fear = larger sizes, greed = smaller)
+    quantity *= sentimentRiskAdjustment;
+
+    // Cap quantity to not exceed 2.5% of account balance in position value
+    const maxPositionValue = this.accountBalance * 0.025;
     if (quantity * entryPrice > maxPositionValue) {
       quantity = maxPositionValue / entryPrice;
     }
@@ -199,39 +212,130 @@ export class RiskManager {
     return position;
   }
 
+  // Calculate trailing stop based on current price and ATR
+  calculateTrailingStop(position: Position, currentPrice: number, atr: number = 5): number {
+    const trailingDistance = atr * 1.2; // Use ATR for trailing distance
+
+    if (position.side === 'LONG') {
+      // For LONG: trailing stop is below current price
+      const newTrailingStop = currentPrice - trailingDistance;
+      return Math.max(newTrailingStop, position.stopLoss); // Never go below hard stop
+    } else {
+      // For SHORT: trailing stop is above current price
+      const newTrailingStop = currentPrice + trailingDistance;
+      return Math.min(newTrailingStop, position.stopLoss); // Never go above hard stop
+    }
+  }
+
+  // Update trailing stops and track highest/lowest prices
+  updateTrailingStop(positionId: string, currentPrice: number, atr: number = 5): void {
+    const position = this.portfolio.get(positionId);
+    if (!position) return;
+
+    if (position.side === 'LONG') {
+      // Track highest price for LONG positions
+      if (!position.highestPrice || currentPrice > position.highestPrice) {
+        position.highestPrice = currentPrice;
+      }
+      // Update trailing stop
+      const newTrailingStop = this.calculateTrailingStop(position, currentPrice, atr);
+      position.trailingStopPrice = newTrailingStop;
+      if (newTrailingStop > position.stopLoss) {
+        position.stopLoss = newTrailingStop;
+      }
+    } else {
+      // Track lowest price for SHORT positions
+      if (!position.lowestPrice || currentPrice < position.lowestPrice) {
+        position.lowestPrice = currentPrice;
+      }
+      // Update trailing stop
+      const newTrailingStop = this.calculateTrailingStop(position, currentPrice, atr);
+      position.trailingStopPrice = newTrailingStop;
+      if (newTrailingStop < position.stopLoss) {
+        position.stopLoss = newTrailingStop;
+      }
+    }
+
+    this.portfolio.set(positionId, position);
+  }
+
+  // Check if position has hit profit-taking target (0.5% or 1%)
+  checkProfitTargets(positionId: string, currentPrice: number): { level: '0.5%' | '1%' | null; shouldClose: boolean } {
+    const position = this.portfolio.get(positionId);
+    if (!position) return { level: null, shouldClose: false };
+
+    const priceChange = (currentPrice - position.entryPrice) / position.entryPrice;
+
+    if (position.side === 'LONG') {
+      // For LONG: positive price change
+      if (priceChange >= 0.01 && !position.partialClosedQuantity) {
+        return { level: '1%', shouldClose: true };
+      }
+      if (priceChange >= 0.005 && !position.partialClosedQuantity) {
+        return { level: '0.5%', shouldClose: true };
+      }
+    } else {
+      // For SHORT: negative price change
+      if (priceChange <= -0.01 && !position.partialClosedQuantity) {
+        return { level: '1%', shouldClose: true };
+      }
+      if (priceChange <= -0.005 && !position.partialClosedQuantity) {
+        return { level: '0.5%', shouldClose: true };
+      }
+    }
+
+    return { level: null, shouldClose: false };
+  }
+
   getOpenPositionsWithIds(): { id: string; position: Position }[] {
     return Array.from(this.portfolio.entries()).map(([id, pos]) => ({ id, position: pos }));
   }
 
-  closePosition(positionId: string, exitPrice: number): any {
+  closePosition(positionId: string, exitPrice: number, quantityToClose?: number): any {
     const position = this.portfolio.get(positionId);
     if (!position) return null;
 
-    const pnl = (exitPrice - position.entryPrice) * position.quantity * (position.side === 'LONG' ? 1 : -1);
-    const pnlPercent = (pnl / (position.entryPrice * position.quantity)) * 100;
+    const closingQuantity = quantityToClose || position.quantity;
+    const remainingQuantity = position.quantity - closingQuantity;
+    const pnl = (exitPrice - position.entryPrice) * closingQuantity * (position.side === 'LONG' ? 1 : -1);
+    const pnlPercent = (pnl / (position.entryPrice * closingQuantity)) * 100;
 
     this.accountBalance += pnl;
-    this.tradeHistory.push({
-      ...position,
-      exitPrice,
-      pnl,
-      pnlPercent,
-      closedAt: Date.now(),
-    });
 
-    this.portfolio.delete(positionId);
+    if (remainingQuantity <= 0) {
+      // Full close
+      this.tradeHistory.push({
+        ...position,
+        exitPrice,
+        pnl,
+        pnlPercent,
+        closedAt: Date.now(),
+      });
+      this.portfolio.delete(positionId);
+    } else {
+      // Partial close
+      position.quantity = remainingQuantity;
+      position.partialClosedQuantity = (position.partialClosedQuantity || 0) + closingQuantity;
+      this.portfolio.set(positionId, position);
+    }
 
     return {
       positionId,
       pnl,
       pnlPercent,
       newBalance: this.accountBalance,
+      fullyClosed: remainingQuantity <= 0,
     };
   }
 
-  updatePosition(positionId: string, currentPrice: number): Position | null {
+  updatePosition(positionId: string, currentPrice: number, atr?: number): Position | null {
     const position = this.portfolio.get(positionId);
     if (!position) return null;
+
+    // Update trailing stop
+    if (atr) {
+      this.updateTrailingStop(positionId, currentPrice, atr);
+    }
 
     // Check stop-loss and take-profit
     if (position.side === 'LONG') {
