@@ -390,10 +390,10 @@ export async function registerRoutes(
       // Ensure market data is fetched
       await marketRotationEngine.fetchMarketData();
       const topCoins = marketRotationEngine.getTopCoins(9);
-      res.json(topCoins);
+      res.json(topCoins.length > 0 ? topCoins : []);
     } catch (err) {
       console.error('[API] Error fetching multi-strategy markets:', err);
-      res.status(500).json({ message: String(err) });
+      res.status(200).json([]); // Return empty array on error (graceful degradation)
     }
   });
 
@@ -401,9 +401,10 @@ export async function registerRoutes(
     try {
       const { ensembleEngine } = await import('./trading/multi-strategy-engine');
       const weights = ensembleEngine.getEnsembleWeights();
-      res.json(weights);
+      res.json(weights || {});
     } catch (err) {
-      res.status(500).json({ message: String(err) });
+      console.error('[API] Error fetching ensemble weights:', err);
+      res.status(200).json({});
     }
   });
 
@@ -411,9 +412,10 @@ export async function registerRoutes(
     try {
       const { ensembleEngine } = await import('./trading/multi-strategy-engine');
       const motifs = ensembleEngine.getMotifs();
-      res.json(motifs);
+      res.json(motifs || []);
     } catch (err) {
-      res.status(500).json({ message: String(err) });
+      console.error('[API] Error fetching motif patterns:', err);
+      res.status(200).json([]);
     }
   });
 
@@ -421,9 +423,11 @@ export async function registerRoutes(
     try {
       const { multiStrategyBot } = await import('./trading/multi-strategy-trader');
       await multiStrategyBot.start();
-      res.json({ message: 'Multi-strategy bot started', status: multiStrategyBot.getStatus() });
+      const status = multiStrategyBot.getStatus();
+      res.json({ message: 'Multi-strategy bot started', status, success: true });
     } catch (err) {
-      res.status(500).json({ message: String(err) });
+      console.error('[API] Error starting multi-strategy bot:', err);
+      res.status(200).json({ message: String(err), success: false, status: { isRunning: false, activeMarkets: [], decisionsCount: 0, tradesCount: 0, openPositions: 0 } });
     }
   });
 
@@ -431,9 +435,10 @@ export async function registerRoutes(
     try {
       const { multiStrategyBot } = await import('./trading/multi-strategy-trader');
       await multiStrategyBot.stop();
-      res.json({ message: 'Multi-strategy bot stopped' });
+      res.json({ message: 'Multi-strategy bot stopped', success: true });
     } catch (err) {
-      res.status(500).json({ message: String(err) });
+      console.error('[API] Error stopping multi-strategy bot:', err);
+      res.status(200).json({ message: String(err), success: false });
     }
   });
 
@@ -443,7 +448,8 @@ export async function registerRoutes(
       const status = multiStrategyBot.getStatus();
       res.json(status);
     } catch (err) {
-      res.status(500).json({ message: String(err) });
+      console.error('[API] Error fetching multi-strategy bot status:', err);
+      res.json({ isRunning: false, activeMarkets: [], decisionsCount: 0, tradesCount: 0, openPositions: 0 });
     }
   });
 
@@ -451,9 +457,10 @@ export async function registerRoutes(
     try {
       const { multiStrategyBot } = await import('./trading/multi-strategy-trader');
       const positions = multiStrategyBot.getOpenPositions();
-      res.json(positions);
+      res.json(positions || []);
     } catch (err) {
-      res.status(500).json({ message: String(err) });
+      console.error('[API] Error fetching multi-strategy positions:', err);
+      res.json([]);
     }
   });
 

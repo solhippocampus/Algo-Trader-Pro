@@ -275,11 +275,18 @@ export function useMultiStrategyMarkets() {
   return useQuery({
     queryKey: ['/api/multi-strategy/markets'],
     queryFn: async () => {
-      const res = await fetch('/api/multi-strategy/markets');
-      if (!res.ok) throw new Error('Failed to fetch markets');
-      return await res.json();
+      try {
+        const res = await fetch('/api/multi-strategy/markets');
+        const data = await res.json();
+        return Array.isArray(data) ? data : [];
+      } catch (err) {
+        console.warn('[Hook] Failed to fetch markets:', err);
+        return [];
+      }
     },
-    refetchInterval: 30000, // Update every 30s
+    refetchInterval: 30000,
+    retry: 2,
+    staleTime: 15000,
   });
 }
 
@@ -287,11 +294,18 @@ export function useEnsembleWeights() {
   return useQuery({
     queryKey: ['/api/multi-strategy/ensemble-weights'],
     queryFn: async () => {
-      const res = await fetch('/api/multi-strategy/ensemble-weights');
-      if (!res.ok) throw new Error('Failed to fetch ensemble weights');
-      return await res.json();
+      try {
+        const res = await fetch('/api/multi-strategy/ensemble-weights');
+        const data = await res.json();
+        return data || {};
+      } catch (err) {
+        console.warn('[Hook] Failed to fetch ensemble weights:', err);
+        return {};
+      }
     },
     refetchInterval: 10000,
+    retry: 2,
+    staleTime: 5000,
   });
 }
 
@@ -299,11 +313,18 @@ export function useMotifPatterns() {
   return useQuery({
     queryKey: ['/api/multi-strategy/motif-patterns'],
     queryFn: async () => {
-      const res = await fetch('/api/multi-strategy/motif-patterns');
-      if (!res.ok) throw new Error('Failed to fetch motif patterns');
-      return await res.json();
+      try {
+        const res = await fetch('/api/multi-strategy/motif-patterns');
+        const data = await res.json();
+        return Array.isArray(data) ? data : [];
+      } catch (err) {
+        console.warn('[Hook] Failed to fetch motif patterns:', err);
+        return [];
+      }
     },
     refetchInterval: 15000,
+    retry: 2,
+    staleTime: 7500,
   });
 }
 
@@ -356,11 +377,18 @@ export function useMultiStrategyBotStatus() {
   return useQuery({
     queryKey: ['/api/multi-strategy/bot-status'],
     queryFn: async () => {
-      const res = await fetch('/api/multi-strategy/bot-status');
-      if (!res.ok) throw new Error('Failed to fetch bot status');
-      return await res.json();
+      try {
+        const res = await fetch('/api/multi-strategy/bot-status');
+        const data = await res.json();
+        return data || { isRunning: false, activeMarkets: [], decisionsCount: 0, tradesCount: 0, openPositions: 0 };
+      } catch (err) {
+        console.warn('[Hook] Failed to fetch bot status:', err);
+        return { isRunning: false, activeMarkets: [], decisionsCount: 0, tradesCount: 0, openPositions: 0 };
+      }
     },
     refetchInterval: 3000,
+    retry: 1,
+    staleTime: 1500,
   });
 }
 
@@ -368,11 +396,18 @@ export function useMultiStrategyPositions() {
   return useQuery({
     queryKey: ['/api/multi-strategy/positions'],
     queryFn: async () => {
-      const res = await fetch('/api/multi-strategy/positions');
-      if (!res.ok) throw new Error('Failed to fetch positions');
-      return await res.json();
+      try {
+        const res = await fetch('/api/multi-strategy/positions');
+        const data = await res.json();
+        return Array.isArray(data) ? data : [];
+      } catch (err) {
+        console.warn('[Hook] Failed to fetch positions:', err);
+        return [];
+      }
     },
     refetchInterval: 5000,
+    retry: 1,
+    staleTime: 2500,
   });
 }
 
