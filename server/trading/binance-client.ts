@@ -25,13 +25,20 @@ export interface OrderBook {
 export class BinanceAPIClient {
   private apiKey: string;
   private apiSecret: string;
-  private baseUrl = 'https://api.binance.com/api';
+  private baseUrl: string;
+  private marketDataBaseUrl: string;
+  private region: 'GLOBAL' | 'US' | 'TR';
   private isDemoMode: boolean = process.env.TRADING_MODE === 'DEMO' || !process.env.BINANCE_API_KEY;
   private lastApiError: string | null = null;
 
   constructor() {
     this.apiKey = process.env.BINANCE_API_KEY || '';
     this.apiSecret = process.env.BINANCE_API_SECRET || process.env.BINANCE_SECRET_KEY || '';
+    this.region = this.resolveRegion();
+    this.baseUrl = this.resolveBaseUrl();
+    this.marketDataBaseUrl = this.resolveMarketDataBaseUrl();
+
+    console.log(`[Binance] Region: ${this.region}, API base URL: ${this.baseUrl}, market data URL: ${this.marketDataBaseUrl}`);
 
     if (!this.apiKey || !this.apiSecret) {
       console.warn('[Binance] API keys not configured - DEMO MODE ENABLED');
@@ -55,14 +62,79 @@ export class BinanceAPIClient {
     console.log(`[Binance] Mode changed to: ${this.isDemoMode ? 'DEMO' : 'LIVE'}`);
   }
 
+  private resolveRegion(): 'GLOBAL' | 'US' | 'TR' {
+    const region = (process.env.BINANCE_REGION || 'GLOBAL').trim().toUpperCase();
+    if (region === 'TR') return 'TR';
+    if (region === 'US') return 'US';
+    return 'GLOBAL';
+  }
+
+  private resolveBaseUrl(): string {
+    const explicitBaseUrl = process.env.BINANCE_BASE_URL?.trim();
+    if (explicitBaseUrl) {
+      return explicitBaseUrl.replace(/\/+$/, '');
+    }
+
+    if (this.region === 'TR') {
+      return 'https://www.binance.tr';
+    }
+
+    if (this.region === 'US') {
+      return 'https://api.binance.us/api';
+    }
+
+    return 'https://api.binance.com/api';
+  }
+
+  private resolveMarketDataBaseUrl(): string {
+    const explicitMarketDataUrl = process.env.BINANCE_MARKET_DATA_BASE_URL?.trim();
+    if (explicitMarketDataUrl) {
+      return explicitMarketDataUrl.replace(/\/+$/, '');
+    }
+
+    if (this.region === 'TR') {
+      return 'https://api.binance.me';
+    }
+
+    return this.baseUrl;
+  }
+
+  private isTrRegion(): boolean {
+    return this.region === 'TR';
+  }
+
+  private unwrapResponseData(payload: any): any {
+    if (payload && typeof payload === 'object' && 'code' in payload && 'data' in payload) {
+      return payload.data;
+    }
+    return payload;
+  }
+
+  private toTrSymbol(symbol: string): string {
+    if (symbol.includes('_')) return symbol;
+    const quoteAssets = ['FDUSD', 'USDT', 'USDC', 'BUSD', 'TRY', 'BTC', 'ETH', 'BNB'];
+    const quote = quoteAssets.find((item) => symbol.endsWith(item));
+    if (!quote) return symbol;
+    const base = symbol.slice(0, symbol.length - quote.length);
+    return `${base}_${quote}`;
+  }
+
   async getCandles(symbol: string, interval: string = '1m', limit: number = 100): Promise<Kline[]> {
     try {
+      const marketSymbol = this.isTrRegion() ? this.toTrSymbol(symbol).replace('_', '') : symbol;
+      const endpoint = this.isTrRegion()
+        ? `${this.marketDataBaseUrl}/api/v1/klines`
+        : `${this.baseUrl}/v3/klines`;
+
       // Use real Binance API
-      const response = await axios.get(`${this.baseUrl}/v3/klines`, {
-        params: { symbol, interval, limit },
+      const response = await axios.get(endpoint, {
+        params: { symbol: marketSymbol, interval, limit },
       });
 
-      return response.data.map((candle: any[]) => ({
+      const candlesPayload = this.unwrapResponseData(response.data);
+      const candles = Array.isArray(candlesPayload) ? candlesPayload : [];
+
+      return candles.map((candle: any[]) => ({
         openTime: candle[0],
         open: candle[1],
         high: candle[2],
@@ -84,14 +156,21 @@ export class BinanceAPIClient {
 
   async getOrderBook(symbol: string, limit: number = 20): Promise<OrderBook | null> {
     try {
-      const response = await axios.get(`${this.baseUrl}/v3/depth`, {
-        params: { symbol, limit },
+      const marketSymbol = this.isTrRegion() ? this.toTrSymbol(symbol).replace('_', '') : symbol;
+      const endpoint = this.isTrRegion()
+        ? `${this.marketDataBaseUrl}/api/v3/depth`
+        : `${this.baseUrl}/v3/depth`;
+
+      const response = await axios.get(endpoint, {
+        params: { symbol: marketSymbol, limit },
       });
+
+      const payload = this.unwrapResponseData(response.data) || {};
 
       return {
         symbol,
-        bids: response.data.bids,
-        asks: response.data.asks,
+        bids: payload.bids || [],
+        asks: payload.asks || [],
         timestamp: Date.now(),
       };
     } catch (error) {
@@ -102,11 +181,18 @@ export class BinanceAPIClient {
 
   async getCurrentPrice(symbol: string): Promise<number | null> {
     try {
-      const response = await axios.get(`${this.baseUrl}/v3/ticker/price`, {
-        params: { symbol },
+      const marketSymbol = this.isTrRegion() ? this.toTrSymbol(symbol).replace('_', '') : symbol;
+      const endpoint = this.isTrRegion()
+        ? `${this.marketDataBaseUrl}/api/v3/ticker/price`
+        : `${this.baseUrl}/v3/ticker/price`;
+
+      const response = await axios.get(endpoint, {
+        params: { symbol: marketSymbol },
       });
 
-      return parseFloat(response.data.price);
+      const payload = this.unwrapResponseData(response.data);
+
+      return parseFloat(payload?.price);
     } catch (error) {
       console.warn(`[Binance] Error fetching price for ${symbol}, using demo data`);
       return this.getBasePriceForSymbol(symbol);
@@ -132,6 +218,23 @@ export class BinanceAPIClient {
     }
 
     try {
+      if (this.isTrRegion()) {
+        const timestamp = Date.now();
+        const trSymbol = this.toTrSymbol(symbol);
+        const trSide = side === 'BUY' ? 0 : 1;
+        const params = `symbol=${trSymbol}&side=${trSide}&type=1&quantity=${quantity}&price=${price}&recvWindow=5000&timestamp=${timestamp}`;
+        const signature = this.hmacSha256(params, this.apiSecret);
+        const url = `${this.baseUrl}/open/v1/orders?${params}&signature=${signature}`;
+
+        const response = await axios.post(url, null, {
+          headers: { 'X-MBX-APIKEY': this.apiKey },
+        });
+
+        const data = this.unwrapResponseData(response.data) || response.data;
+        console.log(`[Binance TR LIVE] ✅ LIMIT order executed: ${side} ${quantity} ${symbol} @ ${price}`);
+        return data;
+      }
+
       const timestamp = Date.now();
       const params = `symbol=${symbol}&side=${side}&type=LIMIT&timeInForce=GTC&quantity=${quantity}&price=${price}&timestamp=${timestamp}`;
       const signature = this.hmacSha256(params, this.apiSecret);
@@ -173,6 +276,23 @@ export class BinanceAPIClient {
     }
 
     try {
+      if (this.isTrRegion()) {
+        const timestamp = Date.now();
+        const trSymbol = this.toTrSymbol(symbol);
+        const trSide = side === 'BUY' ? 0 : 1;
+        const params = `symbol=${trSymbol}&side=${trSide}&type=2&quantity=${quantity}&recvWindow=5000&timestamp=${timestamp}`;
+        const signature = this.hmacSha256(params, this.apiSecret);
+        const url = `${this.baseUrl}/open/v1/orders?${params}&signature=${signature}`;
+
+        const response = await axios.post(url, null, {
+          headers: { 'X-MBX-APIKEY': this.apiKey },
+        });
+
+        const data = this.unwrapResponseData(response.data) || response.data;
+        console.log(`[Binance TR LIVE] ✅ MARKET order executed: ${side} ${quantity} ${symbol}`);
+        return data;
+      }
+
       const timestamp = Date.now();
       const params = `symbol=${symbol}&side=${side}&type=MARKET&quantity=${quantity}&timestamp=${timestamp}`;
       const signature = this.hmacSha256(params, this.apiSecret);
@@ -214,6 +334,32 @@ export class BinanceAPIClient {
     }
 
     try {
+      if (this.isTrRegion()) {
+        const timestamp = Date.now();
+        const params = `recvWindow=5000&timestamp=${timestamp}`;
+        const signature = this.hmacSha256(params, this.apiSecret);
+        const url = `${this.baseUrl}/open/v1/account/spot?${params}&signature=${signature}`;
+
+        const response = await axios.get(url, {
+          headers: { 'X-MBX-APIKEY': this.apiKey },
+        });
+
+        const accountData = this.unwrapResponseData(response.data) || {};
+        const balances = Array.isArray(accountData.accountAssets)
+          ? accountData.accountAssets.map((asset: any) => ({
+              asset: asset.asset,
+              free: asset.free,
+              locked: asset.locked,
+            }))
+          : [];
+
+        this.lastApiError = null;
+        return {
+          ...accountData,
+          balances,
+        };
+      }
+
       const timestamp = Date.now();
       const params = `timestamp=${timestamp}`;
       const signature = this.hmacSha256(params, this.apiSecret);

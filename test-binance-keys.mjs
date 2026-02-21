@@ -1,8 +1,25 @@
 import crypto from 'crypto';
 import https from 'https';
 
-const API_KEY = 'zvTlDo9oJmqJGzWAfL7JI8JChWf0SgucrF9vppskjX58nAHjirh7n5AZ2oso4j7N';
-const API_SECRET = '8ehGnY79lpT1JQOKkJJclmYgC9TC5Tjrejg2v6aBjqvJxlIGtQqpTEqaUlIO1Eaq';
+const API_KEY = process.env.BINANCE_API_KEY || '';
+const API_SECRET = process.env.BINANCE_SECRET_KEY || process.env.BINANCE_API_SECRET || '';
+const BINANCE_REGION = (process.env.BINANCE_REGION || 'GLOBAL').toUpperCase();
+
+function getApiHosts() {
+  if (BINANCE_REGION === 'TR') {
+    return {
+      ping: 'https://www.binance.tr/open/v1/common/time',
+      account: 'https://www.binance.tr/open/v1/account/spot',
+      exchangeInfo: 'https://api.binance.me/api/v3/exchangeInfo?symbol=ETHUSDT',
+    };
+  }
+
+  return {
+    ping: 'https://api.binance.com/api/v3/ping',
+    account: 'https://api.binance.com/api/v3/account',
+    exchangeInfo: 'https://api.binance.com/api/v3/exchangeInfo?symbol=ETHUSDT',
+  };
+}
 
 function hmacSha256(message, secret) {
   return crypto.createHmac('sha256', secret).update(message).digest('hex');
@@ -10,11 +27,19 @@ function hmacSha256(message, secret) {
 
 async function testBinanceKeys() {
   console.log('🔍 Binance API Key Doğrulama Başlıyor...\n');
+  console.log(`🌍 Region: ${BINANCE_REGION}`);
+
+  if (!API_KEY || !API_SECRET) {
+    console.log('❌ BINANCE_API_KEY / BINANCE_SECRET_KEY eksik');
+    process.exit(1);
+  }
+
+  const hosts = getApiHosts();
 
   // Test 1: Public endpoint (no auth needed)
   console.log('Test 1: Binance API Bağlantısı');
   try {
-    const response = (await fetch('https://api.binance.com/api/v3/ping')).ok
+    const response = (await fetch(hosts.ping)).ok
       ? '✅ Başarılı'
       : '❌ Başarısız';
     console.log(`  ${response}\n`);
@@ -26,9 +51,11 @@ async function testBinanceKeys() {
   console.log('Test 2: API Key Geçerliliği');
   try {
     const timestamp = Date.now();
-    const params = `timestamp=${timestamp}`;
+    const params = BINANCE_REGION === 'TR'
+      ? `recvWindow=5000&timestamp=${timestamp}`
+      : `timestamp=${timestamp}`;
     const signature = hmacSha256(params, API_SECRET);
-    const url = `https://api.binance.com/api/v3/account?${params}&signature=${signature}`;
+    const url = `${hosts.account}?${params}&signature=${signature}`;
 
     const response = await fetch(url, {
       headers: {
@@ -39,16 +66,18 @@ async function testBinanceKeys() {
     const data = await response.json();
 
     if (response.ok) {
+      const payload = BINANCE_REGION === 'TR' ? data.data : data;
       console.log('  ✅ API Key Geçerli!');
       console.log(`  📊 Hesap Bilgileri:`);
-      console.log(`     - Maker Commission: ${data.makerCommission}%`);
-      console.log(`     - Taker Commission: ${data.takerCommission}%`);
-      console.log(`     - Can Trade: ${data.canTrade}`);
-      console.log(`     - Can Deposit: ${data.canDeposit}`);
-      console.log(`     - Can Withdraw: ${data.canWithdraw}`);
+      console.log(`     - Maker Commission: ${payload.makerCommission}%`);
+      console.log(`     - Taker Commission: ${payload.takerCommission}%`);
+      console.log(`     - Can Trade: ${payload.canTrade}`);
+      console.log(`     - Can Deposit: ${payload.canDeposit}`);
+      console.log(`     - Can Withdraw: ${payload.canWithdraw}`);
       console.log(`\n  💰 Bakiyeler:`);
 
-      const balances = data.balances.filter(
+      const rawBalances = BINANCE_REGION === 'TR' ? (payload.accountAssets || []) : (payload.balances || []);
+      const balances = rawBalances.filter(
         (b) => parseFloat(b.free) > 0 || parseFloat(b.locked) > 0
       );
 
@@ -83,9 +112,7 @@ async function testBinanceKeys() {
   // Test 3: Check trading pairs
   console.log('\nTest 3: Ticaret Çiftleri (ETHUSDT)');
   try {
-    const response = await fetch(
-      'https://api.binance.com/api/v3/exchangeInfo?symbol=ETHUSDT'
-    );
+    const response = await fetch(hosts.exchangeInfo);
     const data = await response.json();
 
     if (data.symbols && data.symbols.length > 0) {
